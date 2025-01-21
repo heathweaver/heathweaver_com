@@ -1,0 +1,88 @@
+skills:
+  - category: "Leadership & Management"
+    skills:
+      - Team Leadership
+      - Performance Management
+      - Business Strategy
+      - Process Optimization
+      - Client Relationship Management
+      - Project Management
+      - Change Management
+      - P&L Management
+      - Six Sigma
+      - Strategic Planning
+    
+  - category: "Marketing & Digital"
+    skills:
+      - Digital Marketing Strategy
+      - Email Marketing
+      - Lead Generation
+      - Client Acquisition
+      - Customer Segmentation
+      - Multichannel Marketing
+      - Digital Advertising
+      - Campaign Management
+      - Copywriting
+      - SEO/SEM
+      - Content Strategy
+      - Marketing Automation
+      - Growth Marketing
+      - Performance Marketing
+      - Marketing Analytics
+      - Brand Development
+      - Social Media Marketing
+      - Marketing Operations
+      - ABM Strategy
+    
+  - category: "Technical"
+    skills:
+      - AI Implementation
+      - Custom GPT Development
+      - Process Documentation
+      - Digital Optimization
+      - Testing & Analytics
+      - Data Analysis
+      - SQL
+      - Business Intelligence
+      - Python
+      - TypeScript
+      - Deno
+      - PostgreSQL
+      - Vector Databases
+      - AI/ML Integration
+      - Tableau
+      - SAP
+      - Excel VBA
+      - System Architecture
+      - API Development
+      - Full Stack Development
+    
+  - category: "Business Development"
+    skills:
+      - Sales Strategy
+      - Client Retention
+      - Revenue Growth
+      - Business Operations
+      - Strategic Planning
+      - Cost Optimization
+      - Performance Analysis
+
+  - category: "Finance & Business"
+    skills:
+      - Financial Analysis
+      - Investment Advisory
+      - Series 7 Licensed
+      - Investor Relations
+      - Budget Management
+      - Revenue Optimization
+      - Profitability Analysis
+      - Strategic Partnerships
+      - Client Relations
+      - Sales Operations
+      - Market Analysis
+
+  - category: "Languages"
+    skills:
+      - English (Native)
+      - French (Basic)
+      - Italian (Learning)      

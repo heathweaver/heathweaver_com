@@ -1,0 +1,117 @@
+professional_experience:
+  - company: "Realdigit"
+    title: "Consultant (Self-Employed)"
+    start_date: "2019-04"
+    end_date: "2024-12"
+    location: "Brussels/Remote"
+    responsibilities: []  # List of responsibilities
+    achievements: []     # List of achievements
+    narrative: []       # Overall narrative/story
+
+  - company: "Essence of Email"
+    title: "Managing Director"
+    start_date: "2019-07"
+    end_date: "2024-04"
+    location: "US/Remote"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "Trilogy Software"
+    title: "VP of Marketing"
+    start_date: "2018-04"
+    end_date: "2019-02"
+    location: "Remote"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "(client list) WABCO Auto, Tomorrowland, & Startups"
+    title: "Consultant (Self-Employed)"
+    start_date: "2017-08"
+    end_date: "2018-02"
+    location: "Brussels/Antwerp"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "The Specialists Agency & Retorica"
+    title: "Managing Partner & Co-Founder"
+    start_date: "2013-08"
+    end_date: "2017-08"
+    location: "Antwerp/Remote"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "(client list) Doosan"
+    title: "Consultant (Self-Employed)"
+    start_date: "2011-08"
+    end_date: "2017-05"
+    location: "Brussels"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "High Position Agency"
+    title: "Director, Europe"
+    start_date: "2010-04"
+    end_date: "2011-06"
+    location: "London/Remote"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "Sony VAIO Europe"
+    title: "Head of Search Engine Marketing, Europe"
+    start_date: "2007-07"
+    end_date: "2010-03"
+    location: "Brussels"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "Sony Electronics"
+    title: "Finance Manager, Europe"
+    start_date: "2003-09"
+    end_date: "2007-07"
+    location: "Brussels"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "Levi Strauss & Co."
+    title: "Business Analyst, Europe"
+    start_date: "2003"
+    end_date: "2007"
+    location: "Brussels"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "Charlotte Russe"
+    title: "Financial Analyst and Investor Relations"
+    start_date: "2002"
+    end_date: "2003"
+    location: "San Diego"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "ACS, a Xerox Company"
+    title: "Consultant"
+    start_date: "2000"
+    end_date: "2001"
+    location: "San New York"
+    responsibilities: []
+    achievements: []
+    narrative: []
+
+  - company: "Fidelity Investments"
+    title: "Investment Advisor"
+    start_date: "1999-06"
+    end_date: "2000-05"
+    location: "San Diego"
+    responsibilities: []
+    achievements: []
+    narrative: []

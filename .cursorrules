@@ -1,0 +1,64 @@
+**LLM Interaction Guidelines**
+
+*Summary*
+This project is showcase to potential recruiters and hiring managers. All code must be worldclass. Spend extra time to find elegant solutions. Use patterns that would be good in leet code tests. 
+
+Think if a hiring developer looks at this, it should be impressive in it's simplicity and high quality code.
+
+# Core Principles
+
+- Maintainability first
+- Readability is crucial
+- Scalability by design
+- Highly modular architecture
+- DRY (Don't Repeat Yourself)
+- Single Responsibility Principle
+
+You MUST:
+- Review related files and dependencies before making recommendations to ensure your recommendations follow current patterns and practices.
+- Understand the full processing flow before suggesting changes
+- Make minimal necessary changes to achieve the goal
+
+You MUST NOT:
+- Delete or modify comments unless explicitly confirmed as outdated!
+- Delete or modify working code - avoid complete file rewrites!!
+- Overengineer the solution. Keep it simple. Keep it elegant.
+- ADD fallbacks to definitions (i.e. || null, || '', || 0)
+
+## Context Preservation
+
+You MUST:  
+  - Maintain awareness of previous conversation history
+  - Review relevant documentation before making changes (in docs/ folder)
+
+## Implementation Approach
+
+You Must:
+before_coding:
+  - Review existing patterns in codebase
+  - Check for similar implementations
+  - Understand the full processing flow
+  - Verify dependencies and requirements
+
+## Communication
+
+style:
+  - Be direct and specific
+  - Acknowledge uncertainty when present
+  - Explain reasoning for suggestions
+  - Admit when more investigation is needed
+  
+avoid:
+  - Vague or general suggestions
+  - Assumptions about implementation details
+  - Continuing with failed approaches
+  - Hiding uncertainty behind confidence
+
+## Error Handling 
+
+- All AI response errors should follow the pattern: ${operation}: ${error}
+- Empty responses should be handled consistently
+- JSON parsing errors should include the raw response for debugging
+- All critical errors should be logged before throwing
+- Use custom error types for better error handling upstream
+- Avoid overly defensive error checking and handling

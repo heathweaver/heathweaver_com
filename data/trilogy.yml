@@ -1,0 +1,22 @@
+professional_experience:
+  - company: Trilogy Software
+    title: VP of Marketing
+    start_date: 2018-01
+    end_date: 2019-12
+    location: Remote
+    responsibilities:
+      - Assisted with the launch of a portfolio of highly technical software solutions for telecom operators
+      - Developed and delivered an intensive four-week Sales boot camp, creating and implementing a framework to evaluate training effectiveness
+      - Developed Marketing assembly lines for 15 SaaS products, including customer and competitor review, creation of sales enablement materials, and ABM strategies
+      - Managed Salesforce migration, data recovery, and training for sales teams
+      - Created ABM content for DNN (DotNetNuke), focusing on partner and developer ecosystem enhancement
+      - Reported directly to the group COO, overseeing marketing and sales enablement efforts
+      - Worked closely with the management team for the ramp-up of telecom software products
+    achievements:
+      - "Delivered 25% of a four-week Sales boot camp, significantly enhancing the sales team's capabilities."
+      - "Established effective marketing processes for multiple SaaS products, contributing to streamlined product launches and sales strategies."
+      - "Led the transition and training for Salesforce, ensuring data integrity and team readiness for ABM."
+    narrative:
+      - "At Trilogy Software, I was instrumental in not only launching sophisticated software products for telecom but also in building the marketing and sales capabilities around these products. I developed comprehensive training programs, like the Sales boot camp, which directly improved our sales team's effectiveness."
+      - "I took on the responsibility of creating a marketing assembly line for our SaaS offerings, which involved deep dives into market analysis, competitive positioning, and crafting materials that empowered our sales teams to succeed. This was under the direct oversight of the COO, ensuring alignment with corporate objectives."
+      - "My role also included managing the complexities of Salesforce migration, which was crucial for our ABM strategies, ensuring we had the data and systems in place to target and engage with clients effectively."

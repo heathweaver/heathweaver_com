@@ -1,0 +1,6 @@
+publications:
+  - title: "Publication Title"
+    publisher: "Publisher Name"
+    date: "YYYY-MM"
+    url: "https://example.com/publication"
+    description: "Brief description of the publication and its impact" 

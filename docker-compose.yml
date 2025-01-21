@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: ankane/pgvector:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: cv_rag
+      POSTGRES_USER: cv_heathweaver
+      POSTGRES_PASSWORD: cv_heathweaver
+    ports:
+      - "5433:5432"
+    volumes:
+      - /volume1/docker/heathweaver/postgres_data:/var/lib/postgresql/data
+      - /volume1/docker/heathweaver/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+volumes:
+  postgres_data: 

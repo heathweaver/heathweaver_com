@@ -1,0 +1,27 @@
+achievements:
+  - company: "Essence of Email"
+    title: "CEO"
+    achievement:
+      description: "Developed ABM content for open core solution DNN (DotNetNuke)"
+      impact: "Enhanced partner engagement and developer contributions"
+      metrics:
+        - "Increased developer activity by 30%"
+      tags:
+        - "ABM"
+        - "Content Development"
+        - "DNN"
+        - "Open Source"
+
+  - company: "Essence of Email"
+    title: "CEO"
+    achievement:
+      description: "Created approaches to improving partner relationship and developer ecosystem"
+      impact: "Strengthened partnerships and expanded the developer community"
+      metrics:
+        - "Partner satisfaction improved by 40%"
+      tags:
+        - "Partner Relations"
+        - "Developer Ecosystem"
+        - "Strategy"
+
+# Add more achievements following the same format

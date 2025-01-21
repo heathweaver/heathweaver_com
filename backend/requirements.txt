@@ -1,0 +1,3 @@
+aiopg==1.4.0
+pyyaml==6.0.1
+openai==1.12.0 
