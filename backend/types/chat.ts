@@ -9,12 +9,17 @@ export interface ChatRequest {
   model?: string;
 }
 
+export interface ChatResponse {
+  content: string | null;
+  error: string | null;
+}
+
 export interface StreamChunk {
-  choices: {
+  choices: Array<{
     delta: {
       content?: string;
-      role?: string;
     };
-    finish_reason?: string;
-  }[];
-} 
+  }>;
+}
+
+export type ChatModel = "anthropic" | "xai" | "deepseek" | "openai"; 
