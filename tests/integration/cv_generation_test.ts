@@ -1,7 +1,8 @@
 import { assertEquals, assertExists } from "https://deno.land/std@0.208.0/assert/mod.ts";
-import { AICVProvider } from "../../backend/services/cv/providers/ai-cv-provider.ts";
-import { JSONCVProvider } from "../../backend/services/providers/json-cv-provider.ts";
+import { CVGenerator } from "../../backend/services/cv/cv-generator.ts";
+import { CVLoader } from "../../backend/services/cv/cv-loader.ts";
 import { XAIService } from "../../backend/services/ai/xai.ts";
+import { DatabaseService } from "../../backend/db/database.ts";
 import { config } from "../../config.ts";
 
 Deno.test({
@@ -18,11 +19,13 @@ Deno.test({
 
     // Initialize services
     const aiService = new XAIService(config.xai_api_key);
-    const cvProvider = new AICVProvider(aiService, config.database);
+    const db = new DatabaseService();
+    await db.connect();
+    const cvGenerator = new CVGenerator(aiService, db);
 
     try {
       // Generate CV
-      const cv = await cvProvider.getCV(jobData);
+      const cv = await cvGenerator.generateCV(jobData);
 
       // Basic assertions to ensure CV structure is correct
       assertExists(cv.basicInfo, "CV should have basic info");
@@ -39,13 +42,13 @@ Deno.test({
       if (cv.employmentHistory.length > 0) {
         const firstJob = cv.employmentHistory[0];
         assertExists(firstJob.title, "Job should have a title");
-        assertExists(firstJob.date, "Job should have a date");
+        assertExists(firstJob.start_date, "Job should have a start date");
         assertExists(firstJob.location, "Job should have a location");
         assertExists(firstJob.bulletPoints, "Job should have bullet points");
       }
     } finally {
       // Ensure database connection is closed
-      await cvProvider.cleanup();
+      await db.disconnect();
     }
   }
 });
@@ -58,13 +61,17 @@ Deno.test({
       basicInfo: {
         name: "Test User",
         email: "test@example.com",
+        phone: "123-456-7890",
+        location: "San Francisco, CA",
         title: "Software Engineer"
       },
       headline: "INNOVATIVE SOFTWARE ENGINEER",
       profile: "Experienced engineer...",
       employmentHistory: [{
-        title: "Senior Engineer at TechCorp",
-        date: "JAN 2020 - PRESENT",
+        company: "TechCorp",
+        title: "Senior Engineer",
+        start_date: "2020-01",
+        end_date: "Present",
         location: "San Francisco, CA",
         bulletPoints: [{ content: "Led development of key features" }]
       }]
@@ -75,8 +82,8 @@ Deno.test({
 
     try {
       // Test JSON loading
-      const jsonProvider = new JSONCVProvider(tempFile);
-      const loadedCV = await jsonProvider.loadCV();
+      const cvLoader = new CVLoader(tempFile);
+      const loadedCV = await cvLoader.loadCV();
 
       assertEquals(loadedCV.basicInfo.name, testCV.basicInfo.name);
       assertEquals(loadedCV.headline, testCV.headline);

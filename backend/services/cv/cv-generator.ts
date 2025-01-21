@@ -1,15 +1,8 @@
-import { CV, BasicInfo, EmploymentHistoryItem, EducationItem, SkillItem, AwardItem, PublicationItem } from "../../types/cv.ts";
+import { CV, BasicInfo, BulletPoint, EmploymentHistoryItem, EducationItem, SkillItem, AwardItem, PublicationItem } from "../../types/cv.ts";
 import { AIService } from "../../types/ai-service.types.ts";
 import { DatabaseService } from "../../db/database.ts";
-
-interface GenerateOptions {
-  jobId?: string;
-  jobTitle: string;
-  company: string;
-  jobDescription: string;
-  requirements: string;
-  responsibilities: string;
-}
+import { DBExperience, DBEducation, DBSkill, DBAward, DBContact, DBPublication } from "../../types/db.ts";
+import { GenerateOptions } from "../../types/cv-generation.ts";
 
 /**
  * Service for generating customized CVs using AI based on job requirements
@@ -21,34 +14,98 @@ export class CVGenerator {
   ) {}
 
   async generateCV(options: GenerateOptions): Promise<CV> {
-    const cvData = await this.db.fetchCVData();
-    const basicInfo = await this.db.fetchBasicInfo() as BasicInfo;
-    const headline = await this.db.fetchHeadline() as string;
-    const profile = await this.db.fetchProfile() as string;
-    const employmentHistory = await this.db.fetchEmploymentHistory() as EmploymentHistoryItem[];
-    const certificatesAndAwards = await this.db.fetchCertificatesAndAwards() as string[];
-    const education = await this.db.fetchEducation() as EducationItem[];
-    const skills = await this.db.fetchSkills() as SkillItem[];
-    const awards = await this.db.fetchAwards() as AwardItem[];
-    const publications = await this.db.fetchPublications() as PublicationItem[];
-
-    // Use jobId if available to link with stored job content
-    // AI processing logic here
+    const rawData = await this.db.fetchCVData();
     
-    // Construct a complete CV object
-    const cv: CV = {
-      basicInfo: basicInfo,
-      headline: headline,
-      profile: profile,
-      employmentHistory: employmentHistory,
-      certificatesAndAwards: certificatesAndAwards,
-      contact: cvData.contact,
-      experience: cvData.experience,
-      education: education,
-      skills: skills,
-      awards: awards,
-      publications: publications,
+    // Transform contact info into BasicInfo
+    const contact = rawData.contact as DBContact;
+    const basicInfo: BasicInfo = {
+      name: contact.full_name,
+      email: contact.email,
+      phone: contact.phone,
+      location: contact.location,
+      linkedin: contact.linkedin
     };
-    return cv;
+
+    // Transform experience into employment history
+    const employmentHistory: EmploymentHistoryItem[] = (rawData.experience as DBExperience[])
+      .sort((a, b) => b.start_date.getTime() - a.start_date.getTime())  // Sort in reverse chronological order
+      .map(job => ({
+        company: job.company,
+        title: job.title,
+        start_date: job.start_date.toISOString().split('T')[0],
+        end_date: job.end_date ? job.end_date.toISOString().split('T')[0] : undefined,
+        location: job.location,
+        responsibilities: job.responsibilities,
+        achievements: job.achievements,
+        narrative: job.narrative,
+        bulletPoints: this.transformBulletPoints(job.achievements)
+      }));
+
+    // Transform education
+    const education: EducationItem[] = (rawData.education as DBEducation[]).map(edu => ({
+      institution: edu.institution,
+      degree: edu.degree,
+      field: edu.field,
+      start_date: edu.start_date.toISOString().split('T')[0],
+      end_date: edu.end_date.toISOString().split('T')[0],
+    }));
+
+    // Transform skills
+    const skills: SkillItem[] = (rawData.skills as DBSkill[]).map(skill => ({
+      category: skill.category,
+      skills: skill.skills
+    }));
+
+    // Transform awards
+    const awards: AwardItem[] = (rawData.awards as DBAward[]).map(award => ({
+      title: award.title,
+      issuer: award.issuer || undefined,
+      date: award.date ? award.date.toISOString().split('T')[0] : undefined
+    }));
+
+    // Transform publications
+    const publications: PublicationItem[] = (rawData.publications as DBPublication[]).map(pub => ({
+      title: pub.title,
+      publisher: pub.publisher,
+      date: pub.date ? pub.date.toISOString().split('T')[0] : undefined,
+      url: pub.url,
+      description: pub.description
+    }));
+
+    // Generate headline and profile using AI
+    const headline = await this.generateHeadline(options, basicInfo);
+    const profile = await this.generateProfile(options, basicInfo);
+
+    return {
+      basicInfo,
+      headline,
+      profile,
+      employmentHistory,
+      certificatesAndAwards: awards.map(award => award.title),
+      contact: rawData.contact,
+      experience: rawData.experience,
+      education,
+      skills,
+      awards,
+      publications
+    };
+  }
+
+  private transformBulletPoints(achievements: string[]): BulletPoint[] {
+    return achievements.map(achievement => ({
+      content: achievement
+    }));
+  }
+
+  private async generateHeadline(options: GenerateOptions, basicInfo: BasicInfo): Promise<string> {
+    console.log("Generating headline with options:", options);
+    // TODO: Use AI service to generate headline
+    return `${options.jobTitle.toUpperCase()} WITH PROVEN TRACK RECORD`;
+  }
+
+  private async generateProfile(options: GenerateOptions, basicInfo: BasicInfo): Promise<string> {
+    console.log("Generating profile with options:", options);
+    // TODO: Use AI service to generate profile
+    return `Experienced ${options.jobTitle} with a proven track record...`;
   }
 } 

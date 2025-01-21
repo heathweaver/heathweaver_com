@@ -96,7 +96,7 @@ export class PDFGenerator {
       this.checkNewPage();
 
       // Job title (bold)
-      this.drawText(job.title, {
+      this.drawText(`${job.title} at ${job.company}`, {
         font: this.boldFont,
         size: 12,
         color: rgb(0, 0, 0)
@@ -104,7 +104,8 @@ export class PDFGenerator {
       this.y -= this.lineHeight;
 
       // Date and location (normal Arial, uppercase with en dash)
-      const dateLocation = `${job.date.toUpperCase().replace(/-/g, '–')} | ${job.location}`;
+      const dateStr = `${job.start_date}${job.end_date ? ` – ${job.end_date}` : ' – Present'}`;
+      const dateLocation = `${dateStr.toUpperCase()} | ${job.location || ''}`;
       this.drawText(dateLocation, {
         font: this.font,
         size: 10,
@@ -140,7 +141,7 @@ export class PDFGenerator {
     }
 
     // Education section if exists
-    if (cv.education) {
+    if (cv.education && cv.education.length > 0) {
       this.checkNewPage();
       this.drawText("Education", {
         font: this.boldFont,
@@ -149,17 +150,48 @@ export class PDFGenerator {
       });
       this.y -= this.lineHeight;
 
-      const educationText = cv.education.replace(/\n/g, ' ').trim();
-      const educationLines = this.wrapText(educationText, this.font, 11, this.width - this.margin * 2);
-      for (const line of educationLines) {
-        this.drawText(line, {
-          font: this.font,
+      for (const edu of cv.education) {
+        // Institution and degree
+        this.drawText(`${edu.institution} - ${edu.degree} in ${edu.field}`, {
+          font: this.boldFont,
           size: 11,
           color: rgb(0, 0, 0)
         });
         this.y -= this.lineHeight;
+
+        // Date and location
+        const dateStr = `${edu.start_date}${edu.end_date ? ` – ${edu.end_date}` : ' – Present'}`;
+        const dateLocation = `${dateStr.toUpperCase()} | ${edu.location || ''}`;
+        this.drawText(dateLocation, {
+          font: this.font,
+          size: 10,
+          color: rgb(0.4, 0.4, 0.4)
+        });
+        this.y -= this.lineHeight;
+
+        // Achievements if any
+        if (edu.achievements && edu.achievements.length > 0) {
+          for (const achievement of edu.achievements) {
+            const lines = this.wrapText(achievement, this.font, 11, this.width - this.margin * 2.5);
+            for (const [index, line] of lines.entries()) {
+              if (index === 0) {
+                this.drawText("•", {
+                  font: this.font,
+                  size: 11,
+                  x: this.margin
+                });
+              }
+              this.drawText(line, {
+                font: this.font,
+                size: 11,
+                x: this.margin + 12
+              });
+              this.y -= this.lineHeight;
+            }
+          }
+        }
+        this.y -= this.lineHeight;
       }
-      this.y -= this.lineHeight;
     }
 
     // Skills section

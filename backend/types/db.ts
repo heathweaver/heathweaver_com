@@ -8,6 +8,15 @@ export interface DatabaseConfig {
   port: number;
 }
 
+export interface DBContact {
+  id: number;
+  full_name: string;
+  email: string;
+  phone: string;
+  location: string;
+  linkedin: string;
+}
+
 export interface DBExperience {
   id: number;
   company: string;
@@ -42,6 +51,15 @@ export interface DBAward {
   date: Date | null;
 }
 
+export interface DBPublication {
+  id: number;
+  title: string;
+  publisher?: string;
+  date?: Date;
+  url?: string;
+  description?: string;
+}
+
 export interface DBJobContent extends JobContent {
   id: string;
   created_at: Date;
@@ -52,12 +70,12 @@ export interface DatabaseService {
   connect(): Promise<void>;
   disconnect(): Promise<void>;
   fetchCVData(): Promise<{
-    contact: unknown;
-    experience: unknown[];
-    education: unknown[];
-    skills: unknown[];
-    awards: unknown[];
-    publications: unknown[];
+    contact: DBContact;
+    experience: DBExperience[];
+    education: DBEducation[];
+    skills: DBSkill[];
+    awards: DBAward[];
+    publications: DBPublication[];
   }>;
   storeJobContent?(content: JobContent, rawContent: string, id: string): Promise<void>;
 } 

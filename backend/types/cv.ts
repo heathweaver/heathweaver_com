@@ -4,9 +4,7 @@ export interface BasicInfo {
   email: string;
   phone: string;
   location: string;
-  title: string;
   linkedin?: string;
-  github?: string;
 }
 
 // Core job history that doesn't change

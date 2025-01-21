@@ -24,8 +24,8 @@ try {
   await db.connect();
 
   // Get CV data either from JSON or by generating it
-  const cv = args["json"] 
-    ? await new CVLoader(args["json"]).loadCV()
+  const { cv, jobTitle } = args["json"] 
+    ? { cv: await new CVLoader(args["json"]).loadCV(), jobTitle: "FromJson" }
     : await generateCV(args["job-listing"]!, db);
 
   // Generate PDF
@@ -39,13 +39,13 @@ try {
     .join('')
     .padStart(5, '0');
 
-  const jobTitle = (cv.basicInfo.title || "RemoteExecutive")
+  const formattedTitle = jobTitle
     .split(/[\s-]+/)
     .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join('');
 
-  const filename = `backend/artifacts/HeathWeaver_${jobTitle}_${id}.pdf`;
-  const jsonFilename = `backend/artifacts/HeathWeaver_${jobTitle}_${id}.json`;
+  const filename = `backend/artifacts/HeathWeaver_${formattedTitle}_${id}.pdf`;
+  const jsonFilename = `backend/artifacts/HeathWeaver_${formattedTitle}_${id}.json`;
 
   await Deno.writeFile(filename, pdfBytes);
   await Deno.writeTextFile(jsonFilename, JSON.stringify(cv, null, 2));
@@ -66,23 +66,22 @@ async function generateCV(jobUrl: string, db: DatabaseService) {
   console.log("Fetching job posting...");
   const aiService = new XAIService(config.xai_api_key);
   const jobResult = await processJobUrl(jobUrl, aiService, db);
-  if (jobResult.error) {
-    throw new Error(`Failed to fetch job posting: ${jobResult.error}`);
-  }
+  console.log("Job data:", jobResult);
 
-  console.log("\nProcessing job content...");
-  if (jobResult.error) {
-    throw new Error(`Failed to process job content: ${jobResult.error}`);
+  if (!jobResult.title || !jobResult.company) {
+    throw new Error("Failed to extract required job information (title or company)");
   }
 
   console.log("\nGenerating CV...");
   const cvGenerator = new CVGenerator(aiService, db);
-  return cvGenerator.generateCV({
+  const cv = await cvGenerator.generateCV({
     jobId: jobResult.id,
-    jobTitle: jobResult.title || "",
-    company: jobResult.company || "",
+    jobTitle: jobResult.title,
+    company: jobResult.company,
     jobDescription: jobResult.description || "",
-    requirements: jobResult.requirements?.join("\n") || "",
-    responsibilities: jobResult.responsibilities?.join("\n") || ""
+    requirements: Array.isArray(jobResult.requirements) ? jobResult.requirements.join("\n") : "",
+    responsibilities: Array.isArray(jobResult.responsibilities) ? jobResult.responsibilities.join("\n") : ""
   });
+
+  return { cv, jobTitle: jobResult.title };
 } 
