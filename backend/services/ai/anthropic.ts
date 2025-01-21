@@ -1,4 +1,5 @@
 import { AIService, AIResponse } from "../../types/ai-service.types.ts";
+import { AI_SERVICE_SYSTEM_PROMPT } from "../../prompt/index.ts";
 
 interface AnthropicMessage {
   role: "user" | "assistant";
@@ -37,7 +38,7 @@ export class AnthropicService implements AIService {
         model: this.model,
         messages: options.messages,
         max_tokens: options.max_tokens,
-        system: "You are Heath's virtual assistant, specifically designed to create customized CVs and cover letters. Your interaction style is professional but friendly."
+        system: AI_SERVICE_SYSTEM_PROMPT
       };
 
       console.log("Request body:", JSON.stringify(requestBody));

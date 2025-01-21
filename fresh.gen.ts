@@ -5,10 +5,11 @@
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $api_anthropic from "./routes/api/anthropic.ts";
-import * as $api_chat_openai from "./routes/api/chat-openai.ts";
 import * as $api_chat from "./routes/api/chat.ts";
 import * as $api_deepseek from "./routes/api/deepseek.ts";
+import * as $api_joke from "./routes/api/joke.ts";
 import * as $api_openai from "./routes/api/openai.ts";
+import * as $api_verify from "./routes/api/verify.ts";
 import * as $api_xai from "./routes/api/xai.ts";
 import * as $index from "./routes/index.tsx";
 import * as $ChatArea from "./islands/ChatArea.tsx";
@@ -20,10 +21,11 @@ const manifest = {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
     "./routes/api/anthropic.ts": $api_anthropic,
-    "./routes/api/chat-openai.ts": $api_chat_openai,
     "./routes/api/chat.ts": $api_chat,
     "./routes/api/deepseek.ts": $api_deepseek,
+    "./routes/api/joke.ts": $api_joke,
     "./routes/api/openai.ts": $api_openai,
+    "./routes/api/verify.ts": $api_verify,
     "./routes/api/xai.ts": $api_xai,
     "./routes/index.tsx": $index,
   },

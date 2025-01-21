@@ -5,8 +5,10 @@ import { processJobUrl } from "../backend/services/job/url-processor.ts";
 import { CVGenerator } from "../backend/services/cv/cv-generator.ts";
 import { CVLoader } from "../backend/services/cv/cv-loader.ts";
 import { XAIService } from "../backend/services/ai/xai.ts";
+import { DeepSeekService } from "../backend/services/ai/deepseek.ts";
 import { DatabaseService } from "../backend/db/database.ts";
 import { config } from "../config.ts";
+import { AIService } from "../backend/types/ai-service.types.ts";
 
 const args = parseArgs(Deno.args, {
   string: ["job-listing", "model", "json"],
@@ -23,10 +25,17 @@ try {
   const db = new DatabaseService();
   await db.connect();
 
+  // Initialize AI service
+  const aiService = args["model"] === "xai" 
+    ? new XAIService(config.xai_api_key)
+    : new DeepSeekService(config.deepseek_api_key, args["model"]);
+
+  console.log(`Using AI model: ${args["model"]}`);
+
   // Get CV data either from JSON or by generating it
   const { cv, jobTitle } = args["json"] 
     ? { cv: await new CVLoader(args["json"]).loadCV(), jobTitle: "FromJson" }
-    : await generateCV(args["job-listing"]!, db);
+    : await generateCV(args["job-listing"]!, db, aiService);
 
   // Generate PDF
   console.log("\nGenerating PDF...");
@@ -62,9 +71,8 @@ try {
   Deno.exit(1);
 }
 
-async function generateCV(jobUrl: string, db: DatabaseService) {
+async function generateCV(jobUrl: string, db: DatabaseService, aiService: AIService) {
   console.log("Fetching job posting...");
-  const aiService = new XAIService(config.xai_api_key);
   const jobResult = await processJobUrl(jobUrl, aiService, db);
   console.log("Job data:", jobResult);
 

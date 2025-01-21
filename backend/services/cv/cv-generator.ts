@@ -3,6 +3,7 @@ import { AIService } from "../../types/ai-service.types.ts";
 import { DatabaseService } from "../../db/database.ts";
 import { DBExperience, DBEducation, DBSkill, DBAward, DBContact, DBPublication } from "../../types/db.ts";
 import { GenerateOptions } from "../../types/cv-generation.ts";
+import { CV_GENERATOR_HEADLINE_PROMPT, CV_GENERATOR_PROFILE_PROMPT } from "../../prompt/index.ts";
 
 /**
  * Service for generating customized CVs using AI based on job requirements
@@ -50,11 +51,21 @@ export class CVGenerator {
       end_date: edu.end_date.toISOString().split('T')[0],
     }));
 
-    // Transform skills
-    const skills: SkillItem[] = (rawData.skills as DBSkill[]).map(skill => ({
-      category: skill.category,
-      skills: skill.skills
-    }));
+    // Transform skills - separate languages and append at end
+    const allSkills = rawData.skills as DBSkill[];
+    const languageSkills = allSkills.find(skill => skill.category === "Languages");
+    const otherSkills = allSkills.filter(skill => skill.category !== "Languages");
+    
+    const skills: SkillItem[] = [
+      ...otherSkills.map(skill => ({
+        category: skill.category,
+        skills: skill.skills
+      })),
+      ...(languageSkills ? [{
+        category: languageSkills.category,
+        skills: languageSkills.skills
+      }] : [])
+    ];
 
     // Transform awards
     const awards: AwardItem[] = (rawData.awards as DBAward[]).map(award => ({
@@ -73,8 +84,8 @@ export class CVGenerator {
     }));
 
     // Generate headline and profile using AI
-    const headline = await this.generateHeadline(options, basicInfo);
-    const profile = await this.generateProfile(options, basicInfo);
+    const headline = await this.generateHeadline(options, basicInfo, employmentHistory);
+    const profile = await this.generateProfile(options, basicInfo, employmentHistory);
 
     return {
       basicInfo,
@@ -97,15 +108,53 @@ export class CVGenerator {
     }));
   }
 
-  private async generateHeadline(options: GenerateOptions, basicInfo: BasicInfo): Promise<string> {
-    console.log("Generating headline with options:", options);
-    // TODO: Use AI service to generate headline
-    return `${options.jobTitle.toUpperCase()} WITH PROVEN TRACK RECORD`;
+  private async generateHeadline(
+    options: GenerateOptions, 
+    basicInfo: BasicInfo,
+    employmentHistory: EmploymentHistoryItem[]
+  ): Promise<string> {
+    const careerHistory = employmentHistory
+      .map(job => `${job.title} at ${job.company} (${job.start_date} - ${job.end_date || 'Present'})`)
+      .join('\n');
+
+    const prompt = CV_GENERATOR_HEADLINE_PROMPT
+      .replace("{jobTitle}", options.jobTitle)
+      .replace("{requirements}", options.requirements)
+      .replace("{responsibilities}", options.responsibilities)
+      .replace("{careerHistory}", careerHistory);
+
+    const response = await this.ai.processJobPosting(prompt);
+    if (response.error || !response.content.length) {
+      console.error("Failed to generate headline:", response.error);
+      return `${options.jobTitle.toUpperCase()} WITH PROVEN TRACK RECORD`;
+    }
+
+    return response.content[0].trim().toUpperCase();
   }
 
-  private async generateProfile(options: GenerateOptions, basicInfo: BasicInfo): Promise<string> {
-    console.log("Generating profile with options:", options);
-    // TODO: Use AI service to generate profile
-    return `Experienced ${options.jobTitle} with a proven track record...`;
+  private async generateProfile(
+    options: GenerateOptions,
+    basicInfo: BasicInfo,
+    employmentHistory: EmploymentHistoryItem[]
+  ): Promise<string> {
+    const careerHistory = employmentHistory
+      .map(job => `${job.title} at ${job.company} (${job.start_date} - ${job.end_date || 'Present'})
+Key Achievements:
+${job.achievements?.map(a => `- ${a}`).join('\n') || 'No achievements listed'}`)
+      .join('\n\n');
+
+    const prompt = CV_GENERATOR_PROFILE_PROMPT
+      .replace("{jobTitle}", options.jobTitle)
+      .replace("{requirements}", options.requirements)
+      .replace("{responsibilities}", options.responsibilities)
+      .replace("{careerHistory}", careerHistory);
+
+    const response = await this.ai.processJobPosting(prompt);
+    if (response.error || !response.content.length) {
+      console.error("Failed to generate profile:", response.error);
+      return `Experienced ${options.jobTitle} with a proven track record...`;
+    }
+
+    return response.content[0].trim();
   }
 } 

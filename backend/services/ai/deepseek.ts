@@ -1,7 +1,8 @@
 import { AIService, AIResponse } from "../../types/ai-service.types.ts";
+import { AI_SERVICE_SYSTEM_PROMPT } from "../../prompt/index.ts";
 
 interface DeepSeekMessage {
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "system";
   content: string;
 }
 
@@ -20,21 +21,22 @@ interface DeepSeekRequestOptions {
 export class DeepSeekService implements AIService {
   private readonly apiKey: string;
   private readonly baseUrl = "https://api.deepseek.com/v1";
-  private readonly model = "deepseek-chat";
+  private readonly model: string;
 
-  constructor(apiKey: string | null | undefined) {
+  constructor(apiKey: string | null | undefined, model = "deepseek-chat") {
     if (!apiKey) {
       throw new Error("service: DEEPSEEK_API_KEY is required");
     }
     this.apiKey = apiKey;
-    console.log("DeepSeek service initialized");
+    this.model = model;
+    console.log(`DeepSeek service initialized with model: ${model}`);
   }
 
   private async makeRequest(options: DeepSeekRequestOptions): Promise<AIResponse> {
     try {
       console.log("Making DeepSeek API request:", {
         url: `${this.baseUrl}/chat/completions`,
-        model: options.model,
+        model: this.model,
         messageCount: options.messages.length,
       });
 
@@ -42,7 +44,7 @@ export class DeepSeekService implements AIService {
       const messages = [
         {
           role: "system",
-          content: "You are Heath's virtual assistant, specifically designed to create customized CVs and cover letters. Your interaction style is professional but friendly."
+          content: AI_SERVICE_SYSTEM_PROMPT
         },
         ...options.messages
       ];

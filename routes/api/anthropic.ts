@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { config } from "../../config.ts";
-import { SYSTEM_PROMPT } from "../../backend/prompt/index.ts";
+import { VERIFIED_PROMPT } from "../../backend/prompt/index.ts";
 
 export async function handler(
   req: Request,
@@ -24,7 +24,7 @@ export async function handler(
         model: "claude-3-sonnet-20240229",
         messages: [{ role: "user", content: message }],
         max_tokens: 1024,
-        system: SYSTEM_PROMPT
+        system: VERIFIED_PROMPT
       }),
     });
 

@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { config } from "../../config.ts";
-import { SYSTEM_PROMPT } from "../../backend/prompt/index.ts";
+import { VERIFIED_PROMPT } from "../../backend/prompt/index.ts";
 
 export async function handler(
   req: Request,
@@ -24,7 +24,7 @@ export async function handler(
         messages: [
           {
             role: "system",
-            content: SYSTEM_PROMPT
+            content: VERIFIED_PROMPT
           },
           { role: "user", content: message }
         ],

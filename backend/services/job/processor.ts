@@ -1,6 +1,12 @@
 import { AIService } from "../../types/ai-service.types.ts";
 import { JobContent } from "../../types/job.ts";
 import { DatabaseService } from "../../db/database.ts";
+import { 
+  JOB_ANALYSIS_PROMPT, 
+  JOB_DETAILS_PROMPT,
+  JOB_CONTENT_EXTRACTION_PROMPT,
+  JOB_CONTENT_PROCESSING_PROMPT
+} from "../../prompt/index.ts";
 
 const JOB_CONTENT_TEMPLATE = {
   title: "Job title",
@@ -28,12 +34,9 @@ function generateJobId(): string {
  * This is meant to be used with an LLM to extract relevant sections.
  */
 export function structureJobContent(rawText: string): string {
-  return `Please analyze this job posting text and extract the relevant sections. 
-Return ONLY a JSON object with these fields (omit any that aren't present):
-${JSON.stringify(JOB_CONTENT_TEMPLATE, null, 2)}
-
-Job posting text:
-${rawText}`;
+  return JOB_CONTENT_EXTRACTION_PROMPT
+    .replace("{template}", JSON.stringify(JOB_CONTENT_TEMPLATE, null, 2))
+    .replace("{content}", rawText);
 }
 
 /**
@@ -46,29 +49,16 @@ export function prepareCVPrompt(jobContent: JobContent): string {
     Object.entries(jobContent).filter(([_, v]) => v !== undefined)
   ) as JobContent;
 
-  return `Please help customize a CV for this job opportunity:
-
-${content.title ? `Role: ${content.title}` : ''}
-${content.company ? `Company: ${content.company}` : ''}
-${content.location ? `Location: ${content.location}` : ''}
-${content.salary ? `Compensation: ${content.salary}` : ''}
-
-${content.description ? `Role Overview:\n${content.description}` : ''}
-
-${content.requirements ? `Key Requirements:\n${content.requirements.join('\n')}` : ''}
-
-${content.responsibilities ? `Main Responsibilities:\n${content.responsibilities.join('\n')}` : ''}
-
-${content.aboutCompany ? `About the Company:\n${content.aboutCompany}` : ''}
-
-${content.benefits ? `Benefits:\n${content.benefits}` : ''}
-
-Please analyze this job posting and suggest how to customize the CV to best match this opportunity.
-Focus on:
-1. Most relevant experience to highlight
-2. Key skills to emphasize
-3. Achievements that would resonate with their needs
-4. Any specific formatting or content suggestions`;
+  return JOB_ANALYSIS_PROMPT
+    .replace("{title}", content.title || "")
+    .replace("{company}", content.company || "")
+    .replace("{location}", content.location || "")
+    .replace("{salary}", content.salary || "")
+    .replace("{description}", content.description || "")
+    .replace("{requirements}", content.requirements?.join('\n') || "")
+    .replace("{responsibilities}", content.responsibilities?.join('\n') || "")
+    .replace("{aboutCompany}", content.aboutCompany || "")
+    .replace("{benefits}", content.benefits || "");
 }
 
 /**
@@ -141,13 +131,12 @@ export function validateJobContent(content: unknown): JobContent {
 export async function processJobContent(
   content: string,
   ai: AIService,
-  db?: DatabaseService
+  db?: DatabaseService,
+  url?: string
 ): Promise<JobContent & { id?: string }> {
-  const prompt = `Extract key information from this job posting. Return ONLY a clean JSON object with these fields, no markdown formatting or additional text:
-${JSON.stringify(JOB_CONTENT_TEMPLATE, null, 2)}
-
-Job posting:
-${content}`;
+  const prompt = JOB_CONTENT_PROCESSING_PROMPT
+    .replace("{template}", JSON.stringify(JOB_CONTENT_TEMPLATE, null, 2))
+    .replace("{content}", content);
 
   try {
     const response = await ai.processJobPosting(prompt);
@@ -172,9 +161,9 @@ ${content}`;
         const id = generateJobId();
         
         // Database storage is optional - only try if db is provided and has storeJobContent method
-        if (db && 'storeJobContent' in db) {
+        if (db && 'storeJobContent' in db && url) {
           try {
-            await db.storeJobContent(validatedContent, content, id);
+            await db.storeJobContent(validatedContent, content, id, url);
           } catch (dbError) {
             console.error(`process: Failed to store job content - ${String(dbError)}`);
             // Continue even if storage fails - don't fail the whole process
@@ -197,17 +186,11 @@ ${content}`;
 }
 
 export function prepareJobPrompt(content: JobContent): string {
-  return `Job Details:
-Title: ${content.title}
-Company: ${content.company}
-Location: ${content.location}
-
-Description:
-${content.description}
-
-Requirements:
-${content.requirements?.map(r => `• ${r}`).join("\n")}
-
-Responsibilities:
-${content.responsibilities?.map(r => `• ${r}`).join("\n")}`;
+  return JOB_DETAILS_PROMPT
+    .replace("{title}", content.title || "")
+    .replace("{company}", content.company || "")
+    .replace("{location}", content.location || "")
+    .replace("{description}", content.description || "")
+    .replace("{requirements}", content.requirements?.map(r => `• ${r}`).join("\n") || "")
+    .replace("{responsibilities}", content.responsibilities?.map(r => `• ${r}`).join("\n") || "");
 } 
