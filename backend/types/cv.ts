@@ -95,7 +95,6 @@ export interface PublicationItem {
 
 export interface CV {
   basicInfo: BasicInfo;
-  headline: string;
   profile: string;
   employmentHistory: EmploymentHistoryItem[];
   certificatesAndAwards: string[];

@@ -22,11 +22,6 @@ const manifest = {
     "./routes/_app.tsx": $_app,
     "./routes/api/anthropic.ts": $api_anthropic,
     "./routes/api/chat.ts": $api_chat,
-    "./routes/api/deepseek.ts": $api_deepseek,
-    "./routes/api/joke.ts": $api_joke,
-    "./routes/api/openai.ts": $api_openai,
-    "./routes/api/verify.ts": $api_verify,
-    "./routes/api/xai.ts": $api_xai,
     "./routes/index.tsx": $index,
   },
   islands: {

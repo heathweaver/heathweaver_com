@@ -1,5 +1,5 @@
 import { CV } from "../../types/cv.ts";
-import { DBEducation, DBAward } from "../database.ts";
+import { DBEducation, DBAward } from "../../types/db.ts";
 import { FormatError } from "../../types/errors.ts";
 
 const DATE_FORMAT: Intl.DateTimeFormatOptions = { 
@@ -23,10 +23,10 @@ export class CVFormatter {
     try {
       return {
         ...cv,
-        headline: cv.headline.toUpperCase(),
         employmentHistory: cv.employmentHistory.map(job => ({
           ...job,
-          date: this.formatDate(job.date),
+          start_date: this.formatSingleDate(new Date(job.start_date)),
+          end_date: job.end_date ? this.formatSingleDate(new Date(job.end_date)) : "PRESENT",
           bulletPoints: job.bulletPoints.map(b => ({
             content: b.content.trim()
           }))
@@ -56,13 +56,8 @@ export class CVFormatter {
   }
 
   /**
-   * Formats dates into consistent format
+   * Formats a single date into consistent format
    */
-  private formatDate(dateStr: string): string {
-    const [start, end] = dateStr.split(" - ");
-    return `${this.formatSingleDate(new Date(start))} - ${end === "PRESENT" ? end : this.formatSingleDate(new Date(end))}`;
-  }
-
   private formatSingleDate(date: Date | null): string {
     if (!date) return "PRESENT";
     try {

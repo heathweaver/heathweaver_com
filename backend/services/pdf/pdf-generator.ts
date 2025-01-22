@@ -56,20 +56,7 @@ export class PDFGenerator {
       color: rgb(0, 0, 0),
       x: this.margin + nameWidth + 12  // Add some spacing between name and email
     });
-    this.y -= this.lineHeight +3;  // Reduced from lineHeight * 2 to just lineHeight
-
-    // Headline (Arial Narrow, all caps)
-    const cleanHeadline = cv.headline.replace(/['"]/g, '');  // Remove any quotes
-    const headlineLines = this.wrapText(cleanHeadline, this.narrowFont, 14, this.width - this.margin * 2);
-    for (const line of headlineLines) {
-      this.drawText(line, {
-        font: this.narrowFont,
-        size: 13,
-        color: rgb(0, 0, 0)
-      });
-      this.y -= this.lineHeight;
-    }
-    this.y -= this.lineHeight;
+    this.y -= this.lineHeight + 3;  // Reduced spacing after name/email
 
     // Profile text (italic)
     const profileLines = this.wrapText(cv.profile, this.italicFont, 11, this.width - this.margin * 2);
