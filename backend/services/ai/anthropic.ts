@@ -1,4 +1,5 @@
 import { AIService, AIResponse } from "../../types/ai-service.types.ts";
+import { AI_SERVICE_SYSTEM_PROMPT } from "../../prompt/index.ts";
 
 interface AnthropicMessage {
   role: "user" | "assistant";
@@ -28,6 +29,20 @@ export class AnthropicService implements AIService {
 
   private async makeRequest(options: AnthropicRequestOptions): Promise<AIResponse> {
     try {
+      console.log("Making Anthropic API request:", {
+        url: `${this.baseUrl}/messages`,
+        messageCount: options.messages.length,
+      });
+
+      const requestBody = {
+        model: this.model,
+        messages: options.messages,
+        max_tokens: options.max_tokens,
+        system: AI_SERVICE_SYSTEM_PROMPT
+      };
+
+      console.log("Request body:", JSON.stringify(requestBody));
+
       const response = await fetch(`${this.baseUrl}/messages`, {
         method: "POST",
         headers: {
@@ -35,22 +50,35 @@ export class AnthropicService implements AIService {
           "anthropic-version": "2023-06-01",
           "content-type": "application/json",
         },
-        body: JSON.stringify({
-          model: this.model,
-          ...options
-        }),
+        body: JSON.stringify(requestBody),
       });
 
+      const responseText = await response.text();
+      console.log("Raw API response:", responseText);
+
       if (!response.ok) {
-        const error = await response.text();
-        console.error(`request: Anthropic API error: ${error}`);
-        throw new Error(`request: ${error}`);
+        console.error(`Anthropic API error: Status ${response.status}`, responseText);
+        throw new Error(`request: Anthropic API error: ${responseText}`);
       }
 
-      const data = await response.json();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error("Failed to parse Anthropic response:", e);
+        throw new Error("Failed to parse Anthropic response");
+      }
+
+      console.log("Parsed response data:", data);
+
+      if (!data.content?.[0]?.text) {
+        console.error("Unexpected response structure:", data);
+        throw new Error("Unexpected response structure from Anthropic");
+      }
+
       return { content: [data.content[0].text] };
     } catch (error) {
-      console.error("request:", error);
+      console.error("Anthropic request error:", error);
       return {
         content: [],
         error: error instanceof Error ? error.message : String(error),

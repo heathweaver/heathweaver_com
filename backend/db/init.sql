@@ -24,6 +24,7 @@ CREATE TABLE job_content (
     about_company TEXT,
     benefits TEXT,
     raw_content TEXT NOT NULL,
+    url TEXT UNIQUE NOT NULL,  -- Added URL field with UNIQUE constraint
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 

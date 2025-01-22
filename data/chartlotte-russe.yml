@@ -1,8 +1,8 @@
 professional_experience:
   - company: Charlotte Russe
     title: Financial Analyst and Investor Relations
-    start_date: 2002-01
-    end_date: 2003-12
+    start_date: 2002-10-01
+    end_date: 2003-05-01
     location: San Diego
     responsibilities:
       - Automated reporting to increase management productivity using MS Excel VBA (Macros)

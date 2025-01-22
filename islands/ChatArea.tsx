@@ -1,16 +1,22 @@
 import { useSignal } from "@preact/signals";
-import { ChatMessage, StreamChunk } from "../backend/types/chat.ts";
+import { ChatMessage } from "../backend/types/chat.ts";
+import { INITIAL_PROMPT } from "../backend/prompt/index.ts";
 
 export default function ChatArea() {
   const messages = useSignal<ChatMessage[]>([{
     role: "assistant",
-    content: "Hi, I am Heath's virtual assistant. I am responsible for creating a CV/Resume that's tailored to the role you have available. Would you like to begin?"
+    content: INITIAL_PROMPT
   }]);
   const inputValue = useSignal("");
   const isLoading = useSignal(false);
-  const currentModel = useSignal<"anthropic" | "xai">("anthropic");
+  const currentModel = useSignal<"xai" | "anthropic" | "deepseek" | "openai">("xai");
   const showJobInput = useSignal(false);
-  const jobUrl = useSignal("");
+  const verificationData = useSignal<{
+    isValid: boolean;
+    mode: "initial" | "verified" | "jokes";
+    jobData?: Record<string, unknown>;
+    cvData?: Record<string, unknown>;
+  } | null>(null);
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
@@ -20,82 +26,113 @@ export default function ChatArea() {
     inputValue.value = "";
     isLoading.value = true;
 
-    // Check if the message is a URL
-    const urlPattern = /https?:\/\/[^\s]+/;
-    if (urlPattern.test(userMessage)) {
-      // Handle as job URL
-      jobUrl.value = userMessage;
-      messages.value = [...messages.value, {
-        role: "user",
-        content: `I'd like to analyze this job posting: ${userMessage}`,
-      }];
-    } else {
-      messages.value = [...messages.value, {
-        role: "user",
-        content: userMessage,
-      }];
-    }
+    messages.value = [...messages.value, {
+      role: "user",
+      content: userMessage,
+    }];
 
     try {
-      const response = await fetch("/api/chat", {
+      // If not verified yet, try to verify the code
+      if (!verificationData.value) {
+        // If they don't provide what looks like a code (at least 8 chars), go straight to jokes
+        if (userMessage.toLowerCase().includes('joke') || userMessage.length < 8) {
+          verificationData.value = {
+            isValid: true,
+            mode: "jokes",
+            jobData: undefined,
+            cvData: undefined
+          };
+          
+          const jokeResponse = await fetch('/api/joke');
+          if (!jokeResponse.ok) throw new Error("Failed to fetch joke");
+          
+          const jokeData = await jokeResponse.json();
+          messages.value = [...messages.value, {
+            role: "assistant",
+            content: `Here's a joke: ${jokeData.content}\n\nYou can provide the code at any time to discuss Heath's career.`,
+          }];
+          return;
+        }
+
+        // Try to verify the code if it looks like one
+        const verifyResponse = await fetch('/api/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: userMessage })
+        });
+
+        const data = await verifyResponse.json();
+        
+        if (!data.isValid) {
+          verificationData.value = {
+            isValid: true,
+            mode: "jokes",
+            jobData: undefined,
+            cvData: undefined
+          };
+          
+          const jokeResponse = await fetch('/api/joke');
+          if (!jokeResponse.ok) throw new Error("Failed to fetch joke");
+          
+          const jokeData = await jokeResponse.json();
+          messages.value = [...messages.value, {
+            role: "assistant",
+            content: `That code wasn't valid, but here's a joke instead: ${jokeData.content}\n\nYou can provide a code at any time.`,
+          }];
+          return;
+        }
+
+        verificationData.value = data;
+      }
+
+      // If in joke mode, fetch a joke
+      if (verificationData.value.mode === "jokes") {
+        const jokeResponse = await fetch('/api/joke');
+        if (!jokeResponse.ok) throw new Error("Failed to fetch joke");
+        
+        const jokeData = await jokeResponse.json();
+        messages.value = [...messages.value, {
+          role: "assistant",
+          content: `Here's another joke: ${jokeData.content}\n\nRemember, you can provide the code at any time to discuss Heath's career.`,
+        }];
+        return;
+      }
+
+      // For verified mode, make the AI request with the verification data
+      const response = await fetch(`/api/${currentModel.value}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           message: userMessage,
-          conversationHistory: messages.value.filter(m => m.role !== "system"),
-          model: currentModel.value
+          verificationData: verificationData.value
         }),
       });
 
-      if (!response.ok) throw new Error("API request failed");
+      if (!response.ok) throw new Error("Failed to get response from AI");
 
-      // Add empty assistant message that we'll stream into
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       messages.value = [...messages.value, {
         role: "assistant",
-        content: "",
+        content: data.content,
       }];
-
-      const reader = response.body?.getReader();
-      if (!reader) throw new Error("No response body");
-
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        // Decode the chunk and add it to our buffer
-        buffer += decoder.decode(value, { stream: true });
-        
-        // Process complete lines from the buffer
-        const lines = buffer.split("\n");
-        buffer = lines.pop() || ""; // Keep the last incomplete line in the buffer
-
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const data = line.slice(6); // Remove "data: " prefix
-            if (data === "[DONE]") continue;
-
-            try {
-              const chunk: StreamChunk = JSON.parse(data);
-              const content = chunk.choices[0]?.delta?.content;
-              
-              if (content) {
-                const lastMessage = messages.value[messages.value.length - 1];
-                messages.value = [
-                  ...messages.value.slice(0, -1),
-                  { ...lastMessage, content: lastMessage.content + content },
-                ];
-              }
-            } catch (e) {
-              console.error("Error parsing chunk:", e);
-            }
-          }
-        }
-      }
     } catch (error) {
       console.error("Chat error:", error);
+      // Don't show technical errors to the user, just continue with joke mode
+      verificationData.value = {
+        isValid: true,
+        mode: "jokes",
+        jobData: undefined,
+        cvData: undefined
+      };
+      messages.value = [...messages.value, {
+        role: "assistant",
+        content: "I couldn't verify that code, but I'd be happy to tell you some jokes instead! Would you like to hear one?",
+      }];
     } finally {
       isLoading.value = false;
     }
@@ -118,83 +155,55 @@ export default function ChatArea() {
       </div>
       
       <div class="p-4 border-t">
-        <div class="flex flex-col gap-2">
-          {showJobInput.value && (
-            <div class="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl border border-gray-200">
-              <input
-                type="text"
-                value={jobUrl.value}
-                onChange={(e) => jobUrl.value = e.currentTarget.value}
-                class="flex-1 bg-transparent border-none focus:outline-none text-slate-800 placeholder-gray-500"
-                placeholder="Paste job URL here..."
-              />
-              <button
-                onClick={() => {
-                  if (jobUrl.value) {
-                    inputValue.value = jobUrl.value;
-                    handleSubmit(new Event('submit'));
-                  }
-                  showJobInput.value = false;
+        <form onSubmit={handleSubmit} class="flex flex-col gap-2">
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => showJobInput.value = true}
+              class="text-emerald-600 hover:text-emerald-700 transition-colors px-2 text-xl"
+            >
+              +
+            </button>
+            <input
+              type="text"
+              value={inputValue.value}
+              onChange={(e) => inputValue.value = e.currentTarget.value}
+              disabled={isLoading.value}
+              class="flex-1 px-4 py-2 bg-white rounded-xl border border-gray-200 focus:border-emerald-600 transition-colors disabled:opacity-50"
+              placeholder={isLoading.value ? "AI is thinking..." : "Type your message..."}
+            />
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="min-w-[140px] relative">
+              <select
+                value={currentModel.value}
+                onChange={(e) => {
+                  currentModel.value = e.currentTarget.value as "xai" | "anthropic" | "deepseek" | "openai";
                 }}
-                class="text-emerald-600 text-sm font-medium hover:text-emerald-700 transition-colors"
+                class="w-full pl-8 pr-3 py-1.5 rounded-xl text-sm text-slate-600 bg-transparent appearance-none cursor-pointer focus:outline-none"
               >
-                Add
-              </button>
-              <button
-                onClick={() => {
-                  showJobInput.value = false;
-                  jobUrl.value = "";
-                }}
-                class="text-gray-500 text-sm hover:text-gray-700 transition-colors"
-              >
-                Cancel
-              </button>
+                <option value="xai">xAI</option>
+                <option value="deepseek">DeepSeek</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="openai">OpenAI</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-2 text-slate-600">
+                <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+                </svg>
+              </div>
             </div>
-          )}
-
-          <div class="flex flex-col gap-2">
-            <div class="flex items-center gap-2">
+            <div class="flex-1 flex justify-end">
               <button
-                onClick={() => showJobInput.value = true}
-                class="text-emerald-600 hover:text-emerald-700 transition-colors px-2 text-xl"
-              >
-                +
-              </button>
-              <input
-                type="text"
-                value={inputValue.value}
-                onChange={(e) => inputValue.value = e.currentTarget.value}
+                type="submit"
                 disabled={isLoading.value}
-                class="flex-1 px-4 py-2 bg-white rounded-xl border border-gray-200 focus:border-emerald-600 transition-colors disabled:opacity-50"
-                placeholder={isLoading.value ? "AI is thinking..." : "Type your message..."}
-              />
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="min-w-[140px]">
-                <select
-                  value={currentModel.value}
-                  onChange={(e) => {
-                    currentModel.value = e.currentTarget.value as "anthropic" | "xai";
-                  }}
-                  class="w-full px-3 py-1.5 rounded-xl text-sm text-slate-600 bg-white border border-gray-200 hover:border-emerald-600 focus:border-emerald-600 transition-colors appearance-none cursor-pointer"
-                >
-                  <option value="anthropic">Anthropic</option>
-                  <option value="xai">xAI</option>
-                </select>
-              </div>
-              <div class="flex-1 flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isLoading.value}
-                  onClick={handleSubmit}
-                  class="px-6 py-1.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50"
-                >
-                  Send
-                </button>
-              </div>
+                class="px-6 py-1.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50"
+              >
+                Send
+              </button>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

@@ -152,12 +152,16 @@ export class PDFGenerator {
 
       for (const edu of cv.education) {
         // Institution and degree
-        this.drawText(`${edu.institution} - ${edu.degree} in ${edu.field}`, {
-          font: this.boldFont,
-          size: 11,
-          color: rgb(0, 0, 0)
-        });
-        this.y -= this.lineHeight;
+        const educationText = `${edu.institution} - ${edu.degree} in ${edu.field}`;
+        const educationLines = this.wrapText(educationText, this.boldFont, 11, this.width - this.margin * 2);
+        for (const line of educationLines) {
+          this.drawText(line, {
+            font: this.boldFont,
+            size: 11,
+            color: rgb(0, 0, 0)
+          });
+          this.y -= this.lineHeight;
+        }
 
         // Date and location
         const dateStr = `${edu.start_date}${edu.end_date ? ` – ${edu.end_date}` : ' – Present'}`;
@@ -242,7 +246,7 @@ export class PDFGenerator {
     }
 
     // Add note at the end
-    this.y -= this.lineHeight * 2;  // Add some space before the note
+    this.y -= this.lineHeight * 1.5;  // Add some space before the note
     
     // Generate a random 20-character hex code
     const code = Array.from(crypto.getRandomValues(new Uint8Array(10)))

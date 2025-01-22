@@ -27,5 +27,5 @@ export async function processJobUrl(
   }
 
   // 3. Process text into structured data and store
-  return processJobContent(parseResult.content, ai, db);
+  return processJobContent(parseResult.content, ai, db, url);
 } 
