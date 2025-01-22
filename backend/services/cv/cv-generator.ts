@@ -3,7 +3,7 @@ import { AIService } from "../../types/ai-service.types.ts";
 import { DatabaseService } from "../../db/database.ts";
 import { DBExperience, DBEducation, DBSkill, DBAward, DBContact, DBPublication } from "../../types/db.ts";
 import { GenerateOptions } from "../../types/cv-generation.ts";
-import { CV_GENERATOR_HEADLINE_PROMPT, CV_GENERATOR_PROFILE_PROMPT } from "../../prompt/index.ts";
+import { CV_GENERATOR_HEADLINE_PROMPT, CV_GENERATOR_PROFILE_PROMPT, CV_JOB_BULLETS } from "../../prompt/index.ts";
 
 /**
  * Service for generating customized CVs using AI based on job requirements
@@ -27,10 +27,11 @@ export class CVGenerator {
       linkedin: contact.linkedin
     };
 
-    // Transform experience into employment history
-    const employmentHistory: EmploymentHistoryItem[] = (rawData.experience as DBExperience[])
-      .sort((a, b) => b.start_date.getTime() - a.start_date.getTime())  // Sort in reverse chronological order
-      .map(job => ({
+    // Transform experience into employment history with customized bullet points
+    const employmentHistory: EmploymentHistoryItem[] = [];
+    for (const job of (rawData.experience as DBExperience[])) {
+      const customBullets = await this.generateCustomBulletPoints(job, options);
+      employmentHistory.push({
         company: job.company,
         title: job.title,
         start_date: job.start_date.toISOString().split('T')[0],
@@ -39,8 +40,11 @@ export class CVGenerator {
         responsibilities: job.responsibilities,
         achievements: job.achievements,
         narrative: job.narrative,
-        bulletPoints: this.transformBulletPoints(job.achievements)
-      }));
+        bulletPoints: customBullets
+      });
+    }
+    // Sort in reverse chronological order
+    employmentHistory.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
 
     // Transform education
     const education: EducationItem[] = (rawData.education as DBEducation[]).map(edu => ({
@@ -102,10 +106,88 @@ export class CVGenerator {
     };
   }
 
-  private transformBulletPoints(achievements: string[]): BulletPoint[] {
-    return achievements.map(achievement => ({
-      content: achievement
-    }));
+  private async generateCustomBulletPoints(job: DBExperience, options: GenerateOptions): Promise<BulletPoint[]> {
+    console.log(`Generating bullets for: ${job.company} - ${job.title}`);
+    const prompt = this.constructBulletPrompt(job, options.requirements);
+    console.log("\nBullet point prompt after replacement:", prompt);
+    const response = await this.ai.processJobPosting(prompt);
+    
+    if (response.error) {
+      throw new Error(`generateCustomBulletPoints: ${response.error}`);
+    }
+
+    console.log("Raw bullet response:", response.content[0]);
+    try {
+      const result = JSON.parse(response.content[0]);
+      return result.jobs[0].bullets.map((content: string) => ({ content }));
+    } catch (error: unknown) {
+      console.error("Failed to parse bullet response:", error);
+      throw new Error(`Failed to parse bullet response: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  private calculateJobDuration(startDate: Date, endDate: Date | null): number {
+    const end = endDate || new Date();
+    const diffInMs = end.getTime() - startDate.getTime();
+    const years = diffInMs / (1000 * 60 * 60 * 24 * 365.25);
+    return years;
+  }
+
+  private getBulletConfig(years: number): { bulletCount: number, wordCount: number } {
+    if (years < 2) return { bulletCount: 1, wordCount: 30 };
+    if (years <= 3) return { bulletCount: 2, wordCount: 50 };
+    return { bulletCount: 4, wordCount: 80 };
+  }
+
+  private constructBulletPrompt(job: DBExperience, targetRequirements: string | string[]): string {
+    const requirements = Array.isArray(targetRequirements) 
+      ? targetRequirements.join("\n")
+      : targetRequirements;
+
+    const years = this.calculateJobDuration(job.start_date, job.end_date);
+    const { bulletCount, wordCount } = this.getBulletConfig(years);
+    
+    console.log(`Job duration config for ${job.company}:`, {
+      years: years.toFixed(1),
+      bulletCount,
+      wordCount
+    });
+
+    const systemInstructions = CV_JOB_BULLETS.system_instructions
+      .replace('<CURRENT_CURSOR_POSITION>', '')
+      .replace(/{bulletCount}/g, bulletCount.toString())
+      .replace(/{wordCount}/g, wordCount.toString());
+
+    const rules = CV_JOB_BULLETS.rules
+      .replace(/{bulletCount}/g, bulletCount.toString())
+      .replace(/{wordCount}/g, wordCount.toString());
+
+    const responseFormat = CV_JOB_BULLETS.response_format
+      .replace(/{bulletCount}/g, bulletCount.toString());
+
+    return `${systemInstructions}
+
+Target Role Requirements:
+${requirements}
+
+Job Information:
+Company: ${job.company}
+Title: ${job.title}
+Duration: ${job.start_date.toISOString().split('T')[0]} to ${job.end_date ? job.end_date.toISOString().split('T')[0] : 'Present'}
+Years in Role: ${years.toFixed(1)} years
+Required Bullet Points: ${bulletCount}
+Max Words per Bullet: ${wordCount}
+
+Responsibilities:
+${job.responsibilities.join("\n")}
+Achievements:
+${job.achievements.join("\n")}
+Narrative:
+${Array.isArray(job.narrative) ? job.narrative.join("\n") : job.narrative}
+
+${rules}
+
+${responseFormat}`;
   }
 
   private async generateHeadline(
@@ -114,7 +196,7 @@ export class CVGenerator {
     employmentHistory: EmploymentHistoryItem[]
   ): Promise<string> {
     const careerHistory = employmentHistory
-      .map(job => `${job.title} at ${job.company} (${job.start_date} - ${job.end_date || 'Present'})`)
+      .map(job => `${job.title} at ${job.company} (${job.start_date} - ${job.end_date})`)
       .join('\n');
 
     const prompt = CV_GENERATOR_HEADLINE_PROMPT
@@ -123,10 +205,10 @@ export class CVGenerator {
       .replace("{responsibilities}", options.responsibilities)
       .replace("{careerHistory}", careerHistory);
 
+    console.log("\nHeadline prompt after replacement:", prompt);
     const response = await this.ai.processJobPosting(prompt);
-    if (response.error || !response.content.length) {
-      console.error("Failed to generate headline:", response.error);
-      return `${options.jobTitle.toUpperCase()} WITH PROVEN TRACK RECORD`;
+    if (response.error) {
+      throw new Error(`generateHeadline: ${response.error}`);
     }
 
     return response.content[0].trim().toUpperCase();
@@ -138,9 +220,9 @@ export class CVGenerator {
     employmentHistory: EmploymentHistoryItem[]
   ): Promise<string> {
     const careerHistory = employmentHistory
-      .map(job => `${job.title} at ${job.company} (${job.start_date} - ${job.end_date || 'Present'})
+      .map(job => `${job.title} at ${job.company} (${job.start_date} - ${job.end_date})
 Key Achievements:
-${job.achievements?.map(a => `- ${a}`).join('\n') || 'No achievements listed'}`)
+${job.achievements?.map(a => `- ${a}`).join('\n')}`)
       .join('\n\n');
 
     const prompt = CV_GENERATOR_PROFILE_PROMPT
@@ -149,12 +231,19 @@ ${job.achievements?.map(a => `- ${a}`).join('\n') || 'No achievements listed'}`)
       .replace("{responsibilities}", options.responsibilities)
       .replace("{careerHistory}", careerHistory);
 
+    console.log("\nProfile prompt after replacement:", prompt);
     const response = await this.ai.processJobPosting(prompt);
-    if (response.error || !response.content.length) {
-      console.error("Failed to generate profile:", response.error);
-      return `Experienced ${options.jobTitle} with a proven track record...`;
+    if (response.error) {
+      throw new Error(`generateProfile: ${response.error}`);
     }
 
-    return response.content[0].trim();
+    console.log("Raw profile response:", response.content[0]);
+    try {
+      const result = JSON.parse(response.content[0]);
+      return result.profile || result.content || response.content[0].trim();
+    } catch (error) {
+      console.error("Failed to parse profile response:", error);
+      return response.content[0].trim();
+    }
   }
 } 

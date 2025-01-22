@@ -90,9 +90,9 @@ async def clear_tables(conn) -> None:
         """)
     print("Tables cleared.")
 
-async def load_professional_experience(conn) -> None:
-    # Files containing detailed job information
-    job_files = [
+async def load_professional_experience(conn, single_job_file: str | None = None) -> None:
+    # If single job file is provided, only load that one
+    job_files = [single_job_file] if single_job_file else [
         'data/essence_of_email.yml',
         'data/trilogy.yml',
         'data/specialists.yml',
@@ -235,6 +235,16 @@ async def load_publications(conn) -> None:
         print("Warning: publications.yml not found")
 
 async def main():
+    # Check for single job file argument
+    single_job_file = None
+    if len(os.sys.argv) > 1:
+        if os.sys.argv[1] == '--job':
+            if len(os.sys.argv) != 3:
+                print("Usage: python load_data.py --job <path_to_job_yaml>")
+                return
+            single_job_file = os.sys.argv[2]
+            print(f"Loading single job file: {single_job_file}")
+
     try:
         print("Connecting to database...")
         async with aiopg.create_pool(
@@ -245,26 +255,30 @@ async def main():
             port=int(os.getenv('POSTGRES_PORT', '5433'))
         ) as pool:
             async with pool.acquire() as conn:
-                # Clear existing data first
-                await clear_tables(conn)
-                
-                print("Loading contact info...")
-                await load_contact_info(conn)
-                
-                print("Loading professional experience...")
-                await load_professional_experience(conn)
-                
-                print("Loading education...")
-                await load_education(conn)
-                
-                print("Loading skills...")
-                await load_skills(conn)
-                
-                print("Loading awards...")
-                await load_awards(conn)
-                
-                print("Loading publications...")
-                await load_publications(conn)
+                if single_job_file:
+                    # Only load the single job
+                    await load_professional_experience(conn, single_job_file)
+                else:
+                    # Clear existing data first
+                    await clear_tables(conn)
+                    
+                    print("Loading contact info...")
+                    await load_contact_info(conn)
+                    
+                    print("Loading professional experience...")
+                    await load_professional_experience(conn)
+                    
+                    print("Loading education...")
+                    await load_education(conn)
+                    
+                    print("Loading skills...")
+                    await load_skills(conn)
+                    
+                    print("Loading awards...")
+                    await load_awards(conn)
+                    
+                    print("Loading publications...")
+                    await load_publications(conn)
                 
                 print("Data loading complete!")
     except Exception as e:

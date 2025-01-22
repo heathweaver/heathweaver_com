@@ -3,7 +3,6 @@ import { JobContent } from "../../types/job.ts";
 import { DatabaseService } from "../../db/database.ts";
 import { 
   JOB_ANALYSIS_PROMPT, 
-  JOB_DETAILS_PROMPT,
   JOB_CONTENT_EXTRACTION_PROMPT,
   JOB_CONTENT_PROCESSING_PROMPT
 } from "../../prompt/index.ts";
@@ -97,12 +96,19 @@ export function validateJobContent(content: unknown): JobContent {
   // Handle array fields
   for (const key of arrayFields) {
     const value = (content as Record<string, unknown>)[key];
-    if (value !== undefined && !Array.isArray(value)) {
-      console.error(`validate: Invalid type for field ${key}`);
-      return { error: `validate: Invalid type for field ${key}` };
-    }
-    if (value) {
-      result[key] = Array.isArray(value) ? value.map(String) : [String(value)];
+    if (value !== undefined) {
+      if (Array.isArray(value)) {
+        result[key] = value.map(String);
+      } else if (typeof value === 'string') {
+        // Split string on newlines and/or commas, then clean up
+        result[key] = value
+          .split(/[\n,]+/)
+          .map(item => item.trim())
+          .filter(item => item.length > 0);
+      } else {
+        console.error(`validate: Invalid type for field ${key}`);
+        return { error: `validate: Invalid type for field ${key}` };
+      }
     }
   }
 
@@ -146,14 +152,8 @@ export async function processJobContent(
       return { error: `process: ${error}` };
     }
 
-    // Clean up any potential markdown formatting
-    const cleanContent = response.content[0]
-      .replace(/^```json\s*/, '')
-      .replace(/```\s*$/, '')
-      .trim();
-
     try {
-      const parsed = JSON.parse(cleanContent);
+      const parsed = JSON.parse(response.content[0]);
       const validatedContent = validateJobContent(parsed);
 
       // If content is valid, generate an ID
@@ -183,14 +183,4 @@ export async function processJobContent(
     console.error(`process: ${message}`);
     return { error: `process: ${message}` };
   }
-}
-
-export function prepareJobPrompt(content: JobContent): string {
-  return JOB_DETAILS_PROMPT
-    .replace("{title}", content.title || "")
-    .replace("{company}", content.company || "")
-    .replace("{location}", content.location || "")
-    .replace("{description}", content.description || "")
-    .replace("{requirements}", content.requirements?.map(r => `• ${r}`).join("\n") || "")
-    .replace("{responsibilities}", content.responsibilities?.map(r => `• ${r}`).join("\n") || "");
 } 

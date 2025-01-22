@@ -31,52 +31,79 @@ Job posting:
 {content}`;
 
 // CV Generator Prompts
-export const CV_GENERATOR_HEADLINE_PROMPT = `Generate a powerful one-line headline for my CV targeting this position. The headline should be in UPPERCASE and highlight my most relevant career achievements. Max 10 words. Be truthful and accurate.
+export const CV_GENERATOR_HEADLINE_PROMPT = `Generate a powerful one-line headline for my CV targeting this position. The headline should highlight my most relevant career achievements. Max 10 words. Be truthful and accurate. The headline should be based on my career history and how in one sentence map how I am a good fit for the target role.
 
-Target Position:
-Title: {jobTitle}
-Requirements: {requirements}
-Responsibilities: {responsibilities}
-
-My Career History:
-{careerHistory}
-
-Format: Return ONLY the headline, in uppercase, focusing on years of experience and key achievements.
+Format: Return ONLY the headline focusing on key achievements.
 Example: SENIOR MARKETING EXECUTIVE WITH 15+ YEARS LEADING GLOBAL DIGITAL INITIATIVES`;
 
-export const CV_GENERATOR_PROFILE_PROMPT = `Write a concise professional profile (2-3 sentences, MAX 50 words!) summarizing the match between my career and the job.
-
-Target Position:
-Title: {jobTitle}
-Requirements: {requirements}
-Responsibilities: {responsibilities}
-
-My Career History:
-{careerHistory}`;
+export const CV_GENERATOR_PROFILE_PROMPT = `Write a concise professional profile (2-3 sentences, MAX 50 words!) mapping the target role's requirements and my career. The profile should be based on my career history and map that I am a good fit for the target role. Only provide the profile, no other text, as JSON.`;
 
 export const CV_JOB_BULLETS = {
+  system_instructions: `Map my job history to the target role's requirements using their exact phrases. Start with a strong verb, include a metric, and tie to their requirements. Never invent details.
+
+  Create {bulletCount} bullet points not longer than {wordCount} words. Respond with json.
+
+  Example:
+  Target Role Reqs Input:
+  - Experience building and optimizing operational systems and processes
+  - Ability to prioritize and organize multiple projects
+
+  Output:
+  Optimized operational systems through detailed process documentation, reducing defects by 76% while managing over 30 clients.`,
+
+  rules: `
+  Use ONLY my Responsibilities, Achievements, Narrative
+  Match their phrases verbatim where possible
+  Create only {bulletCount} bullet points
+  Max {wordCount} words per bullet, end with outcome`,
+
+  response_format: `Return {bulletCount} bullet point(s) in this JSON format:
+  {
+    "jobs": [
+      {
+        "id": 1,  // Match the exact job ID from input
+        "company": "Company Name",  // Must match exactly for validation
+        "bullets": [
+          "First bullet point with quantifiable result and impact",
+          "Second bullet point with clear outcome"
+        ]
+      }
+    ]
+  }`
+};
+export const CV_JOB_BULLETS_OLD = {
   system_instructions: `Generate bullet points for each of my past jobs that demonstrate relevant achievements for the target position.
-You MUST:
-1. LANGUAGE MATCHING: Tailor each bullet point to the specific job, using the terminology and tone from the *target job requirements and responsibilities*
-2. TRUTHFULNESS: Only use achievements, responsibilities, and narrative points from the provided job history
-3. RESULTS FOCUS: Emphasize quantifiable outcomes and impact
-4. LENGTH REQUIREMENTS based on job duration:
-   - Under 1 year: 1-2 bullet points, total max 30 words
-   - 1-3 years: 2-3 bullet points, total max 50 words
-   - Over 3 years: 3-5 bullet points, total max 80 words
-5. SOURCE MATERIAL: Base bullet points ONLY from the information provided in:
-   - The "Responsibilities" section
-   - The "Achievements" section
-   - The "Narrative" section
-   Do NOT fabricate or combine information not explicitly stated.`,
+
+  You MUST:
+  1. LANGUAGE MATCHING: Map my job history bullets to the target role's requirements using their exact phrases.
+  2. RESULTS FOCUS: Emphasize quantifiable outcomes and impact
+  3. TRUTHFULNESS: Only use achievements, responsibilities, and narrative points from the provided job history.
+  4. SOURCE MATERIAL: Base bullet points ONLY from the information provided in:
+    - The "Responsibilities" section
+    - The "Achievements" section
+    - The "Narrative" section
+
+  Do NOT fabricate or combine information not explicitly stated.
+  
+  Example:
+  Job Reqs Input:
+  - Experience building and optimizing operational systems and processes
+  - Ability to prioritize and organize multiple projects
+
+  Output: 
+  Optimized operational systems through detailed process documentation, reducing defects by 76% while managing over 30 clients.`,
+
+  length_requirements: `LENGTH REQUIREMENTS are based on job duration:
+  - For roles under 1 year: 1-2 bullet points, total max 30 words
+  - For roles between 1-3 years: 2-3 bullet points, total max 50 words
+  - For roles over 3 years: 3-5 bullet points, total max 80 words`,
 
   format_instructions: `For each job in my history, generate bullet points that:
 - Begin with a strong action verb
 - Include at least one quantifiable result when available
 - Not exceed 25 words each
 - End with a clear impact or outcome
-- Use ONLY information from the job's responsibilities, achievements, and narrative sections
-- Try to use the same tone as the target job requirements
+- Match tone and language from the target role requirements
 
 Return the bullet points in this JSON format:
 {
@@ -90,19 +117,7 @@ Return the bullet points in this JSON format:
       ]
     }
   ]
-}`,
-
-  template: `{system_instructions}
-
-Target Position:
-Title: {job_title}
-Requirements: {requirements}
-Responsibilities: {responsibilities}
-
-My Job History:
-{job_history}
-
-{format_instructions}`
+}`
 };
 
 export const JOB_ANALYSIS_PROMPT = `Please help customize a CV for this job opportunity:
@@ -133,17 +148,3 @@ Focus on:
 2. Key skills to emphasize
 3. Achievements that would resonate with their needs
 4. Any specific formatting or content suggestions`;
-
-export const JOB_DETAILS_PROMPT = `Job Details:
-Title: {title}
-Company: {company}
-Location: {location}
-
-Description:
-{description}
-
-Requirements:
-{requirements}
-
-Responsibilities:
-{responsibilities}`;
