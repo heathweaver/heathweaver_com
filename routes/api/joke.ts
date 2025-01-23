@@ -9,7 +9,7 @@ export async function handler(
     return new Response("Method not allowed", { status: 405 });
   }
 
-  const apiKey = Deno.env.get("API_NINJAS_KEY");
+  const apiKey = Deno.env.get("NINJAS_API_KEY");
   if (!apiKey) {
     return new Response(
       JSON.stringify({ error: "API Ninjas key not configured" }),
