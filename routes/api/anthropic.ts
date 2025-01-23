@@ -1,5 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
-import { config } from "../../config.ts";
+import "$std/dotenv/load.ts";
 import { VERIFIED_PROMPT } from "../../backend/prompt/index.ts";
 
 export async function handler(
@@ -10,13 +10,21 @@ export async function handler(
     return new Response("Method not allowed", { status: 405 });
   }
 
+  const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+  if (!apiKey) {
+    return new Response(
+      JSON.stringify({ error: "Anthropic API key not configured" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   try {
     const { message } = await req.json();
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        "x-api-key": config.anthropic_api_key,
+        "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
         "content-type": "application/json",
       },
