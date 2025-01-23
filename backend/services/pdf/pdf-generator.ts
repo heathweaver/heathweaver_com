@@ -17,6 +17,15 @@ export class PDFGenerator {
   private y!: number;
   private lineHeight = 14;  // Consistent with Python's spacing
 
+  // Format dates to YYYY-MMM
+  private formatDate(dateStr: string | undefined): string {
+    if (!dateStr) return 'Present';
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    return `${year}-${month}`;
+  }
+
   async generateCV(cv: CV): Promise<Uint8Array> {
     // Initialize document
     this.doc = await PDFDocument.create();
@@ -58,17 +67,20 @@ export class PDFGenerator {
     });
     this.y -= this.lineHeight + 3;  // Reduced spacing after name/email
 
-    // Profile text (italic)
-    const profileLines = this.wrapText(cv.profile, this.italicFont, 11, this.width - this.margin * 2);
-    for (const line of profileLines) {
-      this.drawText(line, {
-        font: this.italicFont,
-        size: 11,
-        color: rgb(0, 0, 0)
-      });
-      this.y -= this.lineHeight;
+    // Profile text
+    if (cv.profile) {
+      this.y -= this.lineHeight;  // Reduced to 1 line height before profile
+      const profileLines = this.wrapText(cv.profile, this.font, 11, this.width - this.margin * 2);
+      for (const line of profileLines) {
+        this.drawText(line, {
+          font: this.font,
+          size: 11,
+          color: rgb(0, 0, 0)
+        });
+        this.y -= this.lineHeight;
+      }
+      this.y -= this.lineHeight * 1.5;  // Keep extra space after profile
     }
-    this.y -= this.lineHeight * 2;  // Increased spacing before Career section
 
     // Career section
     this.drawText("Career", {
@@ -91,8 +103,9 @@ export class PDFGenerator {
       this.y -= this.lineHeight;
 
       // Date and location (normal Arial, uppercase with en dash)
-      const dateStr = `${job.start_date}${job.end_date ? ` – ${job.end_date}` : ' – Present'}`;
-      const dateLocation = `${dateStr.toUpperCase()} | ${job.location || ''}`;
+      const startDate = this.formatDate(job.start_date);
+      const endDate = job.end_date ? this.formatDate(job.end_date) : 'Present';
+      const dateLocation = `${startDate} – ${endDate} | ${job.location || ''}`;
       this.drawText(dateLocation, {
         font: this.font,
         size: 10,
@@ -123,6 +136,7 @@ export class PDFGenerator {
           });
           this.y -= this.lineHeight;
         }
+        this.y -= 1;  // Add 1px after each bullet point
       }
       this.y -= this.lineHeight;
     }
@@ -151,8 +165,9 @@ export class PDFGenerator {
         }
 
         // Date and location
-        const dateStr = `${edu.start_date}${edu.end_date ? ` – ${edu.end_date}` : ' – Present'}`;
-        const dateLocation = `${dateStr.toUpperCase()} | ${edu.location || ''}`;
+        const startDate = this.formatDate(edu.start_date);
+        const endDate = edu.end_date ? this.formatDate(edu.end_date) : 'Present';
+        const dateLocation = `${startDate} – ${endDate} | ${edu.location || ''}`;
         this.drawText(dateLocation, {
           font: this.font,
           size: 10,
@@ -233,7 +248,7 @@ export class PDFGenerator {
     }
 
     // Add note at the end
-    this.y -= this.lineHeight * 1.5;  // Add some space before the note
+    this.y -= this.lineHeight;  // Add some space before the note
     
     // Generate a random 20-character hex code
     const code = Array.from(crypto.getRandomValues(new Uint8Array(10)))

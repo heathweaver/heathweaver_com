@@ -10,11 +10,20 @@ import { DatabaseService } from "../backend/db/database.ts";
 import { config } from "../config.ts";
 import { AIService } from "../backend/types/ai-service.types.ts";
 
+/**
+ * CLI Arguments:
+ * --job-listing: URL of the job posting to analyze and generate CV for
+ * --model: AI model to use for generation (default: "xai")
+ *          Options: "xai" or deepseek models like "deepseek-coder"
+ * --json: Path to existing CV JSON file to generate PDF from
+ *         (mutually exclusive with --job-listing)
+ */
 const args = parseArgs(Deno.args, {
   string: ["job-listing", "model", "json"],
   default: { model: "xai" },
 });
 
+// Validate required arguments - either job listing URL or JSON file is required
 if (!args["job-listing"] && !args["json"]) {
   console.error("Please provide either --job-listing or --json");
   Deno.exit(1);
@@ -25,7 +34,7 @@ try {
   const db = new DatabaseService();
   await db.connect();
 
-  // Initialize AI service
+  // Initialize AI service based on model argument
   const aiService = args["model"] === "xai" 
     ? new XAIService(config.xai_api_key)
     : new DeepSeekService(config.deepseek_api_key, args["model"]);
@@ -42,12 +51,13 @@ try {
   const pdfGenerator = new PDFGenerator();
   const pdfBytes = await pdfGenerator.generateCV(cv);
 
-  // Save files with consistent naming
+  // Generate unique ID for file naming (2 bytes converted to 4-digit number)
   const id = Array.from(crypto.getRandomValues(new Uint8Array(2)))
     .map(b => b % 100)
     .join('')
     .padStart(5, '0');
 
+  // Format job title for filename (PascalCase)
   const formattedTitle = jobTitle
     .split(/[\s-]+/)
     .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -71,6 +81,14 @@ try {
   Deno.exit(1);
 }
 
+/**
+ * Generates a customized CV based on the job posting URL
+ * 
+ * @param jobUrl - URL of the job posting to analyze
+ * @param db - Database service instance for persistence
+ * @param aiService - AI service instance for content generation
+ * @returns Object containing generated CV and job title
+ */
 async function generateCV(jobUrl: string, db: DatabaseService, aiService: AIService) {
   console.log("Fetching job posting...");
   const jobResult = await processJobUrl(jobUrl, aiService, db);

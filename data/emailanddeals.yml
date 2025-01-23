@@ -1,0 +1,33 @@
+professional_experience:
+  - company: EmailsandDeals.com
+    title: Personal Project to better understand AI
+    start_date: 2024-09-01
+    end_date: 2025-01-01
+    location: Brussels
+    responsibilities:
+      - Designed and implemented the entire architecture for emailsanddeals.com, including backend, frontend, and deployment.
+      - Developed 12 microservices in Python for email processing, including fetching, parsing, sanitizing links, and integrating affiliate links.
+      - Integrated AI systems (e.g., OpenAI) for email content review and deal extraction, later transitioning to Python-based LLM and OCR tools for improved efficiency.
+      - Built a responsive frontend using Deno Fresh (TypeScript) and ensured seamless user interaction with thumbnails, text, and a search engine.
+      - Managed database design and optimization using MariaDB, transitioning from Appwrite to improve page load times from 18 seconds to under 1 second.
+      - Implemented Redis for efficient queuing and task management after refactoring from a database table-based queue system.
+      - Automated the generation of blog posts and tweets for every processed email, ensuring full system automation.
+      - Handled deployment, version control, and staging workflows using Git, including pull requests and staging branch management.
+    achievements:
+      - "Processed 11,500 emails over 2.5 months, achieving a processing rate of 1 email every 5 seconds."
+      - "Improved deal extraction accuracy from 80% to 95% through iterative AI model refinements and Python-based tooling."
+      - "Improved deal extraction accuracy from 80% to 95% through iterative AI model refinements and Python-based tooling."
+      - "Reduced page load times from 18 seconds to under 1 second by refactoring the backend and migrating to MariaDB."
+      - "Fully automated the system, enabling end-to-end processing of emails, including affiliate link integration, thumbnail generation, and content publishing."
+      - "Subscribed to 450+ stores for deal aggregation, demonstrating scalability and integration capabilities."
+      - "Successfully implemented Redis for task queuing, improving system reliability and performance."
+      - "Gained hands-on experience with AI integration, Redis, Deno Fresh, and advanced Python development."
+    narrative:
+      - "Designed and developed emailsanddeals.com, a fully automated AI-powered platform that processes 11,500 emails, extracts deals with 95% accuracy, and integrates affiliate links for monetization."
+      - "Built a scalable backend with 12 microservices in Python, handling email fetching, parsing, sanitization, and AI-driven content review, achieving a processing rate of 1 email every 5 seconds."
+      - "Refactored the system to replace OpenAI with Python-based LLM and OCR tools, improving deal extraction accuracy and reducing dependency on external AI services."
+      - "Optimized page load times from 18 seconds to under 1 second by migrating from Appwrite to a locally hosted MariaDB database and implementing Redis for task queuing."
+      - "Created a responsive frontend using Deno Fresh (TypeScript), featuring deal thumbnails, search functionality, and seamless user interaction."
+      - "Automated content generation, producing blog posts and tweets for every processed email, and integrated affiliate links to drive revenue."
+      - "Managed the entire project lifecycle, from architecture design and development to deployment and version control using Git and pull requests."
+      - "Gained expertise in AI integration, Redis, Deno Fresh, and advanced Python development while building a complex, fully automated system from scratch."

@@ -36,6 +36,8 @@ export interface DBEducation {
   field: string;
   start_date: Date;
   end_date: Date;
+  location: string;
+  achievements: string[];
 }
 
 export interface DBSkill {

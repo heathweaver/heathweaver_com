@@ -16,7 +16,7 @@ export interface CompanyBulletConfig {
 export const DEFAULT_BULLET_CONFIG: CompanyBulletConfig = {
   "Essence of Email": 4,
   "Trilogy": 2,
-  "Specialists": 3,
+  "Specialists": 2,
   "High Position": 3,
   "Sony Marketing": 3,
   "Sony Finance": 3,

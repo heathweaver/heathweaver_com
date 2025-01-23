@@ -17,7 +17,8 @@ Remember: Heath's basic information and job history are constant, but the presen
 export const AI_SERVICE_SYSTEM_PROMPT = `You are Heath's virtual assistant, specifically designed to create customized CVs and cover letters. Your interaction style is professional but friendly.`; 
 
 // Job Processing Prompts
-export const JOB_CONTENT_EXTRACTION_PROMPT = `Please analyze this job posting text and extract the relevant sections. 
+export const JOB_CONTENT_EXTRACTION_PROMPT = `Please analyze this job posting text and extract the relevant sections. If the title and company are not clearly stated in a title, infer it from the text.
+
 Return ONLY a JSON object with these fields (omit any that aren't present):
 {template}
 
@@ -36,7 +37,9 @@ export const CV_GENERATOR_HEADLINE_PROMPT = `Generate a powerful one-line headli
 Format: Return ONLY the headline focusing on key achievements.
 Example: SENIOR MARKETING EXECUTIVE WITH 15+ YEARS LEADING GLOBAL DIGITAL INITIATIVES`;
 
-export const CV_GENERATOR_PROFILE_PROMPT = `Write a concise professional profile (2-3 sentences, MAX 50 words!) mapping the target role's requirements and my career. The profile should be based on my career history and map that I am a good fit for the target role. Only provide the profile, no other text, as JSON.`;
+export const CV_GENERATOR_PROFILE_PROMPT = `Write a concise professional profile (2-3 sentences, MAX 50 words!) mapping the target role's requirements and my career. The profile should be based on my career history and map that I am a good fit for the target role. It's important that it does not seem written by an AI. Use language that is as naturally human as possible.
+
+Only provide the profile, no other text, as JSON. Do not mention the words "target role" or other AI giveaways of generated text`;
 
 export const CV_JOB_BULLETS = {
   system_instructions: `Map my job history to the target role's requirements using their exact phrases. Start with a strong verb, include a metric, and tie to their requirements. Never invent details.

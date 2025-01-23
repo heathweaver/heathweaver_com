@@ -7,6 +7,11 @@ export interface ParseResult {
   error?: string;
   debug?: {
     contentLength?: number;
+    sample?: string;
+    containerFound?: boolean;
+    firstTermFound?: string;
+    errorType?: string;
+    fullError?: string;
   };
 }
 

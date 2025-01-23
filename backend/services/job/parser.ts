@@ -1,6 +1,51 @@
 import { DOMParser } from "@b-fuze/deno-dom";
 import { ParseResult } from "../../types/job.ts";
+import { Document } from "@b-fuze/deno-dom/wasm";
 // import { Element } from "@b-fuze/deno-dom/wasm";
+
+interface JobPostingSchema {
+  "@type": string;
+  title: string;
+  description: string;
+  datePosted: string;
+  hiringOrganization: {
+    "@type": string;
+    name: string;
+  };
+}
+
+/**
+ * Attempts to extract job data from JSON-LD structured data
+ */
+function extractStructuredData(doc: Document): ParseResult | null {
+  try {
+    const jsonLdScript = doc.querySelector('script[type="application/ld+json"]');
+    if (!jsonLdScript) return null;
+
+    const data = JSON.parse(jsonLdScript.textContent || "") as JobPostingSchema;
+    
+    if (data["@type"] !== "JobPosting") return null;
+
+    console.log("\nFound structured job data:", {
+      title: data.title,
+      company: data.hiringOrganization?.name,
+    });
+
+    return {
+      success: true,
+      content: data.description,
+      debug: {
+        contentLength: data.description.length,
+        sample: data.description.substring(0, 100),
+        containerFound: true,
+        firstTermFound: "json-ld"
+      }
+    };
+  } catch (err) {
+    console.error("Failed to parse JSON-LD:", err);
+    return null;
+  }
+}
 
 /**
  * Extracts job posting content from HTML
@@ -15,10 +60,20 @@ export async function extractJobContent(html: string): Promise<ParseResult> {
       return { success: false, error: "parse: Failed to parse HTML" };
     }
 
+    // console.log("\nInitial HTML length:", html.length);
+    // console.log("Sample of initial content:", html.substring(0, 500));
+
+    // First try to extract from JSON-LD
+    const structuredData = extractStructuredData(doc);
+    if (structuredData) {
+      return structuredData;
+    }
+
+    console.log("No structured data found, falling back to HTML parsing");
+
     // Remove non-content elements
     const elementsToRemove = [
       // Technical elements
-      'script',
       'style',
       'link',
       'meta',
@@ -78,6 +133,9 @@ export async function extractJobContent(html: string): Promise<ParseResult> {
       .replace(/(?:Sign in|Sign up|Log in|Register|Join now|Create account).*/, '')  // remove auth text
       .replace(/Cookie Policy.*Privacy Policy.*Terms.*/, '')  // remove policy text
       .trim();
+
+    console.log("\nCleaned text length:", cleanText.length);
+    console.log("Sample of cleaned content:", cleanText);
 
     // Validate content
     if (cleanText.length < 100) {
