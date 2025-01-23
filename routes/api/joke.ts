@@ -1,5 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
-import { config } from "../../config.ts";
+import "$std/dotenv/load.ts";
 
 export async function handler(
   req: Request,
@@ -9,11 +9,19 @@ export async function handler(
     return new Response("Method not allowed", { status: 405 });
   }
 
+  const apiKey = Deno.env.get("API_NINJAS_KEY");
+  if (!apiKey) {
+    return new Response(
+      JSON.stringify({ error: "API Ninjas key not configured" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   try {
     console.log("Fetching joke from API Ninjas...");
     const response = await fetch('https://api.api-ninjas.com/v1/jokes', {
       headers: {
-        'X-Api-Key': config.api_ninjas_key.trim(),
+        'X-Api-Key': apiKey.trim(),
         'Accept': 'application/json'
       }
     });

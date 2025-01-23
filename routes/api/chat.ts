@@ -1,17 +1,17 @@
 import { FreshContext } from "$fresh/server.ts";
+import "$std/dotenv/load.ts";
 import { processJobUrl } from "../../backend/utils/process-job-url.ts";
 import { AnthropicService } from "../../backend/services/ai/anthropic.ts";
 import { XAIService } from "../../backend/services/ai/xai.ts";
 import { DeepSeekService } from "../../backend/services/ai/deepseek.ts";
 import { ChatHandler } from "../../backend/handlers/chat.ts";
-import { config } from "../../config.ts";
 import { ChatModel } from "../../backend/types/chat.ts";
 
 // Initialize AI services
 const services: Record<string, AnthropicService | XAIService | DeepSeekService> = {
-  anthropic: new AnthropicService(config.anthropic_api_key),
-  xai: new XAIService(config.xai_api_key),
-  deepseek: new DeepSeekService(config.deepseek_api_key)
+  anthropic: new AnthropicService(Deno.env.get("ANTHROPIC_API_KEY")),
+  xai: new XAIService(Deno.env.get("XAI_API_KEY")),
+  deepseek: new DeepSeekService(Deno.env.get("DEEPSEEK_API_KEY"))
 };
 
 // Initialize chat handler

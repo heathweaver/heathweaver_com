@@ -1,5 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
-import { config } from "../../config.ts";
+import "$std/dotenv/load.ts";
 import { PromptMode } from "../../backend/prompt/index.ts";
 import { Client } from "postgres";
 import { DBJobContent } from "../../backend/types/db.ts";
@@ -28,11 +28,11 @@ export async function handler(
 
     // Connect to the database
     const client = new Client({
-      hostname: config.database.host,
-      port: config.database.port,
-      database: config.database.database,
-      user: config.database.user,
-      password: config.database.password,
+      hostname: Deno.env.get("POSTGRES_HOST"),
+      port: Number(Deno.env.get("POSTGRES_PORT")),
+      database: Deno.env.get("POSTGRES_DB"),
+      user: Deno.env.get("POSTGRES_USER"),
+      password: Deno.env.get("POSTGRES_PASSWORD"),
       tls: { enabled: false }
     });
 
