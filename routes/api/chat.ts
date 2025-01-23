@@ -1,5 +1,4 @@
 import { FreshContext } from "$fresh/server.ts";
-import "$std/dotenv/load.ts";
 import { processJobUrl } from "../../backend/utils/process-job-url.ts";
 import { AnthropicService } from "../../backend/services/ai/anthropic.ts";
 import { XAIService } from "../../backend/services/ai/xai.ts";

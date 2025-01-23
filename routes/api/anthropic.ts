@@ -1,5 +1,4 @@
 import { FreshContext } from "$fresh/server.ts";
-import "$std/dotenv/load.ts";
 import { VERIFIED_PROMPT } from "../../backend/prompt/index.ts";
 
 export async function handler(
