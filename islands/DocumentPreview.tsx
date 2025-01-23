@@ -14,7 +14,7 @@ export default function DocumentPreview() {
           ) : (
             <div class="flex items-center justify-center h-full">
               <p class="text-[#9C89B8] text-lg text-center">
-                Your CV and cover letter will appear here
+                The job description and my CV will appear here
               </p>
             </div>
           )}
