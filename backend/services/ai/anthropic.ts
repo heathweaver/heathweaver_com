@@ -1,5 +1,6 @@
 import { AIService, AIResponse } from "../../types/ai-service.types.ts";
 import { AI_SERVICE_SYSTEM_PROMPT } from "../../prompt/index.ts";
+import "$std/dotenv/load.ts";
 
 interface AnthropicMessage {
   role: "user" | "assistant";
@@ -20,7 +21,7 @@ export class AnthropicService implements AIService {
   private readonly baseUrl = "https://api.anthropic.com/v1";
   private readonly model = "claude-3-sonnet-20240229";
 
-  constructor(apiKey: string | null | undefined) {
+  constructor(apiKey: string | null | undefined = Deno.env.get("ANTHROPIC_API_KEY")) {
     if (!apiKey) {
       throw new Error("service: ANTHROPIC_API_KEY is required");
     }

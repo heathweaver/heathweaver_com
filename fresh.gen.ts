@@ -9,6 +9,7 @@ import * as $api_chat from "./routes/api/chat.ts";
 import * as $api_deepseek from "./routes/api/deepseek.ts";
 import * as $api_joke from "./routes/api/joke.ts";
 import * as $api_openai from "./routes/api/openai.ts";
+import * as $api_test_env from "./routes/api/test-env.ts";
 import * as $api_verify from "./routes/api/verify.ts";
 import * as $api_xai from "./routes/api/xai.ts";
 import * as $index from "./routes/index.tsx";
@@ -22,6 +23,12 @@ const manifest = {
     "./routes/_app.tsx": $_app,
     "./routes/api/anthropic.ts": $api_anthropic,
     "./routes/api/chat.ts": $api_chat,
+    "./routes/api/deepseek.ts": $api_deepseek,
+    "./routes/api/joke.ts": $api_joke,
+    "./routes/api/openai.ts": $api_openai,
+    "./routes/api/test-env.ts": $api_test_env,
+    "./routes/api/verify.ts": $api_verify,
+    "./routes/api/xai.ts": $api_xai,
     "./routes/index.tsx": $index,
   },
   islands: {
