@@ -9,7 +9,6 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: production
 
     permissions:
       id-token: write # Needed for auth with Deno Deploy
@@ -31,7 +30,7 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "heathweaver-com"
-          entrypoint: "main.tsx"
+          entrypoint: "main.ts"
           root: "."
           
           
