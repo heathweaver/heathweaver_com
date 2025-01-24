@@ -5,7 +5,7 @@
     "cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
     "manifest": "deno task cli manifest $(pwd)",
     "start": "deno run -A --watch=static/,routes/ dev.ts",
-    "build": "deno run -A dev.ts build --env=production",
+    "build": "deno run -A dev.ts build --allow-env --env=production",
     "preview": "deno run -A main.ts",
     "update": "deno run -A -r https://fresh.deno.dev/update .",
     "test": "deno test -A tests/integration/ tests/unit/"
@@ -43,5 +43,16 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact"
   },
-  "nodeModulesDir": "auto"
+  "nodeModulesDir": "auto",
+  "deploy": {
+    "project": "45341af7-2cc7-4fac-93fc-e4692bff63ea",
+    "exclude": [
+      "**/node_modules",
+      "**/node_modules"
+    ],
+    "include": [
+      "**/*"
+    ],
+    "entrypoint": "main.ts"
+  }
 }
