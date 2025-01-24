@@ -23,7 +23,6 @@ jobs:
       POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
       POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
 
-
     permissions:
       id-token: write # Needed for auth with Deno Deploy
       contents: read # Needed to clone the repository

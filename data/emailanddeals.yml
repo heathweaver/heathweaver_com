@@ -1,10 +1,11 @@
 professional_experience:
   - company: EmailsandDeals.com
-    title: Personal Project to better understand AI
+    title: Personal project to explore AI
     start_date: 2024-09-01
     end_date: 2025-01-01
     location: Brussels
     responsibilities:
+      - EmailsandDeals.com is a non SaaS project that uses AI to extract deals from emails and provide coupons to visitors.
       - Designed and implemented the entire architecture for emailsanddeals.com, including backend, frontend, and deployment.
       - Developed 12 microservices in Python for email processing, including fetching, parsing, sanitizing links, and integrating affiliate links.
       - Integrated AI systems (e.g., OpenAI) for email content review and deal extraction, later transitioning to Python-based LLM and OCR tools for improved efficiency.

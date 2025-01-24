@@ -109,8 +109,13 @@ export class CVGenerator {
   private async generateCustomBulletPoints(job: DBExperience, options: GenerateOptions): Promise<BulletPoint[]> {
     console.log(`Generating bullets for: ${job.company} - ${job.title}`);
     const config = options.bulletPointConfig || DEFAULT_BULLET_CONFIG;
-    const bulletCount = config[job.company] || 2; // Default to 2 if company not specified
-    const wordCount = 50; // Default word count per bullet
+    
+    if (!config[job.company]) {
+      throw new Error(`Company "${job.company}" not found in bullet point configuration`);
+    }
+    
+    const bulletCount = config[job.company];
+    const wordCount = 50;
     
     const prompt = this.constructBulletPrompt(job, options.requirements, bulletCount, wordCount);
     console.log("\nBullet point prompt after replacement:", prompt);

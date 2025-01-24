@@ -1,4 +1,4 @@
-import { parse } from 'yaml';
+import { parse } from '@std/yaml';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import fs from 'fs/promises';
 import pg from 'pg';

@@ -43,7 +43,10 @@ try {
 
   // Get CV data either from JSON or by generating it
   const { cv, jobTitle } = args["json"] 
-    ? { cv: await new CVLoader(args["json"]).loadCV(), jobTitle: "FromJson" }
+    ? { 
+        cv: await new CVLoader(args["json"]).loadCV(), 
+        jobTitle: args["json"].match(/HeathWeaver_(.+?)_\d{5}/)?.[1] || "FromJson"
+      }
     : await generateCV(args["job-listing"]!, db, aiService);
 
   // Generate PDF

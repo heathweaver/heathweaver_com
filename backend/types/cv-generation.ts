@@ -14,11 +14,12 @@ export interface CompanyBulletConfig {
 
 // Default bullet point configuration
 export const DEFAULT_BULLET_CONFIG: CompanyBulletConfig = {
-  "Essence of Email": 4,
-  "Trilogy": 2,
-  "Specialists": 2,
-  "High Position": 3,
-  "Sony Marketing": 3,
-  "Sony Finance": 3,
+  "EmailsandDeals.com": 3,
+  "Essence of Email Agency": 4,
+  "Trilogy Software": 2,
+  "Retorica & The Specialists Agency": 2,
+  "High Position Agency": 1,
+  "Sony eCommerce Europe": 3,
+  "Sony VAIO Europe": 3,
   "Charlotte Russe": 1
 }; 
