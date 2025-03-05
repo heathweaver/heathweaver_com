@@ -1,5 +1,4 @@
 import { Client } from "postgres";
-import "$std/dotenv/load.ts";
 import { DatabaseService as IDatabase, DBContact, DBExperience, DBEducation, DBSkill, DBAward, DBPublication } from "../types/db.ts";
 import { JobContent } from "../types/job.ts";
 
