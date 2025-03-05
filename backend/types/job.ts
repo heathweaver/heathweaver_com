@@ -12,6 +12,8 @@ export interface ParseResult {
     firstTermFound?: string;
     errorType?: string;
     fullError?: string;
+    title?: string;
+    company?: string;
   };
 }
 

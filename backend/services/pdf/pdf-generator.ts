@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, PDFPage, PDFFont, RGB } from "pdf-lib";
+import { PDFDocument, rgb, PDFPage, PDFFont, RGB, PageSizes } from "pdf-lib";
 import fontkit from "npm:@pdf-lib/fontkit";
 import { CV } from "../../types/cv.ts";
 
@@ -12,25 +12,56 @@ export class PDFGenerator {
   private narrowFont!: PDFFont;  // Arial Narrow for headline
   private width!: number;
   private height!: number;
-  private margin = 54;  // Reduced left margin
-  private topMargin = 82;  // Added 10pt to top margin
+  private margin = 45;  // Reduced from 54 to tighten margins
+  private topMargin = 72;  // Reduced from 82 to tighten margins
   private y!: number;
   private lineHeight = 14;  // Consistent with Python's spacing
+  private currentPageNumber = 1;  // Add page counter
 
-  // Format dates to YYYY-MMM
+  // Format dates to Month YYYY
   private formatDate(dateStr: string | undefined): string {
     if (!dateStr) return 'Present';
     const date = new Date(dateStr);
+    const month = date.toLocaleString('en-US', { month: 'long' });
     const year = date.getFullYear();
-    const month = date.toLocaleString('en-US', { month: 'short' });
-    return `${year}-${month}`;
+    return `${month} ${year}`;
   }
 
-  async generateCV(cv: CV): Promise<Uint8Array> {
-    // Initialize document
+  /**
+   * Formats a phone number based on region
+   */
+  private formatPhoneNumber(phone: string | undefined, region: "US" | "EU"): string | undefined {
+    if (!phone) return undefined;
+    
+    // Remove all non-numeric characters
+    const numbers = phone.replace(/\D/g, '');
+    
+    if (region === "US") {
+      // US format: +1 (XXX) XXX-XXXX
+      if (numbers.length === 10) {
+        return `+1 (${numbers.slice(0,3)}) ${numbers.slice(3,6)}-${numbers.slice(6)}`;
+      } else if (numbers.length === 11 && numbers[0] === '1') {
+        return `+1 (${numbers.slice(1,4)}) ${numbers.slice(4,7)}-${numbers.slice(7)}`;
+      }
+    } else {
+      // EU format: +XX XXX XXX XXX
+      if (numbers.length >= 11) {
+        const countryCode = numbers.slice(0, 2);
+        const remaining = numbers.slice(2).match(/.{1,3}/g) || [];
+        return `+${countryCode} ${remaining.join(' ')}`;
+      }
+    }
+    
+    // If format doesn't match expected patterns, return cleaned original
+    return `+${numbers}`;
+  }
+
+  async generateCV(cv: CV, region: "US" | "EU" = "EU"): Promise<Uint8Array> {
+    // Initialize document with region-specific page size
     this.doc = await PDFDocument.create();
     this.doc.registerFontkit(fontkit);
-    this.currentPage = this.doc.addPage();
+    const pageSize = region === "US" ? PageSizes.Letter : PageSizes.A4;
+    this.currentPage = this.doc.addPage(pageSize);
     const { width, height } = this.currentPage.getSize();
     this.width = width;
     this.height = height;
@@ -50,65 +81,75 @@ export class PDFGenerator {
     
     this.y = height - this.topMargin;
 
-    // Name (Arial Black) and email on same line
+    // Name (Arial Black)
     this.drawText(cv.basicInfo.name, {
       font: this.blackFont,
       size: 24,
       color: rgb(0, 0, 0)
     });
+    this.y -= this.lineHeight * 1.5;  // Space after name
 
-    // Calculate position for email to be on same line
-    const nameWidth = this.blackFont.widthOfTextAtSize(cv.basicInfo.name, 24);
+    // Contact info under name
+    if (cv.basicInfo.phone) {
+      try {
+        const phoneNumbers = JSON.parse(cv.basicInfo.phone);
+        const phoneNumber = region === "US" ? phoneNumbers.US : phoneNumbers.BE;
+        if (phoneNumber) {
+          const formattedPhone = this.formatPhoneNumber(phoneNumber, region);
+          if (formattedPhone) {
+            this.drawText(formattedPhone, {
+              font: this.font,
+              size: 11,
+              color: rgb(0, 0, 0)
+            });
+          }
+        }
+      } catch (e) {
+        console.error("Failed to parse phone numbers:", e);
+      }
+      this.y -= this.lineHeight;
+    }
+
+    // Email below phone
     this.drawText(cv.basicInfo.email, {
       font: this.font,
       size: 11,
-      color: rgb(0, 0, 0),
-      x: this.margin + nameWidth + 12  // Add some spacing between name and email
+      color: rgb(0, 0, 0)
     });
-    this.y -= this.lineHeight + 3;  // Reduced spacing after name/email
-
-    // Profile text
-    if (cv.profile) {
-      this.y -= this.lineHeight;  // Reduced to 1 line height before profile
-      const profileLines = this.wrapText(cv.profile, this.font, 11, this.width - this.margin * 2);
-      for (const line of profileLines) {
-        this.drawText(line, {
-          font: this.font,
-          size: 11,
-          color: rgb(0, 0, 0)
-        });
-        this.y -= this.lineHeight;
-      }
-      this.y -= this.lineHeight * 1.5;  // Keep extra space after profile
-    }
+    this.y -= this.lineHeight * 2;  // Extra space before Career section
 
     // Career section
     this.drawText("Career", {
       font: this.boldFont,
-      size: 20,
+      size: 19,
       color: rgb(0, 0, 0)
     });
     this.y -= this.lineHeight * 1.5;
 
     // Employment history
     for (const job of cv.employmentHistory) {
-      this.checkNewPage();
+      // Check space for both title and date before drawing
+      const startDate = this.formatDate(job.start_date);
+      const endDate = job.end_date === 'Present' ? 'Present' : this.formatDate(job.end_date);
+      const dateLocation = `${startDate} – ${endDate}${job.location ? ' | ' + job.location : ''}`;
+      
+      this.checkAndEnsureSpace([
+        { text: `${job.title} at ${job.company}`, font: this.boldFont, size: 11 },  // Reduced from 12
+        { text: dateLocation, font: this.font, size: 9 }  // Reduced from 10
+      ], this.lineHeight + 3);
 
       // Job title (bold)
       this.drawText(`${job.title} at ${job.company}`, {
         font: this.boldFont,
-        size: 12,
+        size: 11,  // Reduced from 12
         color: rgb(0, 0, 0)
       });
       this.y -= this.lineHeight;
 
       // Date and location (normal Arial, uppercase with en dash)
-      const startDate = this.formatDate(job.start_date);
-      const endDate = job.end_date ? this.formatDate(job.end_date) : 'Present';
-      const dateLocation = `${startDate} – ${endDate} | ${job.location || ''}`;
       this.drawText(dateLocation, {
         font: this.font,
-        size: 10,
+        size: 9,  // Reduced from 10
         color: rgb(0.4, 0.4, 0.4)
       });
       this.y -= this.lineHeight + 3;  // Added 1pt more spacing after date
@@ -116,14 +157,14 @@ export class PDFGenerator {
       // Bullet points
       for (const bullet of job.bulletPoints) {
         this.checkNewPage();
-        const lines = this.wrapText(bullet.content, this.font, 11, this.width - this.margin * 2.5);
+        const lines = this.wrapText(bullet.content, this.font, 10, this.width - this.margin * 2.5);  // Reduced from 11
         
         for (const [index, line] of lines.entries()) {
           if (index === 0) {
             // Draw bullet point at margin
             this.drawText("•", {
               font: this.font,
-              size: 11,
+              size: 10,  // Reduced from 11
               x: this.margin
             });
           }
@@ -131,7 +172,7 @@ export class PDFGenerator {
           // Draw line with proper indentation
           this.drawText(line, {
             font: this.font,
-            size: 11,
+            size: 10,  // Reduced from 11
             x: this.margin + 12
           });
           this.y -= this.lineHeight;
@@ -146,7 +187,7 @@ export class PDFGenerator {
       this.checkNewPage();
       this.drawText("Education", {
         font: this.boldFont,
-        size: 14,
+        size: 13,  // Reduced from 14
         color: rgb(0, 0, 0)
       });
       this.y -= this.lineHeight;
@@ -154,11 +195,11 @@ export class PDFGenerator {
       for (const edu of cv.education) {
         // Institution and degree
         const educationText = `${edu.institution} - ${edu.degree} in ${edu.field}`;
-        const educationLines = this.wrapText(educationText, this.boldFont, 11, this.width - this.margin * 2);
+        const educationLines = this.wrapText(educationText, this.boldFont, 10, this.width - this.margin * 2);  // Reduced from 11
         for (const line of educationLines) {
           this.drawText(line, {
             font: this.boldFont,
-            size: 11,
+            size: 10,  // Reduced from 11
             color: rgb(0, 0, 0)
           });
           this.y -= this.lineHeight;
@@ -170,7 +211,7 @@ export class PDFGenerator {
         const dateLocation = `${startDate} – ${endDate} | ${edu.location || ''}`;
         this.drawText(dateLocation, {
           font: this.font,
-          size: 10,
+          size: 9,  // Reduced from 10
           color: rgb(0.4, 0.4, 0.4)
         });
         this.y -= this.lineHeight;
@@ -178,18 +219,18 @@ export class PDFGenerator {
         // Achievements if any
         if (edu.achievements && edu.achievements.length > 0) {
           for (const achievement of edu.achievements) {
-            const lines = this.wrapText(achievement, this.font, 11, this.width - this.margin * 2.5);
+            const lines = this.wrapText(achievement, this.font, 10, this.width - this.margin * 2.5);  // Reduced from 11
             for (const [index, line] of lines.entries()) {
               if (index === 0) {
                 this.drawText("•", {
                   font: this.font,
-                  size: 11,
+                  size: 10,  // Reduced from 11
                   x: this.margin
                 });
               }
               this.drawText(line, {
                 font: this.font,
-                size: 11,
+                size: 10,  // Reduced from 11
                 x: this.margin + 12
               });
               this.y -= this.lineHeight;
@@ -203,6 +244,8 @@ export class PDFGenerator {
     // Skills section
     if (cv.skills && cv.skills.length > 0) {
       this.checkNewPage();
+
+      // Draw skills section
       this.drawText("Skills", {
         font: this.boldFont,
         size: 14,
@@ -210,45 +253,79 @@ export class PDFGenerator {
       });
       this.y -= this.lineHeight;
 
-      // Group skills by category
-      const skillsByCategory = cv.skills.reduce((acc, skill) => {
-        if (!acc[skill.category]) {
-          acc[skill.category] = [];
-        }
-        acc[skill.category].push(...skill.skills);
-        return acc;
-      }, {} as Record<string, string[]>);
-
       // Draw each category and its skills
-      for (const [category, skills] of Object.entries(skillsByCategory)) {
+      for (const skill of cv.skills) {
         this.checkNewPage();
         
-        // Draw category in bold
-        this.drawText(category + ":", {
+        // Draw category in bold with colon
+        const categoryText = skill.category + ": ";
+        const categoryWidth = this.boldFont.widthOfTextAtSize(categoryText, 9);
+        
+        this.drawText(categoryText, {
           font: this.boldFont,
-          size: 11,
+          size: 9,
           color: rgb(0, 0, 0)
         });
-        this.y -= this.lineHeight;
 
-        // Draw skills as a wrapped paragraph
-        const skillText = skills.join(" • ");
-        const skillLines = this.wrapText(skillText, this.font, 11, this.width - this.margin * 2);
-        for (const line of skillLines) {
-          this.drawText(line, {
+        // Draw skills as a flowing paragraph
+        const skillText = skill.skills.join(" • ");
+        
+        // First line has less width due to the category
+        const firstLineWidth = this.width - (this.margin * 2) - categoryWidth;
+        const remainingLinesWidth = this.width - (this.margin * 2);
+        
+        // Split text into words and build lines
+        const words = skillText.split(' ');
+        let lines: string[] = [];
+        let currentLine = '';
+        let isFirstLine = true;
+        
+        for (const word of words) {
+          const testLine = currentLine.length === 0 ? word : `${currentLine} ${word}`;
+          const width = this.font.widthOfTextAtSize(testLine, 9);
+          const maxWidth = isFirstLine ? firstLineWidth : remainingLinesWidth;
+
+          if (width > maxWidth && currentLine.length > 0) {
+            lines.push(currentLine);
+            currentLine = word;
+            isFirstLine = false;
+          } else {
+            currentLine = testLine;
+          }
+        }
+        if (currentLine.length > 0) {
+          lines.push(currentLine);
+        }
+
+        // Draw first line after category
+        if (lines.length > 0) {
+          this.drawText(lines[0], {
             font: this.font,
-            size: 11,
-            color: rgb(0, 0, 0)
+            size: 9,
+            color: rgb(0, 0, 0),
+            x: this.margin + categoryWidth
           });
           this.y -= this.lineHeight;
         }
-        this.y -= this.lineHeight / 2;  // Add a bit of space between categories
+
+        // Draw remaining lines
+        for (let i = 1; i < lines.length; i++) {
+          this.drawText(lines[i], {
+            font: this.font,
+            size: 9,
+            color: rgb(0, 0, 0),
+            x: this.margin
+          });
+          this.y -= this.lineHeight;
+        }
+        
+        this.y -= this.lineHeight / 4;  // Small space between skill categories
       }
-      this.y -= this.lineHeight;
+      this.y -= this.lineHeight / 2;
     }
 
     // Add note at the end
-    this.y -= this.lineHeight;  // Add some space before the note
+    this.y -= this.lineHeight;
     
     // Generate a random 20-character hex code
     const code = Array.from(crypto.getRandomValues(new Uint8Array(10)))
@@ -271,11 +348,21 @@ export class PDFGenerator {
     return this.doc.save();
   }
 
-  private checkNewPage() {
-    if (this.y < this.margin * 2) {
-      this.currentPage = this.doc.addPage();
-      this.y = this.height - this.margin;
+  private checkNewPage(requiredHeight: number = this.lineHeight) {
+    if (this.y < (this.currentPageNumber === 1 ? this.margin * 2 : this.margin) + requiredHeight) {
+      const pageSize = this.currentPage.getSize();
+      this.currentPage = this.doc.addPage([pageSize.width, pageSize.height]);
+      this.currentPageNumber++;
+      this.y = this.height - this.topMargin;
     }
+  }
+
+  private checkAndEnsureSpace(elements: { text: string; font: PDFFont; size: number }[], spacing: number = 0) {
+    const totalHeight = elements.reduce((height, element) => {
+      return height + this.lineHeight;
+    }, spacing);
+
+    this.checkNewPage(totalHeight);
   }
 
   private drawText(text: string, options: {
@@ -283,11 +370,12 @@ export class PDFGenerator {
     size: number;
     color?: RGB;
     x?: number;
+    y?: number;
   }) {
     const cleanText = text.replace(/\n/g, ' ').trim();
     this.currentPage.drawText(cleanText, {
       x: options.x ?? this.margin,
-      y: this.y,
+      y: options.y ?? this.y,
       font: options.font,
       size: options.size,
       color: options.color ?? rgb(0, 0, 0)
@@ -317,5 +405,12 @@ export class PDFGenerator {
     }
 
     return lines;
+  }
+
+  private calculateContentHeight(elements: { text: string; font: PDFFont; size: number }[]): number {
+    return elements.reduce((height, element) => {
+      const lines = this.wrapText(element.text, element.font, element.size, this.width - this.margin * 2);
+      return height + (lines.length * this.lineHeight);
+    }, 0);
   }
 } 

@@ -19,7 +19,7 @@ export const AI_SERVICE_SYSTEM_PROMPT = `You are Heath's virtual assistant, spec
 // Job Processing Prompts
 export const JOB_CONTENT_EXTRACTION_PROMPT = `Please analyze this job posting text and extract the relevant sections. If the title and company are not clearly stated in a title, infer it from the text.
 
-Return ONLY a JSON object with these fields (omit any that aren't present):
+Return ONLY a raw JSON object with these fields (omit any that aren't present). Do not include any markdown formatting, code blocks, or additional text:
 {template}
 
 Job posting text:
@@ -57,9 +57,11 @@ export const CV_JOB_BULLETS = {
   rules: `
   Use ONLY my Responsibilities, Achievements, Narrative
   Match their phrases verbatim where possible
+  Don't be overly repetitive with key terms, use it once or twice, but not on every position
   Create only {bulletCount} bullet points
   Max {wordCount} words per bullet, end with outcome
-  Do not say "Drove demand for SaaS" unless it is explicitly mentioned in my job history`,
+  Do not say "Drove demand for SaaS" unless it is explicitly mentioned in my job history
+  Never invent a quantifiable result, if none is explicityly mentioned, then don't inlcude it`,
 
   response_format: `Return {bulletCount} bullet point(s) in this JSON format:
   {

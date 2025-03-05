@@ -6,6 +6,7 @@ export interface GenerateOptions {
   requirements: string;
   responsibilities: string;
   bulletPointConfig?: CompanyBulletConfig;
+  region?: 'US' | 'EU';  // defaults to EU if not specified
 }
 
 export interface CompanyBulletConfig {

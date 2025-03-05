@@ -140,12 +140,19 @@ export async function processJobContent(
   db?: DatabaseService,
   url?: string
 ): Promise<JobContent & { id?: string }> {
-  const prompt = JOB_CONTENT_PROCESSING_PROMPT
-    .replace("{template}", JSON.stringify(JOB_CONTENT_TEMPLATE, null, 2))
-    .replace("{content}", content);
+  // First check if we have valid content
+  if (!content) {
+    return { error: "No content provided to process" };
+  }
 
+  // Only log first 100 chars of content for debugging
+  console.log("Processing job content:", content.slice(0, 100) + "...");
+  
+  // Extract initial job data using AI
+  const structuringPrompt = structureJobContent(content);
+  
   try {
-    const response = await ai.processJobPosting(prompt);
+    const response = await ai.processJobPosting(structuringPrompt);
     if (response.error || !response.content.length) {
       const error = response.error || "No content returned";
       console.error(`process: ${error}`);

@@ -64,15 +64,12 @@ export class XAIService implements AIService {
   async processJobPosting(prompt: string, jsonSchema?: Record<string, unknown>): Promise<AIResponse> {
     const options: XAIRequestOptions = {
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 1024
-    };
-
-    if (jsonSchema) {
-      options.response_format = {
+      max_tokens: 1024,
+      response_format: {
         type: "json_object",
-        schema: jsonSchema
-      };
-    }
+        schema: jsonSchema || {}
+      }
+    };
 
     return this.makeRequest(options);
   }

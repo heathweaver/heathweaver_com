@@ -6,6 +6,14 @@ import { GenerateOptions } from "../../types/cv-generation.ts";
 import { CV_GENERATOR_PROFILE_PROMPT, CV_JOB_BULLETS } from "../../prompt/index.ts";
 import { DEFAULT_BULLET_CONFIG } from "../../types/cv-generation.ts";
 
+interface ParsedJobPosting {
+  title: string;
+  company: string;
+  responsibilities: string[];
+  requirements: string[];
+  description: string;
+}
+
 /**
  * Service for generating customized CVs using AI based on job requirements
  */
@@ -15,9 +23,92 @@ export class CVGenerator {
     private db: DatabaseService
   ) {}
 
+  /**
+   * Parses raw job posting content into structured format
+   */
+  private parseJobPosting(content: string): ParsedJobPosting {
+    // Initialize with defaults
+    const parsed: ParsedJobPosting = {
+      title: "",
+      company: "",
+      responsibilities: [],
+      requirements: [],
+      description: ""
+    };
+
+    // Extract title and company if present in structured format
+    const titleMatch = content.match(/title:\s*"([^"]+)"/i);
+    const companyMatch = content.match(/company:\s*"([^"]+)"/i);
+    parsed.title = titleMatch?.[1] || "";
+    parsed.company = companyMatch?.[1] || "";
+
+    // Split content into sections
+    const sections = content.split(/\n\s*\n/);
+    
+    let currentSection = "description";
+    for (const section of sections) {
+      const cleanSection = section.trim();
+      
+      // Skip empty sections
+      if (!cleanSection) continue;
+
+      // Detect section type
+      if (/responsibilities|position responsibilities|job duties/i.test(cleanSection)) {
+        currentSection = "responsibilities";
+        continue;
+      }
+      if (/requirements|qualifications|skills|experience required/i.test(cleanSection)) {
+        currentSection = "requirements";
+        continue;
+      }
+
+      // Extract bullet points
+      const bullets = cleanSection.split(/[•\-\*]\s+/)
+        .map(b => b.trim())
+        .filter(b => b.length > 10); // Filter out short/empty bullets
+
+      // Add content to appropriate section
+      switch (currentSection) {
+        case "responsibilities":
+          parsed.responsibilities.push(...bullets);
+          break;
+        case "requirements":
+          parsed.requirements.push(...bullets);
+          break;
+        default:
+          if (cleanSection.length > 50) { // Only add substantial paragraphs
+            parsed.description += cleanSection + "\n\n";
+          }
+      }
+    }
+
+    // Clean up and deduplicate
+    parsed.responsibilities = [...new Set(parsed.responsibilities)];
+    parsed.requirements = [...new Set(parsed.requirements)];
+    parsed.description = parsed.description.trim();
+
+    return parsed;
+  }
+
+  private formatDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+
   async generateCV(options: GenerateOptions): Promise<CV> {
     const rawData = await this.db.fetchCVData();
     
+    // Parse job posting if provided
+    let jobData: ParsedJobPosting | null = null;
+    if (typeof options.requirements === 'string') {
+      jobData = this.parseJobPosting(options.requirements);
+      options.requirements = [
+        ...jobData.requirements,
+        ...jobData.responsibilities
+      ].join('\n');
+      options.jobTitle = jobData.title || options.jobTitle;
+    }
+
     // Transform contact info into BasicInfo
     const contact = rawData.contact as DBContact;
     const basicInfo: BasicInfo = {
@@ -31,12 +122,17 @@ export class CVGenerator {
     // Transform experience into employment history with customized bullet points
     const employmentHistory: EmploymentHistoryItem[] = [];
     for (const job of (rawData.experience as DBExperience[])) {
-      const customBullets = await this.generateCustomBulletPoints(job, options);
+      const customBullets = await this.generateCustomBulletPoints(
+        job, 
+        options,
+        jobData?.requirements || []
+      );
+      
       employmentHistory.push({
         company: job.company,
         title: job.title,
-        start_date: job.start_date.toISOString().split('T')[0],
-        end_date: job.end_date ? job.end_date.toISOString().split('T')[0] : undefined,
+        start_date: this.formatDate(job.start_date.toISOString()),
+        end_date: job.end_date ? this.formatDate(job.end_date.toISOString()) : undefined,
         location: job.location,
         responsibilities: job.responsibilities,
         achievements: job.achievements,
@@ -44,8 +140,14 @@ export class CVGenerator {
         bulletPoints: customBullets
       });
     }
+
     // Sort in reverse chronological order
     employmentHistory.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+    
+    // Always set the most recent job's end date to 'Present'
+    if (employmentHistory.length > 0) {
+      employmentHistory[0].end_date = 'Present';
+    }
 
     // Transform education
     const education: EducationItem[] = (rawData.education as DBEducation[]).map(edu => ({
@@ -90,7 +192,8 @@ export class CVGenerator {
     }));
 
     // Generate profile using AI
-    const profile = await this.generateProfile(options, basicInfo, employmentHistory);
+    // const profile = await this.generateProfile(options, basicInfo, employmentHistory);
+    const profile = ""; // Removing summary section
 
     return {
       basicInfo,
@@ -106,7 +209,11 @@ export class CVGenerator {
     };
   }
 
-  private async generateCustomBulletPoints(job: DBExperience, options: GenerateOptions): Promise<BulletPoint[]> {
+  private async generateCustomBulletPoints(
+    job: DBExperience, 
+    options: GenerateOptions,
+    jobRequirements: string[] = []
+  ): Promise<BulletPoint[]> {
     console.log(`Generating bullets for: ${job.company} - ${job.title}`);
     const config = options.bulletPointConfig || DEFAULT_BULLET_CONFIG;
     
@@ -117,7 +224,13 @@ export class CVGenerator {
     const bulletCount = config[job.company];
     const wordCount = 50;
     
-    const prompt = this.constructBulletPrompt(job, options.requirements, bulletCount, wordCount);
+    const prompt = this.constructBulletPrompt(
+      job, 
+      jobRequirements.length > 0 ? jobRequirements : options.requirements, 
+      bulletCount, 
+      wordCount
+    );
+
     console.log("\nBullet point prompt after replacement:", prompt);
     const response = await this.ai.processJobPosting(prompt);
     

@@ -55,8 +55,6 @@ export class DeepSeekService implements AIService {
       })
     };
 
-    // console.log("Request body:", JSON.stringify(requestBody));
-
     try {
       const response = await fetch(this.baseUrl, {
         method: "POST",
@@ -67,16 +65,30 @@ export class DeepSeekService implements AIService {
         body: JSON.stringify(requestBody)
       });
 
-      const data = await response.json();
-      // console.log("Raw API response:", JSON.stringify(data));
+      const responseText = await response.text();
+      console.log("Raw API response:", responseText);
 
       if (!response.ok) {
-        console.error("DeepSeek API error:", JSON.stringify(data));
-        throw new Error(`request: DeepSeek API error: ${JSON.stringify(data)}`);
+        console.error("DeepSeek API error:", responseText);
+        throw new Error(`DeepSeek API error: ${responseText}`);
+      }
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error("Failed to parse DeepSeek response:", e);
+        console.error("Raw response text:", responseText);
+        throw new Error(`Failed to parse DeepSeek response. Raw response: ${responseText.slice(0, 500)}...`);
+      }
+
+      if (!data.choices?.[0]?.message?.content) {
+        console.error("Unexpected response structure:", data);
+        throw new Error(`Unexpected response structure from DeepSeek: ${JSON.stringify(data)}`);
       }
 
       return {
-        content: data.choices.map((choice: any) => choice.message.content)
+        content: [data.choices[0].message.content]
       };
     } catch (error) {
       console.error("DeepSeek request error:", error);
