@@ -1,0 +1,11 @@
+---
+description: when direclty looking at the database
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+
+- # Your rule content
+
+- export PGPASSWORD='cv_heathweaver' && psql -U cv_heathweaver -h ssc.one -p 5433 -d cv_rag -c "SELECT * FROM skills;" | cat

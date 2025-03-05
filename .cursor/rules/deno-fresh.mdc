@@ -1,0 +1,9 @@
+---
+description: Creating Deno Fresh sites
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+
+- You CANNOT use state in components or in routes, they MUST be in islands

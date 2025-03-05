@@ -1,0 +1,11 @@
+---
+description: When dealing with the myriad of job sites
+globs: 
+---
+
+# Your rule content
+
+- You must remember that job sites have different structures
+- There are thousands of jobs sites, which have a thousand different layouts and structures
+- Just because there is a lot of javascript doesn't mean the job description into present
+- Job parsing tests are in backend/tests
