@@ -1,11 +1,50 @@
 CV & Cover Letter Generator Documentation
 Overview
-We're building an AI-powered system to generate customized CVs and cover letters based on:
-Pre-stored job history in Q&A format
-Target job description
-Consistent CV structure
+We're building an AI-powered system to generate customized CVs and cover letters based on user-provided information and target job descriptions.
+
+User Flow
+1. User signs up for an account
+2. User purchases credits for resume generation
+3. User navigates to profile page to:
+   - Link their LinkedIn profile OR
+   - Upload an existing CV
+4. System extracts information from LinkedIn/CV to populate the database
+5. User can:
+   - Review extracted information
+   - Update or add additional items
+   - Participate in AI interview to gather more details
+6. User adds target job URL to generate page
+7. System generates CV and displays it:
+   - CV preview on the left
+   - AI interface on the right
+   - Editable fields for real-time updates
+8. User can download final CV as PDF
+
 Data Structure
-1. Job History Format
+
+User Profile
+```typescript
+interface UserProfile {
+  id: string;
+  email: string;
+  credits: number;
+  contactInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    location: string;
+    linkedin?: string;
+  };
+  experience: JobHistory[];
+  education: Education[];
+  skills: SkillCategory[];
+  awards: Award[];
+  publications: Publication[];
+}
+```
+
+Job History
+```typescript
 interface JobHistory {
   position: string;
   company: string;
@@ -16,84 +55,148 @@ interface JobHistory {
   responsibilities: string[];
   achievements: string[];
   skills: string[];
-  qa: {
-    question: string;
-    answer: string;
-  }[];
 }
-2. CV Structure
-interface CV {
-  personalInfo: {
-    name: string;
-    title: string;
-    contact: {
-      email: string;
-      phone: string;
-      location: string;
-    };
+```
+
+Education
+```typescript
+interface Education {
+  institution: string;
+  degree: string;
+  field: string;
+  duration: {
+    start: string;
+    end: string;
   };
-  summary: string;
-  experience: JobHistory[];
-  education: {
-    institution: string;
-    degree: string;
-    year: string;
-  }[];
-  skills: {
-    technical: string[];
-    soft: string[];
-  };
+  achievements: string[];
 }
+```
+
+Skills
+```typescript
+interface SkillCategory {
+  category: string;
+  skills: string[];
+}
+```
+
+Awards & Publications
+```typescript
+interface Award {
+  title: string;
+  issuer: string;
+  date: string;
+  description: string;
+}
+
+interface Publication {
+  title: string;
+  publisher: string;
+  date: string;
+  url: string;
+  description: string;
+}
+```
+
 Implementation Plan
-1. Data Storage
-Create a data folder with:
-data/
-  ├── job-history.json    # Your work history in Q&A format
-  ├── cv-template.json    # Base CV structure
-  └── prompts/
-      ├── cv.ts          # CV generation prompts
-      └── cover.ts       # Cover letter generation prompts
 
-2. AI Interaction Flow
-graph TD
-    A[User Input] --> B[Parse Job Description or Company]
-    B --> C[Match Skills & Experience]
+1. Database Schema
+```sql
+CREATE TABLE users (
+  id UUID PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  credits INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-AI Discusses with recruiter
-AI Updates job mentions
+CREATE TABLE contact_info (
+  user_id UUID PRIMARY KEY REFERENCES users(id),
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT,
+  location TEXT,
+  linkedin TEXT
+);
 
-    C --> D[Generate CV]
-    C --> E[Generate Cover Letter]
-    D --> F[Preview & Edit]
-    E --> F
+CREATE TABLE professional_experience (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  company TEXT NOT NULL,
+  title TEXT NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE,
+  location TEXT,
+  responsibilities TEXT[],
+  achievements TEXT[]
+);
 
-3. System Prompts
-For CV Generation:
-const CV_SYSTEM_PROMPT = `You are a professional CV writer. Using the provided job history and target position:
-1. Select relevant experiences
-2. Highlight matching skills
-3. Quantify achievements
-4. Use action verbs
-5. Maintain professional tone
-6. Keep to 1-2 pages`;
+CREATE TABLE education (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  institution TEXT NOT NULL,
+  degree TEXT NOT NULL,
+  field TEXT NOT NULL,
+  start_date DATE,
+  end_date DATE,
+  location TEXT,
+  achievements TEXT[]
+);
 
-For Cover Letter:
-const COVER_LETTER_PROMPT = `Create a compelling cover letter that:
-1. Addresses key job requirements
-2. Highlights relevant experience
-3. Shows enthusiasm and culture fit
-4. Maintains professional tone
-5. Includes specific examples`;
+CREATE TABLE skills (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  category TEXT NOT NULL,
+  skills TEXT[] NOT NULL
+);
 
-4. Next Implementation Steps
-Create data structures:
+CREATE TABLE awards (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  title TEXT NOT NULL,
+  issuer TEXT NOT NULL,
+  date DATE NOT NULL,
+  description TEXT
+);
 
+CREATE TABLE publications (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  title TEXT NOT NULL,
+  publisher TEXT NOT NULL,
+  date DATE NOT NULL,
+  url TEXT,
+  description TEXT
+);
+```
 
-here
-Set up storage:
-templates
-3. Update chat handler:
-generation
-Add document preview:
-options
-Would you like me to start implementing any of these components, or would you like to refine the structure further?
+2. System Components
+1. Authentication System
+   - User registration
+   - Login/logout
+   - Credit management
+
+2. Profile Management
+   - LinkedIn integration
+   - CV upload and parsing
+   - Data extraction and storage
+   - Profile editing interface
+
+3. AI Interview System
+   - Interactive Q&A to gather missing information
+   - Smart suggestions based on job requirements
+   - Experience refinement
+
+4. CV Generation
+   - Template system
+   - Real-time preview
+   - PDF export
+   - AI-powered content optimization
+
+3. Next Steps
+1. Set up user authentication
+2. Implement LinkedIn integration
+3. Create CV parsing system
+4. Build profile management interface
+5. Develop AI interview system
+6. Create CV generation and preview system
+7. Add PDF export functionality

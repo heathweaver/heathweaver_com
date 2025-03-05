@@ -5,7 +5,7 @@ import { INITIAL_PROMPT } from "../backend/prompt/index.ts";
 export default function ChatArea() {
   const messages = useSignal<ChatMessage[]>([{
     role: "assistant",
-    content: INITIAL_PROMPT
+    content: "Hi! I can help you create and customize your CV. Would you like to:"
   }]);
   const inputValue = useSignal("");
   const isLoading = useSignal(false);
@@ -139,70 +139,56 @@ export default function ChatArea() {
   };
 
   return (
-    <div class="flex flex-col h-[calc(100vh-140px)] bg-white rounded-2xl shadow-lg p-4">
+    <div class="flex flex-col h-[calc(100vh-16rem)] bg-white rounded-2xl shadow-sm">
+      {/* Chat messages */}
       <div class="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.value.map((msg, i) => (
-          <div key={i} class={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div class={`max-w-[80%] p-4 rounded-2xl ${
-              msg.role === "user" 
-                ? "bg-emerald-600 text-white" 
-                : "bg-gray-100 text-slate-800"
-            }`}>
-              {msg.content || (isLoading.value && msg.role === "assistant" && "...")}
+          <div key={i} class={`flex items-start space-x-3 ${msg.role === "user" ? "flex-row-reverse space-x-reverse" : ""}`}>
+            {msg.role === "assistant" && (
+              <div class="flex-shrink-0">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <span class="text-sm font-medium text-emerald-600">AI</span>
+                </div>
+              </div>
+            )}
+            <div class={`flex-1 max-w-[80%]`}>
+              <div class={`p-3 rounded-2xl ${
+                msg.role === "user" 
+                  ? "bg-emerald-600 text-white ml-auto" 
+                  : "bg-gray-100 text-gray-800"
+              }`}>
+                <p class="text-sm whitespace-pre-wrap">{msg.content}</p>
+              </div>
             </div>
           </div>
         ))}
+        {isLoading.value && (
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 rounded-full bg-gray-300 animate-bounce" style="animation-delay: 0s" />
+            <div class="w-2 h-2 rounded-full bg-gray-300 animate-bounce" style="animation-delay: 0.1s" />
+            <div class="w-2 h-2 rounded-full bg-gray-300 animate-bounce" style="animation-delay: 0.2s" />
+          </div>
+        )}
       </div>
-      
-      <div class="p-4 border-t">
-        <form onSubmit={handleSubmit} class="flex flex-col gap-2">
-          <div class="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => showJobInput.value = true}
-              class="text-emerald-600 hover:text-emerald-700 transition-colors px-2 text-xl"
-            >
-              +
-            </button>
-            <input
-              type="text"
-              value={inputValue.value}
-              onChange={(e) => inputValue.value = e.currentTarget.value}
-              disabled={isLoading.value}
-              class="flex-1 px-4 py-2 bg-white rounded-xl border border-gray-200 focus:border-emerald-600 transition-colors disabled:opacity-50"
-              placeholder={isLoading.value ? "AI is thinking..." : "Type your message..."}
-            />
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="min-w-[140px] relative">
-              <select
-                value={currentModel.value}
-                onChange={(e) => {
-                  currentModel.value = e.currentTarget.value as "xai" | "anthropic" | "deepseek" | "openai";
-                }}
-                class="w-full pl-8 pr-3 py-1.5 rounded-xl text-sm text-slate-600 bg-transparent appearance-none cursor-pointer focus:outline-none"
-              >
-                <option value="xai">xAI</option>
-                <option value="deepseek">DeepSeek</option>
-                <option value="anthropic">Anthropic</option>
-                <option value="openai">OpenAI</option>
-              </select>
-              <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center px-2 text-slate-600">
-                <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="flex-1 flex justify-end">
-              <button
-                type="submit"
-                disabled={isLoading.value}
-                class="px-6 py-1.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50"
-              >
-                Send
-              </button>
-            </div>
-          </div>
+
+      {/* Chat input */}
+      <div class="border-t p-4">
+        <form onSubmit={handleSubmit} class="flex items-center space-x-2">
+          <input
+            type="text"
+            value={inputValue.value}
+            onChange={(e) => inputValue.value = e.currentTarget.value}
+            disabled={isLoading.value}
+            class="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:opacity-50"
+            placeholder={isLoading.value ? "AI is thinking..." : "Ask me anything about your CV..."}
+          />
+          <button
+            type="submit"
+            disabled={isLoading.value}
+            class="px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 font-medium"
+          >
+            Send
+          </button>
         </form>
       </div>
     </div>

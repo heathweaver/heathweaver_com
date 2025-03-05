@@ -17,10 +17,12 @@ import { AIService } from "../backend/types/ai-service.types.ts";
  *          Options: "xai" or deepseek models like "deepseek-coder"
  * --json: Path to existing CV JSON file to generate PDF from
  *         (mutually exclusive with --job-listing)
+ * --region: Target region for phone number (default: "EU")
+ *          Options: "US" or "EU"
  */
 const args = parseArgs(Deno.args, {
-  string: ["job-listing", "model", "json"],
-  default: { model: "xai" },
+  string: ["job-listing", "model", "json", "region"],
+  default: { model: "xai", region: "EU" },
 });
 
 // Validate required arguments - either job listing URL or JSON file is required
@@ -52,7 +54,7 @@ try {
   // Generate PDF
   console.log("\nGenerating PDF...");
   const pdfGenerator = new PDFGenerator();
-  const pdfBytes = await pdfGenerator.generateCV(cv);
+  const pdfBytes = await pdfGenerator.generateCV(cv, args["region"] as "US" | "EU");
 
   // Generate unique ID for file naming (2 bytes converted to 4-digit number)
   const id = Array.from(crypto.getRandomValues(new Uint8Array(2)))
@@ -109,7 +111,8 @@ async function generateCV(jobUrl: string, db: DatabaseService, aiService: AIServ
     company: jobResult.company,
     jobDescription: jobResult.description || "",
     requirements: Array.isArray(jobResult.requirements) ? jobResult.requirements.join("\n") : "",
-    responsibilities: Array.isArray(jobResult.responsibilities) ? jobResult.responsibilities.join("\n") : ""
+    responsibilities: Array.isArray(jobResult.responsibilities) ? jobResult.responsibilities.join("\n") : "",
+    region: args["region"] as "US" | "EU"
   });
 
   return { cv, jobTitle: jobResult.title };
