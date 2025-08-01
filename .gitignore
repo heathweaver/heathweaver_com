@@ -11,3 +11,12 @@ _fresh/
 # npm dependencies
 node_modules/
 artifacts/*.mp4
+
+# Video files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.webm
