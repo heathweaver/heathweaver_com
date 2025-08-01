@@ -1,9 +1,9 @@
 import { Handlers, PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/runtime.ts";
-import Navigation from "../../components/Navigation.tsx";
-import CVGenerator from "../../islands/CVGenerator.tsx";
-import DocumentPreview from "../../islands/DocumentPreview.tsx";
-import { AuthState } from "../../plugins/auth/mod.ts";
+import Navigation from "../components/Navigation.tsx";
+import CVGenerator from "../islands/CVGenerator.tsx";
+import DocumentPreview from "../islands/DocumentPreview.tsx";
+import { AuthState } from "../plugins/auth/mod.ts";
 
 export const handler: Handlers<null, AuthState> = {
   async GET(_req, ctx) {

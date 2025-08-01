@@ -10,4 +10,4 @@ config.ts
 _fresh/
 # npm dependencies
 node_modules/
-artifacts/
+artifacts/*.mp4

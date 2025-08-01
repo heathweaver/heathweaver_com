@@ -7,3 +7,4 @@ alwaysApply: false
 # Your rule content
 
 - You CANNOT use state in components or in routes, they MUST be in islands
+- YOU DO NOT PUT SQL in routes, put it in the CRUD file dbtable-db.ts in lib/db/

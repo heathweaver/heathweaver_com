@@ -19,6 +19,12 @@ export default function Navigation() {
               Home
             </a>
             <a
+              href="/jobs"
+              class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900"
+            >
+              Track Jobs
+            </a>
+            <a
               href="/profile"
               class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900"
             >

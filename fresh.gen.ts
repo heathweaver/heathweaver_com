@@ -15,13 +15,15 @@ import * as $api_cv_example from "./routes/api/cv/example.ts";
 import * as $api_cv_index from "./routes/api/cv/index.ts";
 import * as $api_deepseek from "./routes/api/deepseek.ts";
 import * as $api_experience_update from "./routes/api/experience/update.ts";
+import * as $api_jobs_id_status from "./routes/api/jobs/[id]/status.ts";
 import * as $api_joke from "./routes/api/joke.ts";
 import * as $api_openai from "./routes/api/openai.ts";
 import * as $api_test_env from "./routes/api/test-env.ts";
 import * as $api_verify from "./routes/api/verify.ts";
 import * as $api_xai from "./routes/api/xai.ts";
-import * as $career_index from "./routes/career/index.tsx";
+import * as $career from "./routes/career.tsx";
 import * as $index from "./routes/index.tsx";
+import * as $jobs from "./routes/jobs.tsx";
 import * as $profile from "./routes/profile.tsx";
 import * as $CVGenerator from "./islands/CVGenerator.tsx";
 import * as $ChatArea from "./islands/ChatArea.tsx";
@@ -30,7 +32,10 @@ import * as $DocumentPreview from "./islands/DocumentPreview.tsx";
 import * as $EditableExperienceTitle from "./islands/EditableExperienceTitle.tsx";
 import * as $EditableSection from "./islands/EditableSection.tsx";
 import * as $ExperienceSection from "./islands/ExperienceSection.tsx";
+import * as $JobTracker from "./islands/JobTracker.tsx";
 import * as $LinkedInButton from "./islands/LinkedInButton.tsx";
+import * as $jobs_JobSearch from "./islands/jobs/JobSearch.tsx";
+import * as $jobs_JobStatusSelect from "./islands/jobs/JobStatusSelect.tsx";
 import * as $shared from "./islands/shared.ts";
 import type { Manifest } from "$fresh/server.ts";
 
@@ -49,13 +54,15 @@ const manifest = {
     "./routes/api/cv/index.ts": $api_cv_index,
     "./routes/api/deepseek.ts": $api_deepseek,
     "./routes/api/experience/update.ts": $api_experience_update,
+    "./routes/api/jobs/[id]/status.ts": $api_jobs_id_status,
     "./routes/api/joke.ts": $api_joke,
     "./routes/api/openai.ts": $api_openai,
     "./routes/api/test-env.ts": $api_test_env,
     "./routes/api/verify.ts": $api_verify,
     "./routes/api/xai.ts": $api_xai,
-    "./routes/career/index.tsx": $career_index,
+    "./routes/career.tsx": $career,
     "./routes/index.tsx": $index,
+    "./routes/jobs.tsx": $jobs,
     "./routes/profile.tsx": $profile,
   },
   islands: {
@@ -66,7 +73,10 @@ const manifest = {
     "./islands/EditableExperienceTitle.tsx": $EditableExperienceTitle,
     "./islands/EditableSection.tsx": $EditableSection,
     "./islands/ExperienceSection.tsx": $ExperienceSection,
+    "./islands/JobTracker.tsx": $JobTracker,
     "./islands/LinkedInButton.tsx": $LinkedInButton,
+    "./islands/jobs/JobSearch.tsx": $jobs_JobSearch,
+    "./islands/jobs/JobStatusSelect.tsx": $jobs_JobStatusSelect,
     "./islands/shared.ts": $shared,
   },
   baseUrl: import.meta.url,

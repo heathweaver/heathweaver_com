@@ -1,0 +1,16 @@
+[
+  {
+    "id": 8,
+    "institution": "Dixie State University",
+    "degree": "",
+    "field": "Business Administration with Accounting and Marketing Emphasis",
+    "start_date": "1997-09-01",
+    "end_date": "1999-05-01",
+    "location": "St. George, UT",
+    "achievements": [
+      "Served in Student Coucil",
+      "Started student organization",
+      "Started on university football team (soccer)"
+    ]
+  }
+]

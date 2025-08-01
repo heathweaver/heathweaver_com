@@ -1,0 +1,103 @@
+[
+  {
+    "id": 17,
+    "category": "Leadership & Management",
+    "skills": [
+      "Team Leadership",
+      "Performance Management",
+      "Business Strategy",
+      "Process Optimization",
+      "Client Relationship Management",
+      "Project Management",
+      "Change Management",
+      "P&L Management",
+      "Six Sigma",
+      "Strategic Planning"
+    ]
+  },
+  {
+    "id": 18,
+    "category": "Marketing & Digital",
+    "skills": [
+      "Digital Marketing Strategy",
+      "Email Marketing",
+      "Lead Generation",
+      "Client Acquisition",
+      "Customer Segmentation",
+      "Multichannel Marketing",
+      "Digital Advertising",
+      "Campaign Management",
+      "Copywriting",
+      "SEO/SEM",
+      "Content Strategy",
+      "Marketing Automation",
+      "Growth Marketing",
+      "Performance Marketing",
+      "Marketing Analytics",
+      "Brand Development",
+      "Social Media Marketing",
+      "Marketing Operations",
+      "ABM Strategy"
+    ]
+  },
+  {
+    "id": 19,
+    "category": "Technical",
+    "skills": [
+      "AI Implementation",
+      "Custom GPT Development",
+      "Process Documentation",
+      "Digital Optimization",
+      "Testing & Analytics",
+      "SQL",
+      "Python",
+      "Deno",
+      "PostgreSQL",
+      "Vector Databases",
+      "AI/ML Integration",
+      "Tableau",
+      "SAP",
+      "Excel VBA",
+      "API Development"
+    ]
+  },
+  {
+    "id": 20,
+    "category": "Business Development",
+    "skills": [
+      "Sales Strategy",
+      "Client Retention",
+      "Revenue Growth",
+      "Business Operations",
+      "Strategic Planning",
+      "Cost Optimization",
+      "Performance Analysis"
+    ]
+  },
+  {
+    "id": 21,
+    "category": "Finance & Business",
+    "skills": [
+      "Financial Analysis",
+      "Investment Advisory",
+      "Series 7 Licensed",
+      "Investor Relations",
+      "Budget Management",
+      "Revenue Optimization",
+      "Profitability Analysis",
+      "Strategic Partnerships",
+      "Client Relations",
+      "Sales Operations",
+      "Market Analysis"
+    ]
+  },
+  {
+    "id": 22,
+    "category": "Languages",
+    "skills": [
+      "English (Native)",
+      "French (Basic)",
+      "Italian (Learning)"
+    ]
+  }
+]
