@@ -9,7 +9,12 @@ interface ImportedJobData {
   error?: string;
 }
 
-export default function AddJobForm() {
+interface AddJobFormProps {
+  jobId?: string;
+}
+
+export default function AddJobForm({ jobId }: AddJobFormProps) {
+  const isEditing = !!jobId;
   const jobUrl = useSignal("");
   const companyName = useSignal("");
   const jobTitle = useSignal("");
@@ -21,7 +26,29 @@ export default function AddJobForm() {
   const importError = useSignal("");
   const submitError = useSignal("");
   const submitSuccess = useSignal(false);
-  const showManualForm = useSignal(false);
+  const showManualForm = useSignal(isEditing); // Show form immediately if editing
+  const isLoading = useSignal(false);
+
+  // Load existing job data if editing
+  if (isEditing && !isLoading.value && !companyName.value) {
+    isLoading.value = true;
+    fetch(`/api/jobs/${jobId}`)
+      .then(res => res.json())
+      .then(job => {
+        companyName.value = job.companyName || "";
+        jobTitle.value = job.jobTitle || "";
+        status.value = job.status || "saved";
+        jobUrl.value = job.jobUrl || "";
+        jobDescription.value = job.jobDescription || "";
+        notes.value = job.notes || "";
+        isLoading.value = false;
+      })
+      .catch(err => {
+        console.error("Error loading job:", err);
+        submitError.value = "Failed to load job data";
+        isLoading.value = false;
+      });
+  }
 
   const handleImport = async () => {
     if (!jobUrl.value.trim()) {
@@ -88,8 +115,11 @@ export default function AddJobForm() {
     submitSuccess.value = false;
 
     try {
-      const response = await fetch("/api/jobs", {
-        method: "POST",
+      const url = isEditing ? `/api/jobs/${jobId}` : "/api/jobs";
+      const method = isEditing ? "PUT" : "POST";
+      
+      const response = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           companyName: companyName.value,
@@ -104,7 +134,7 @@ export default function AddJobForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        submitError.value = data.error || "Failed to create job";
+        submitError.value = data.error || `Failed to ${isEditing ? "update" : "create"} job`;
         return;
       }
 
@@ -296,7 +326,7 @@ export default function AddJobForm() {
           {submitSuccess.value && (
             <div class="rounded-md bg-green-50 p-4">
               <p class="text-sm text-green-800">
-                Job created successfully! Redirecting...
+                Job {isEditing ? "updated" : "created"} successfully! Redirecting...
               </p>
             </div>
           )}
@@ -314,7 +344,10 @@ export default function AddJobForm() {
               disabled={isSubmitting.value}
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting.value ? "Creating..." : "Create Job"}
+              {isSubmitting.value 
+                ? (isEditing ? "Updating..." : "Creating...") 
+                : (isEditing ? "Update Job" : "Create Job")
+              }
             </button>
           </div>
         </div>

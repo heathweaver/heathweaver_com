@@ -86,6 +86,9 @@ export default function JobsPage({ jobs }: JobsPageProps) {
                 >
                   CV Status
                 </th>
+                <th scope="col" class="relative px-6 py-3">
+                  <span class="sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -134,6 +137,14 @@ export default function JobsPage({ jobs }: JobsPageProps) {
                           </button>
                         )}
                     </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <a
+                      href={`/jobs/add?id=${job.id}`}
+                      class="text-emerald-600 hover:text-emerald-900"
+                    >
+                      Edit
+                    </a>
                   </td>
                 </tr>
               ))}
