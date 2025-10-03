@@ -6,7 +6,7 @@ interface ImportedJobData {
   company?: string;
   description?: string;
   location?: string;
-  error?: string | { message?: string; type?: string };
+  error?: string;
 }
 
 export default function AddJobForm() {
@@ -41,14 +41,8 @@ export default function AddJobForm() {
       const data: ImportedJobData = await response.json();
 
       if (!response.ok) {
-        // Handle error object or string
-        if (typeof data.error === 'string') {
-          importError.value = data.error;
-        } else if (data.error && typeof data.error === 'object') {
-          importError.value = data.error.message || JSON.stringify(data.error);
-        } else {
-          importError.value = "Failed to import job";
-        }
+        // Error is now always a string from the API
+        importError.value = typeof data.error === 'string' ? data.error : "Failed to import job";
         // Keep the URL so user can try again or edit it
         return;
       }

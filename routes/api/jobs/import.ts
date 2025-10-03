@@ -39,8 +39,16 @@ export const handler = define.handlers({
 
       // Check for errors
       if (jobContent.error) {
+        // Extract error message from error object
+        let errorMessage = 'Failed to extract job content';
+        if (typeof jobContent.error === 'string') {
+          errorMessage = jobContent.error;
+        } else if (typeof jobContent.error === 'object' && jobContent.error !== null) {
+          errorMessage = (jobContent.error as { message?: string }).message || errorMessage;
+        }
+        
         return new Response(
-          JSON.stringify({ error: jobContent.error }),
+          JSON.stringify({ error: errorMessage }),
           { status: 422, headers: { "Content-Type": "application/json" } },
         );
       }
