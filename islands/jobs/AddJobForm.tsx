@@ -124,7 +124,7 @@ export default function AddJobForm() {
               value={jobUrl.value}
               onInput={(e) => jobUrl.value = (e.target as HTMLInputElement).value}
               placeholder="https://example.com/job-posting"
-              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2"
               disabled={isImporting.value || isSubmitting.value}
             />
           </div>
@@ -168,7 +168,7 @@ export default function AddJobForm() {
                 companyName.value = (e.target as HTMLInputElement).value}
               required
               disabled={isSubmitting.value}
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -188,7 +188,7 @@ export default function AddJobForm() {
                 jobTitle.value = (e.target as HTMLInputElement).value}
               required
               disabled={isSubmitting.value}
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -206,7 +206,7 @@ export default function AddJobForm() {
               onChange={(e) =>
                 status.value = (e.target as HTMLSelectElement).value as JobStatus}
               disabled={isSubmitting.value}
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
             >
               <option value="saved">Saved</option>
               <option value="applied">Applied</option>
