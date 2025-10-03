@@ -10,6 +10,8 @@ config.ts
 _fresh/
 # npm dependencies
 node_modules/
+# Vite cache
+.vite/
 artifacts/
 
 # Video files
