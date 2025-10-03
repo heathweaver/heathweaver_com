@@ -79,7 +79,7 @@ export class JobParser {
       content: "",
       error: {
         type: "EXTRACTION_ERROR",
-        message: "All parsers failed to extract content",
+        message: "Failed to extract the job details, copy the details manually",
       },
       debug: {
         parser: "JobParser",
@@ -101,7 +101,7 @@ export class JobParser {
         containerFound: false,
         firstTermFound: "none",
         errorType: "EXTRACTION_ERROR",
-        fullError: "All parsers failed to extract content",
+        fullError: "Failed to extract the job details, copy the details manually",
       },
     };
   }

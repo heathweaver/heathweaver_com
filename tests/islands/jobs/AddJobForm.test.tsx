@@ -59,16 +59,16 @@ Line 3`;
   });
 
   await t.step("validates error message extraction - object with message", () => {
-    const error = { type: "EXTRACTION_ERROR", message: "All parsers failed to extract content" };
+    const error = { type: "EXTRACTION_ERROR", message: "Failed to extract the job details, copy the details manually" };
     const result = extractErrorMessage(error);
-    assertEquals(result, "All parsers failed to extract content", "Should extract message from error object");
+    assertEquals(result, "Failed to extract the job details, copy the details manually", "Should extract message from error object");
   });
 
   await t.step("validates error message extraction - real API error format", () => {
     // This is the actual format returned by the API
     const apiResponse = { error: { type: "EXTRACTION_ERROR", message: "All parsers failed to extract content" } };
     const result = extractErrorMessage(apiResponse.error);
-    assertEquals(result, "All parsers failed to extract content", "Should handle real API error format");
+    assertEquals(result, "Failed to extract the job details, copy the details manually", "Should handle real API error format");
   });
 
   await t.step("validates error message extraction - object without message", () => {
