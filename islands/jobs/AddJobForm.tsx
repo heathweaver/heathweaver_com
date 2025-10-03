@@ -215,19 +215,25 @@ export default function AddJobForm() {
 
           {/* Job Description */}
           <div>
-            <label
-              htmlFor="jobDescription"
-              class="block text-sm font-medium text-gray-700"
-            >
-              Job Description
-            </label>
+            <div class="flex justify-between items-center">
+              <label
+                htmlFor="jobDescription"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Job Description
+              </label>
+              <span class="text-sm text-gray-500">
+                {jobDescription.value.length} characters
+              </span>
+            </div>
             <textarea
               id="jobDescription"
               value={jobDescription.value}
               onInput={(e) =>
                 jobDescription.value = (e.target as HTMLTextAreaElement).value}
               rows={6}
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm font-mono"
+              style="white-space: pre-wrap;"
             />
           </div>
 
