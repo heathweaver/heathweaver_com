@@ -42,7 +42,10 @@ export default function AddJobForm() {
 
       if (!response.ok) {
         // Error is now always a string from the API
-        importError.value = typeof data.error === 'string' ? data.error : "Failed to import job";
+        const errorMsg = typeof data.error === 'string' ? data.error : "Failed to import job";
+        console.log("Setting error message:", errorMsg);
+        importError.value = errorMsg;
+        console.log("Error value after setting:", importError.value);
         // Keep the URL so user can try again or edit it
         return;
       }

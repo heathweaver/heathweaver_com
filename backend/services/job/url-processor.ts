@@ -27,7 +27,7 @@ export async function processJobUrl(
 
   if (!fetchResult.success || !fetchResult.content) {
     return {
-      error: String(fetchResult.error || "No content returned from fetch"),
+      error: fetchResult.error || "No content returned from fetch",
     };
   }
 
@@ -42,8 +42,17 @@ export async function processJobUrl(
   });
 
   if (!parseResult.success || !parseResult.content) {
+    // Extract error message from error object
+    let errorMessage = "No content returned from parse";
+    if (parseResult.error) {
+      if (typeof parseResult.error === 'string') {
+        errorMessage = parseResult.error;
+      } else if (typeof parseResult.error === 'object' && 'message' in parseResult.error) {
+        errorMessage = parseResult.error.message || errorMessage;
+      }
+    }
     return {
-      error: String(parseResult.error || "No content returned from parse"),
+      error: errorMessage,
     };
   }
 

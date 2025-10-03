@@ -39,13 +39,21 @@ export const handler = define.handlers({
 
       // Check for errors
       if (jobContent.error) {
+        console.log("jobContent.error:", jobContent.error);
+        console.log("typeof jobContent.error:", typeof jobContent.error);
+        
         // Extract error message from error object
         let errorMessage = 'Failed to extract job content';
         if (typeof jobContent.error === 'string') {
           errorMessage = jobContent.error;
         } else if (typeof jobContent.error === 'object' && jobContent.error !== null) {
-          errorMessage = (jobContent.error as { message?: string }).message || errorMessage;
+          const errObj = jobContent.error as { message?: string; type?: string };
+          console.log("Error object:", errObj);
+          console.log("Error message property:", errObj.message);
+          errorMessage = errObj.message || errorMessage;
         }
+        
+        console.log("Final errorMessage:", errorMessage);
         
         return new Response(
           JSON.stringify({ error: errorMessage }),
