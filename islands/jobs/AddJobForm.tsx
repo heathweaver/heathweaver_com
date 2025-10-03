@@ -125,7 +125,7 @@ export default function AddJobForm() {
               onInput={(e) => jobUrl.value = (e.target as HTMLInputElement).value}
               placeholder="https://example.com/job-posting"
               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-              disabled={isImporting.value}
+              disabled={isImporting.value || isSubmitting.value}
             />
           </div>
           <button
@@ -167,7 +167,8 @@ export default function AddJobForm() {
               onInput={(e) =>
                 companyName.value = (e.target as HTMLInputElement).value}
               required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+              disabled={isSubmitting.value}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -186,7 +187,8 @@ export default function AddJobForm() {
               onInput={(e) =>
                 jobTitle.value = (e.target as HTMLInputElement).value}
               required
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+              disabled={isSubmitting.value}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -203,7 +205,8 @@ export default function AddJobForm() {
               value={status.value}
               onChange={(e) =>
                 status.value = (e.target as HTMLSelectElement).value as JobStatus}
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+              disabled={isSubmitting.value}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
             >
               <option value="saved">Saved</option>
               <option value="applied">Applied</option>
@@ -232,7 +235,8 @@ export default function AddJobForm() {
               onInput={(e) =>
                 jobDescription.value = (e.target as HTMLTextAreaElement).value}
               rows={6}
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm font-mono"
+              disabled={isSubmitting.value}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm font-mono disabled:bg-gray-100 disabled:cursor-not-allowed"
               style="white-space: pre-wrap;"
             />
           </div>
@@ -251,7 +255,8 @@ export default function AddJobForm() {
               onInput={(e) =>
                 notes.value = (e.target as HTMLTextAreaElement).value}
               rows={3}
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+              disabled={isSubmitting.value}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
           </div>
 
