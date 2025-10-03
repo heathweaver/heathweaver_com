@@ -21,6 +21,7 @@ export default function AddJobForm() {
   const importError = useSignal("");
   const submitError = useSignal("");
   const submitSuccess = useSignal(false);
+  const showManualForm = useSignal(false);
 
   const handleImport = async () => {
     if (!jobUrl.value.trim()) {
@@ -60,6 +61,9 @@ export default function AddJobForm() {
       if (data.company) companyName.value = data.company;
       if (data.title) jobTitle.value = data.title;
       if (data.description) jobDescription.value = data.description;
+
+      // Show manual form after successful import
+      showManualForm.value = true;
 
       // Clear any previous errors
       importError.value = "";
@@ -156,9 +160,19 @@ export default function AddJobForm() {
             Extracting job details... This may take a few seconds.
           </p>
         )}
+        {!showManualForm.value && !isImporting.value && (
+          <button
+            type="button"
+            onClick={() => showManualForm.value = true}
+            class="mt-4 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+          >
+            Add Manually
+          </button>
+        )}
       </div>
 
       {/* Manual Entry Form */}
+      {showManualForm.value && (
       <form onSubmit={handleSubmit}>
         <div class="space-y-6">
           <h2 class="text-lg font-medium text-gray-900">Job Details</h2>
@@ -305,6 +319,7 @@ export default function AddJobForm() {
           </div>
         </div>
       </form>
+      )}
     </div>
   );
 }
