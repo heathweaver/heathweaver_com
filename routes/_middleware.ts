@@ -1,14 +1,17 @@
 /// <reference lib="deno.unstable" />
 
-import { FreshContext } from "$fresh/server.ts";
-import { googleSigninHelpers, googleSignupHelpers } from "../plugins/auth/lib/kv_oauth.ts";
+import { define } from "../utils.ts";
+import {
+  googleSigninHelpers,
+  googleSignupHelpers,
+} from "../plugins/auth/lib/kv_oauth.ts";
 
 const PUBLIC_ROUTES = [
-  "/auth/login", 
-  "/auth/signup", 
+  "/auth/login",
+  "/auth/signup",
   "/auth/verify",
   "/auth/callback", // Add general callback route
-  "/auth/logout",   // Add logout route
+  "/auth/logout", // Add logout route
   "/auth/api/signup/twitter",
   "/auth/api/signup/twitter-callback",
   "/auth/api/signin/twitter",
@@ -26,46 +29,56 @@ const PUBLIC_ROUTES = [
   "/auth/api/signin/apple",
   "/auth/api/signin/apple-callback",
   */
-  "/terms", 
+  "/terms",
   "/privacy",
   "/auth/api/login",
   "/auth/api/login-magic",
 ];
 
-const STATIC_FILE_EXTENSIONS = ['.css', '.js', '.svg', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.txt'];
+const STATIC_FILE_EXTENSIONS = [
+  ".css",
+  ".js",
+  ".svg",
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".ico",
+  ".txt",
+];
 
 export interface AuthState {
   sessionId: string | null;
   user: any | null; // We'll type this properly when we move the user type
 }
 
-export async function handler(
-  req: Request,
-  ctx: FreshContext<AuthState>
-) {
-  const url = new URL(req.url);
+export const handler = define.middleware(async (ctx) => {
+  const url = new URL(ctx.req.url);
   const pathname = url.pathname;
 
   // Check if it's a public route FIRST
-  if (PUBLIC_ROUTES.some(route => pathname.startsWith(route))) {
+  if (PUBLIC_ROUTES.some((route) => pathname.startsWith(route))) {
     return await ctx.next();
   }
 
   // Then Fresh internal routes
-  if (pathname.startsWith('/_frsh/')) {
+  if (pathname.startsWith("/_frsh/")) {
     return await ctx.next();
   }
 
   // Then check static files
-  if (pathname.startsWith('/static/') || STATIC_FILE_EXTENSIONS.some(ext => pathname.endsWith(ext))) {
+  if (
+    pathname.startsWith("/static/") ||
+    STATIC_FILE_EXTENSIONS.some((ext) => pathname.endsWith(ext))
+  ) {
     return await ctx.next();
   }
 
   // Only try to get auth for protected routes
   try {
     // Try both signin and signup session handlers
-    const signinSessionId = await googleSigninHelpers.getSessionId(req);
-    const signupSessionId = await googleSignupHelpers.getSessionId(req);
+    const signinSessionId = await googleSigninHelpers.getSessionId(ctx.req);
+    const signupSessionId = await googleSignupHelpers.getSessionId(ctx.req);
     const sessionId = signinSessionId || signupSessionId;
 
     if (!sessionId) {
@@ -75,7 +88,7 @@ export async function handler(
     // Get user from KV store
     const kv = await Deno.openKv();
     const sessionData = await kv.get(["sessions", sessionId]);
-    
+
     if (!sessionData.value) {
       throw new Error("Invalid session");
     }
@@ -83,27 +96,35 @@ export async function handler(
     // Set both session and user in state
     ctx.state.sessionId = sessionId;
     ctx.state.user = sessionData.value;
-    
+
     return await ctx.next();
   } catch (error: unknown) {
     // Only log actual errors, not auth redirects
-    if (!(error instanceof Error) || (error.message !== "No session" && error.message !== "Invalid session")) {
+    if (
+      !(error instanceof Error) ||
+      (error.message !== "No session" && error.message !== "Invalid session")
+    ) {
       console.error("Middleware - Unexpected error:", {
         name: error instanceof Error ? error.name : "Unknown",
         message: error instanceof Error ? error.message : "Unknown error",
-        stack: error instanceof Error ? error.stack : undefined
+        stack: error instanceof Error ? error.stack : undefined,
       });
     }
 
     // Handle auth redirects
-    if (error instanceof Error && (error.message === "No session" || error.message === "Invalid session")) {
+    if (
+      error instanceof Error &&
+      (error.message === "No session" || error.message === "Invalid session")
+    ) {
       return new Response(null, {
         status: 303,
-        headers: { Location: `/auth/login?redirect=${encodeURIComponent(pathname)}` }
+        headers: {
+          Location: `/auth/login?redirect=${encodeURIComponent(pathname)}`,
+        },
       });
     }
 
     // For other errors, let them propagate
     throw error;
   }
-}
+});

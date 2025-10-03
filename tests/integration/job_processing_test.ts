@@ -11,7 +11,7 @@ const dbConfig = {
   database: "cv_rag",
   user: "cv_heathweaver",
   password: "cv_heathweaver",
-  port: 5433
+  port: 5433,
 };
 
 Deno.test({
@@ -19,17 +19,25 @@ Deno.test({
   async fn() {
     const url = "https://job-boards.greenhouse.io/earnest/jobs/6271491";
     let jobId: string | undefined;
-    
+
     // 1. Fetch the content
     const fetchResult = await fetchJobPosting(url);
     assertEquals(fetchResult.success, true, "Failed to fetch job content");
-    assertEquals(typeof fetchResult.content, "string", "No content returned from fetch");
-    
+    assertEquals(
+      typeof fetchResult.content,
+      "string",
+      "No content returned from fetch",
+    );
+
     // 2. Parse the HTML
     const parseResult = await extractJobContent(fetchResult.content!);
     assertEquals(parseResult.success, true, "Failed to parse job content");
-    assertEquals(typeof parseResult.content, "string", "No content returned from parse");
-    
+    assertEquals(
+      typeof parseResult.content,
+      "string",
+      "No content returned from parse",
+    );
+
     // 3. Process with AI and store
     const db = new DatabaseService(dbConfig);
     try {
@@ -44,15 +52,23 @@ Deno.test({
               "description": "Looking for a Senior Software Engineer to join our Backend Engineering team.",
               "requirements": ["5+ years experience"],
               "responsibilities": ["Build backend services"]
-            }`]
+            }`],
           };
-        }
+        },
       }, db);
 
       // 4. Verify the result
       assertEquals(result.error, undefined, "Processing failed");
-      assertEquals(result.title?.includes("Engineer"), true, "Title should contain Engineer");
-      assertEquals(result.company?.includes("Earnest"), true, "Company should be Earnest");
+      assertEquals(
+        result.title?.includes("Engineer"),
+        true,
+        "Title should contain Engineer",
+      );
+      assertEquals(
+        result.company?.includes("Earnest"),
+        true,
+        "Company should be Earnest",
+      );
       assertEquals(typeof result.id, "string", "Should have generated an ID");
       assertEquals(result.id?.length, 20, "ID should be 20 chars");
 
@@ -66,7 +82,6 @@ Deno.test({
       assertEquals(stored?.id, jobId, "ID should match");
       assertEquals(stored?.title, result.title, "Title should match");
       assertEquals(stored?.company, result.company, "Company should match");
-      
     } finally {
       // 6. Clean up
       if (jobId) {
@@ -74,5 +89,5 @@ Deno.test({
       }
       await db.disconnect();
     }
-  }
-}); 
+  },
+});

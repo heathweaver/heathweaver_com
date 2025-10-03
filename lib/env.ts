@@ -4,4 +4,4 @@ export function getRequiredEnv(key: string): string {
     throw new Error(`Missing required environment variable: ${key}`);
   }
   return value;
-} 
+}

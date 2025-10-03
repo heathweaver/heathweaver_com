@@ -7,10 +7,12 @@ async function measureCodebase(rootDir: string): Promise<{
   const fileStats: { path: string; chars: number }[] = [];
   let totalChars = 0;
 
-  for await (const entry of walk(rootDir, {
-    includeDirs: false,
-    exts: [".ts", ".js", ".tsx", ".jsx"],
-  })) {
+  for await (
+    const entry of walk(rootDir, {
+      includeDirs: false,
+      exts: [".ts", ".js", ".tsx", ".jsx"],
+    })
+  ) {
     const content = await Deno.readTextFile(entry.path);
     const chars = content.length;
     totalChars += chars;
@@ -44,4 +46,6 @@ console.log("\nTotal Statistics:");
 console.log("==================================");
 console.log(`Total characters: ${totalChars}`);
 console.log(`Total files: ${fileStats.length}`);
-console.log(`Average file size: ${Math.round(totalChars / fileStats.length)} chars\n`); 
+console.log(
+  `Average file size: ${Math.round(totalChars / fileStats.length)} chars\n`,
+);

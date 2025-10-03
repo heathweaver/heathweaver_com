@@ -1,4 +1,4 @@
-import { Head } from "$fresh/runtime.ts";
+import { Head } from "fresh/runtime";
 import ChatArea from "../islands/ChatArea.tsx";
 import DocumentPreview from "../islands/DocumentPreview.tsx";
 import CVGenerator from "../islands/CVGenerator.tsx";
@@ -9,7 +9,10 @@ export default function Home() {
     <>
       <Head>
         <title>AI CV Generator - Remote Executive</title>
-        <meta name="description" content="Professional CV generator for remote executives" />
+        <meta
+          name="description"
+          content="Professional CV generator for remote executives"
+        />
       </Head>
       <div class="min-h-screen bg-gradient-to-br from-slate-50 to-white">
         <Navigation />

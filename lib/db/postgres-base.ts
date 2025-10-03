@@ -1,56 +1,31 @@
-import { Client, Pool } from "https://deno.land/x/postgres@v0.17.0/mod.ts";
+import postgres from "postgres";
 
 // Connection configuration
 const POSTGRES_CONFIG = {
-  hostname: "ssc.one",
+  host: "ssc.one",
   port: 5433,
   database: "cv_rag",
   user: "cv_heathweaver",
   password: "cv_heathweaver",
+  max: 20, // 20 connections max
 };
 
 // Create a connection pool for better performance and resource management
-const pool = new Pool(POSTGRES_CONFIG, 20); // 20 connections max
+export const sql = postgres(POSTGRES_CONFIG);
 
-export async function getClient(): Promise<Client> {
-  try {
-    const client = await pool.connect();
-    return client;
-  } catch (error) {
-    console.error("Failed to get database client:", error);
-    throw new Error("Database connection failed");
-  }
-}
-
-// Helper function to run queries with automatic client release
-export async function withClient<T>(
-  operation: (client: Client) => Promise<T>
-): Promise<T> {
-  const client = await getClient();
-  try {
-    return await operation(client);
-  } finally {
-    try {
-      await client.release();
-    } catch (releaseError) {
-      console.error("Error releasing client:", releaseError);
-    }
-  }
-}
-
-// Helper for transactions
+// Helper for transactions using postgres npm package
 export async function withTransaction<T>(
-  operation: (client: Client) => Promise<T>
+  operation: (sql: postgres.Sql) => Promise<T>,
 ): Promise<T> {
-  return await withClient(async (client) => {
-    try {
-      await client.queryArray("BEGIN");
-      const result = await operation(client);
-      await client.queryArray("COMMIT");
-      return result;
-    } catch (error) {
-      await client.queryArray("ROLLBACK");
-      throw error;
-    }
-  });
-} 
+  return await sql.begin(async (sql) => {
+    return await operation(sql);
+  }) as Promise<T>;
+}
+
+// Helper for non-transactional operations (replaces old withClient)
+// The npm postgres package doesn't have a Client class - you use sql directly
+export async function withClient<T>(
+  operation: (sql: postgres.Sql) => Promise<T>,
+): Promise<T> {
+  return await operation(sql);
+}

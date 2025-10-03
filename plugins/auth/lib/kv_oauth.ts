@@ -1,4 +1,9 @@
-import { createHelpers, createTwitterOAuthConfig, createGoogleOAuthConfig, getRequiredEnv } from "kv-oauth";
+import {
+  createGoogleOAuthConfig,
+  createHelpers,
+  createTwitterOAuthConfig,
+  getRequiredEnv,
+} from "kv-oauth";
 import { OAuth2Client } from "oauth2";
 
 // Provider Configuration
@@ -8,34 +13,34 @@ const PROVIDERS = {
     clientSecret: getRequiredEnv("GOOGLE_CLIENT_SECRET"),
     redirectUri: {
       signup: getRequiredEnv("GOOGLE_SIGNUP_REDIRECT_URI"),
-      signin: getRequiredEnv("GOOGLE_SIGNIN_REDIRECT_URI")
+      signin: getRequiredEnv("GOOGLE_SIGNIN_REDIRECT_URI"),
     },
-    scopes: ["openid", "profile", "email"] as string[]
+    scopes: ["openid", "profile", "email"] as string[],
   },
   linkedin: {
     clientId: getRequiredEnv("LINKEDIN_CLIENT_ID"),
     clientSecret: getRequiredEnv("LINKEDIN_CLIENT_SECRET"),
     redirectUri: getRequiredEnv("LINKEDIN_REDIRECT_URI"),
-    scopes: ["r_liteprofile", "r_emailaddress", "w_member_social"] as string[]
-  }
+    scopes: ["r_liteprofile", "r_emailaddress", "w_member_social"] as string[],
+  },
 };
 
 const cookieOptions = {
   name: "session",
   sameSite: "Lax" as const,
   secure: true,
-  path: "/"
+  path: "/",
 };
 
 // Google Configuration
 const googleSignupConfig = createGoogleOAuthConfig({
   redirectUri: PROVIDERS.google.redirectUri.signup,
-  scope: PROVIDERS.google.scopes
+  scope: PROVIDERS.google.scopes,
 });
 
 const googleSigninConfig = createGoogleOAuthConfig({
   redirectUri: PROVIDERS.google.redirectUri.signin,
-  scope: PROVIDERS.google.scopes
+  scope: PROVIDERS.google.scopes,
 });
 
 // LinkedIn Configuration
@@ -60,33 +65,41 @@ const linkedinSigninConfig = {
 };
 
 // Google helpers
-export const googleSignupHelpers = createHelpers(googleSignupConfig, { cookieOptions });
-export const googleSigninHelpers = createHelpers(googleSigninConfig, { cookieOptions });
+export const googleSignupHelpers = createHelpers(googleSignupConfig, {
+  cookieOptions,
+});
+export const googleSigninHelpers = createHelpers(googleSigninConfig, {
+  cookieOptions,
+});
 
 // LinkedIn helpers
-export const linkedinSignupHelpers = createHelpers(linkedinSignupConfig, { cookieOptions });
-export const linkedinSigninHelpers = createHelpers(linkedinSigninConfig, { cookieOptions });
+export const linkedinSignupHelpers = createHelpers(linkedinSignupConfig, {
+  cookieOptions,
+});
+export const linkedinSigninHelpers = createHelpers(linkedinSigninConfig, {
+  cookieOptions,
+});
 
 // Google exports
-export const { 
-  signIn: signInWithGoogleSignup, 
-  handleCallback: handleGoogleSignupCallback 
+export const {
+  signIn: signInWithGoogleSignup,
+  handleCallback: handleGoogleSignupCallback,
 } = googleSignupHelpers;
 
-export const { 
-  signIn: signInWithGoogleSignin, 
-  handleCallback: handleGoogleSigninCallback 
+export const {
+  signIn: signInWithGoogleSignin,
+  handleCallback: handleGoogleSigninCallback,
 } = googleSigninHelpers;
 
 // LinkedIn exports
-export const { 
-  signIn: signInWithLinkedInSignup, 
-  handleCallback: handleLinkedInSignupCallback 
+export const {
+  signIn: signInWithLinkedInSignup,
+  handleCallback: handleLinkedInSignupCallback,
 } = linkedinSignupHelpers;
 
-export const { 
-  signIn: signInWithLinkedInSignin, 
-  handleCallback: handleLinkedInSigninCallback 
+export const {
+  signIn: signInWithLinkedInSignin,
+  handleCallback: handleLinkedInSigninCallback,
 } = linkedinSigninHelpers;
 
 // Export provider configuration for use in other parts of the app
@@ -95,7 +108,7 @@ export { PROVIDERS };
 // Twitter Configuration
 const twitterSignupConfig = createTwitterOAuthConfig({
   redirectUri: "http://localhost:8001/auth/api/signup/twitter-callback",
-  scope: ["tweet.read", "users.read"]
+  scope: ["tweet.read", "users.read"],
 });
 
 const twitterSigninConfig = createTwitterOAuthConfig({
@@ -104,18 +117,22 @@ const twitterSigninConfig = createTwitterOAuthConfig({
 });
 
 // Twitter helpers
-export const twitterSignupHelpers = createHelpers(twitterSignupConfig, { cookieOptions });
-export const twitterSigninHelpers = createHelpers(twitterSigninConfig, { cookieOptions });
+export const twitterSignupHelpers = createHelpers(twitterSignupConfig, {
+  cookieOptions,
+});
+export const twitterSigninHelpers = createHelpers(twitterSigninConfig, {
+  cookieOptions,
+});
 
 // Twitter exports
-export const { 
-  signIn: signInWithTwitterSignup, 
-  handleCallback: handleTwitterSignupCallback 
+export const {
+  signIn: signInWithTwitterSignup,
+  handleCallback: handleTwitterSignupCallback,
 } = twitterSignupHelpers;
 
-export const { 
-  signIn: signInWithTwitterSignin, 
-  handleCallback: handleTwitterSigninCallback 
+export const {
+  signIn: signInWithTwitterSignin,
+  handleCallback: handleTwitterSigninCallback,
 } = twitterSigninHelpers;
 
 /* Apple Authentication - Commented out until Apple Developer Account is set up
@@ -156,7 +173,7 @@ async function generateAppleClientSecret() {
   };
 
   const key = getRequiredEnv("APPLE_PRIVATE_KEY");
-  
+
   // You'll need to implement JWT signing with ES256
   // This is a placeholder - you'll need to implement actual JWT signing
   throw new Error("JWT signing not implemented");
@@ -177,13 +194,13 @@ export const appleSignupHelpers = createHelpers(appleSignupConfig, { cookieOptio
 export const appleSigninHelpers = createHelpers(appleSigninConfig, { cookieOptions });
 
 // Apple exports
-export const { 
-  signIn: signInWithAppleSignup, 
-  handleCallback: handleAppleSignupCallback 
+export const {
+  signIn: signInWithAppleSignup,
+  handleCallback: handleAppleSignupCallback
 } = appleSignupHelpers;
 
-export const { 
-  signIn: signInWithAppleSignin, 
-  handleCallback: handleAppleSigninCallback 
+export const {
+  signIn: signInWithAppleSignin,
+  handleCallback: handleAppleSigninCallback
 } = appleSigninHelpers;
 */

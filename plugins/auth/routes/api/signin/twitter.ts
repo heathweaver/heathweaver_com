@@ -1,17 +1,21 @@
 // routes/verify/twitter/signup.tsx - Handle Twitter signup
-import { Handlers } from "$fresh/server.ts";
 import { handleTwitterSigninCallback } from "../../../lib/kv_oauth.ts";
 import db from "@db/postgres-base.ts";
 import { setCookie } from "cookie";
+import { Handlers } from "fresh/compat";
 
 export const handler: Handlers = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
+
     try {
-      const { response, sessionId, tokens } = await handleTwitterSigninCallback(req);
-      
+      const { response, sessionId, tokens } = await handleTwitterSigninCallback(
+        req,
+      );
+
       // Get Twitter user info and create new user
       const userResponse = await fetch("https://api.twitter.com/2/users/me", {
-        headers: { "Authorization": `Bearer ${tokens.accessToken}` }
+        headers: { "Authorization": `Bearer ${tokens.accessToken}` },
       });
       const userData = await userResponse.json();
 
@@ -19,13 +23,13 @@ export const handler: Handlers = {
       const result = await db.queryObject<{ id: number }>(
         `INSERT INTO runners (first_name, provider, provider_id) 
          VALUES ($1, $2, $3) RETURNING id`,
-        [userData.data.name, 'twitter', userData.data.id]
+        [userData.data.name, "twitter", userData.data.id],
       );
 
       // Set session and redirect to onboarding
       const newResponse = new Response(null, {
         status: 303,
-        headers: { Location: "/profile" }
+        headers: { Location: "/profile" },
       });
 
       setCookie(newResponse.headers, {
@@ -43,8 +47,8 @@ export const handler: Handlers = {
       console.error("Twitter signup error:", error);
       return new Response(null, {
         status: 303,
-        headers: { Location: "/signup?error=Failed to create account" }
+        headers: { Location: "/signup?error=Failed to create account" },
       });
     }
-  }
-}; 
+  },
+};

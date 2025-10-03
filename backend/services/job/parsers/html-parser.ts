@@ -1,6 +1,6 @@
 import { Document } from "@b-fuze/deno-dom/wasm";
 import { BaseParser } from "./base-parser.ts";
-import { ParseResult, ParserError } from "../types.ts";
+import { ParserError, ParseResult } from "../types.ts";
 
 export class HtmlParser extends BaseParser {
   name = "HTML";
@@ -26,7 +26,7 @@ export class HtmlParser extends BaseParser {
     ".jobDetailsPanelContent",
     ".jobdescriptionInJobDetails",
     // Zoho Recruit specific
-    '#spandesc',
+    "#spandesc",
     // Article/content containers
     "article",
     ".article",
@@ -50,7 +50,7 @@ export class HtmlParser extends BaseParser {
     ".details",
     ".details-content",
     "#content",
-    "#main-content"
+    "#main-content",
   ];
 
   async parse(doc: Document, rawHtml: string): Promise<ParseResult> {
@@ -66,14 +66,14 @@ export class HtmlParser extends BaseParser {
       }>,
       timing: {
         start: startTime,
-        end: Date.now()
+        end: Date.now(),
       },
       contentLength: 0,
       sample: "",
       containerFound: false,
       firstTermFound: "none",
       errorType: "EXTRACTION_ERROR",
-      fullError: "Failed to extract content from any source"
+      fullError: "Failed to extract content from any source",
     };
 
     // Try to extract from containers first
@@ -81,16 +81,18 @@ export class HtmlParser extends BaseParser {
     for (const selector of this.selectors) {
       console.debug(`HTML parser: Trying selector "${selector}"`);
       const elements = doc.querySelectorAll(selector);
-      
+
       for (const element of elements) {
         console.debug(`HTML parser: Found element with selector "${selector}"`);
-        const rawContent = element.innerHTML || element.textContent || '';
+        const rawContent = element.innerHTML || element.textContent || "";
         console.debug(`HTML parser: Raw content length: ${rawContent.length}`);
-        
+
         if (rawContent.length > 0) {
           const cleanContent = this.cleanHtmlContent(rawContent);
-          console.debug(`HTML parser: Clean content length: ${cleanContent.length}`);
-          
+          console.debug(
+            `HTML parser: Clean content length: ${cleanContent.length}`,
+          );
+
           if (this.validateContent(cleanContent)) {
             console.debug("HTML parser: Content validation passed");
             debug.contentLength = cleanContent.length;
@@ -99,13 +101,13 @@ export class HtmlParser extends BaseParser {
             debug.firstTermFound = selector;
             debug.attempts.push({
               type: "container",
-              success: true
+              success: true,
             });
             debug.timing.end = Date.now();
             return {
               success: true,
               content: cleanContent,
-              debug
+              debug,
             };
           } else {
             console.debug("HTML parser: Content validation failed");
@@ -114,8 +116,8 @@ export class HtmlParser extends BaseParser {
               success: false,
               error: {
                 type: "CONTENT_VALIDATION_ERROR",
-                message: `Content validation failed for selector ${selector}`
-              }
+                message: `Content validation failed for selector ${selector}`,
+              },
             });
           }
         }
@@ -133,13 +135,13 @@ export class HtmlParser extends BaseParser {
       debug.firstTermFound = "main";
       debug.attempts.push({
         type: "main",
-        success: true
+        success: true,
       });
       debug.timing.end = Date.now();
       return {
         success: true,
         content: mainContent,
-        debug
+        debug,
       };
     }
 
@@ -148,8 +150,8 @@ export class HtmlParser extends BaseParser {
       success: false,
       error: {
         type: "EXTRACTION_ERROR",
-        message: "Failed to extract content from main content"
-      }
+        message: "Failed to extract content from main content",
+      },
     });
     debug.timing.end = Date.now();
 
@@ -158,9 +160,9 @@ export class HtmlParser extends BaseParser {
       content: "",
       error: {
         type: "EXTRACTION_ERROR",
-        message: "Failed to extract content from any source"
+        message: "Failed to extract content from any source",
       },
-      debug
+      debug,
     };
   }
 
@@ -169,40 +171,43 @@ export class HtmlParser extends BaseParser {
       console.debug("HTML parser: Removing non-content elements");
       // Remove non-content elements
       const removeSelectors = [
-        'header',
-        'footer',
-        'nav',
-        '.navigation',
-        '.header',
-        '.footer',
-        '.sidebar',
-        '.menu',
-        '.social-share',
-        '.related-jobs',
-        '.job-actions',
-        '.apply-button',
-        '.apply-section',
-        'script',
-        'style',
-        'iframe',
-        'form'
+        "header",
+        "footer",
+        "nav",
+        ".navigation",
+        ".header",
+        ".footer",
+        ".sidebar",
+        ".menu",
+        ".social-share",
+        ".related-jobs",
+        ".job-actions",
+        ".apply-button",
+        ".apply-section",
+        "script",
+        "style",
+        "iframe",
+        "form",
       ];
 
       for (const selector of removeSelectors) {
-        doc.querySelectorAll(selector).forEach(el => {
+        doc.querySelectorAll(selector).forEach((el) => {
           try {
             el.remove();
           } catch (err) {
-            console.debug(`HTML parser: Failed to remove element ${selector}:`, err);
+            console.debug(
+              `HTML parser: Failed to remove element ${selector}:`,
+              err,
+            );
           }
         });
       }
 
       // Get main content
-      const content = doc.body?.textContent || '';
+      const content = doc.body?.textContent || "";
       const cleanContent = this.cleanHtmlContent(content);
       console.debug(`HTML parser: Main content length: ${cleanContent.length}`);
-      
+
       if (this.validateContent(cleanContent)) {
         console.debug("HTML parser: Main content validation passed");
         return cleanContent;
@@ -214,4 +219,4 @@ export class HtmlParser extends BaseParser {
     }
     return null;
   }
-} 
+}

@@ -1,5 +1,5 @@
 import { DOMParser } from "@b-fuze/deno-dom";
-import { ParseResult, ParserError, DebugInfo } from "./types.ts";
+import { DebugInfo, ParserError, ParseResult } from "./types.ts";
 import { Document } from "@b-fuze/deno-dom/wasm";
 import { JobParser } from "./parsers/index.ts";
 
@@ -25,26 +25,26 @@ function cleanHtmlContent(html: string): string {
 
   // Replace common elements with appropriate text
   const elementReplacements: Record<string, string> = {
-    'p': '\n\n',
-    'br': '\n',
-    'div': '\n',
-    'h1': '\n\n',
-    'h2': '\n\n',
-    'h3': '\n\n',
-    'h4': '\n\n',
-    'h5': '\n\n',
-    'h6': '\n\n',
-    'li': '\n• ',
-    'tr': '\n',
-    'th': '\t',
-    'td': '\t',
+    "p": "\n\n",
+    "br": "\n",
+    "div": "\n",
+    "h1": "\n\n",
+    "h2": "\n\n",
+    "h3": "\n\n",
+    "h4": "\n\n",
+    "h5": "\n\n",
+    "h6": "\n\n",
+    "li": "\n• ",
+    "tr": "\n",
+    "th": "\t",
+    "td": "\t",
   };
 
   // Replace elements with their text equivalents
   Object.entries(elementReplacements).forEach(([tag, replacement]) => {
-    doc.querySelectorAll(tag).forEach(el => {
+    doc.querySelectorAll(tag).forEach((el) => {
       try {
-        const text = el.textContent || '';
+        const text = el.textContent || "";
         el.textContent = `${replacement}${text}`;
       } catch (err) {
         console.debug(`Failed to process ${tag} element:`, err);
@@ -57,11 +57,11 @@ function cleanHtmlContent(html: string): string {
 
   // Clean up the text
   return text
-    .replace(/\s+/g, ' ')  // Normalize whitespace
-    .replace(/\n\s*\n/g, '\n\n')  // Normalize line breaks
-    .replace(/\t\s*\t/g, '\t')  // Normalize tabs
-    .replace(/•\s+/g, '• ')  // Clean up bullet points
-    .replace(/\n{3,}/g, '\n\n')  // Remove excessive line breaks
+    .replace(/\s+/g, " ") // Normalize whitespace
+    .replace(/\n\s*\n/g, "\n\n") // Normalize line breaks
+    .replace(/\t\s*\t/g, "\t") // Normalize tabs
+    .replace(/•\s+/g, "• ") // Clean up bullet points
+    .replace(/\n{3,}/g, "\n\n") // Remove excessive line breaks
     .trim();
 }
 
@@ -70,12 +70,14 @@ function cleanHtmlContent(html: string): string {
  */
 function extractStructuredData(doc: Document): ParseResult | null {
   try {
-    const jsonLdScripts = doc.querySelectorAll('script[type="application/ld+json"]');
-    
+    const jsonLdScripts = doc.querySelectorAll(
+      'script[type="application/ld+json"]',
+    );
+
     for (const script of jsonLdScripts) {
       try {
         const data = JSON.parse(script.textContent || "") as JobPostingSchema;
-        
+
         if (data["@type"] === "JobPosting" && data.description) {
           console.log("\nFound structured job data:", {
             title: data.title,
@@ -91,15 +93,15 @@ function extractStructuredData(doc: Document): ParseResult | null {
               strategy: "structured-data",
               attempts: [{
                 type: "json-ld",
-                success: true
+                success: true,
               }],
               timing: {
                 start: Date.now(),
-                end: Date.now()
+                end: Date.now(),
               },
               contentLength: cleanContent.length,
-              sample: cleanContent.substring(0, 100)
-            }
+              sample: cleanContent.substring(0, 100),
+            },
           };
         }
       } catch (err) {
@@ -119,23 +121,23 @@ function extractStructuredData(doc: Document): ParseResult | null {
  */
 function extractFromContainer(doc: Document): string | null {
   const commonSelectors = [
-    '.job-description',
-    '.description',
+    ".job-description",
+    ".description",
     '[data-test="job-description"]',
-    '#job-description',
+    "#job-description",
     '[itemprop="description"]',
-    '.posting-requirements',
-    '.job-details',
-    '.job-content',
-    'article',
-    'main',
-    '.main-content'
+    ".posting-requirements",
+    ".job-details",
+    ".job-content",
+    "article",
+    "main",
+    ".main-content",
   ];
 
   for (const selector of commonSelectors) {
     const element = doc.querySelector(selector);
     if (element) {
-      const rawContent = element.innerHTML || '';
+      const rawContent = element.innerHTML || "";
       if (rawContent.length > 100) {
         const cleanContent = cleanHtmlContent(rawContent);
         if (cleanContent.length > 100) {
@@ -165,37 +167,41 @@ function tryPatterns(content: string, patterns: RegExp[]): string | null {
  */
 export async function extractJobContent(html: string): Promise<ParseResult> {
   console.debug("\nExtracting job content...");
-  
+
   const parser = new JobParser();
   const result = await parser.parse(html);
-  
+
   // Convert string error to ParserError if needed and ensure debug info matches type
   const finalResult: ParseResult = {
     ...result,
     content: result.content || "",
-    error: result.error ? {
-      type: "EXTRACTION_ERROR",
-      message: typeof result.error === 'string' ? result.error : result.error.message
-    } : undefined,
+    error: result.error
+      ? {
+        type: "EXTRACTION_ERROR",
+        message: typeof result.error === "string"
+          ? result.error
+          : result.error.message,
+      }
+      : undefined,
     debug: {
       parser: "JobParser",
       strategy: "combined",
       attempts: [],
       timing: {
         start: Date.now(),
-        end: Date.now()
+        end: Date.now(),
       },
       contentLength: (result.content || "").length,
-      sample: (result.content || "").substring(0, 100)
-    }
+      sample: (result.content || "").substring(0, 100),
+    },
   };
-  
+
   console.debug("Parse result:", {
     success: finalResult.success,
     contentLength: finalResult.content.length,
     error: finalResult.error,
-    debug: finalResult.debug
+    debug: finalResult.debug,
   });
 
   return finalResult;
-} 
+}

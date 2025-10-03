@@ -79,5 +79,10 @@ export interface DatabaseService {
     awards: DBAward[];
     publications: DBPublication[];
   }>;
-  storeJobContent?(content: JobContent, rawContent: string, id: string, url: string): Promise<void>;
-} 
+  storeJobContent?(
+    content: JobContent,
+    rawContent: string,
+    id: string,
+    url: string,
+  ): Promise<void>;
+}

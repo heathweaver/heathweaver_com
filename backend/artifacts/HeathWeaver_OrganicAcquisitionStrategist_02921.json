@@ -1,0 +1,693 @@
+{
+  "basicInfo": {
+    "name": "Heath Weaver",
+    "email": "heath.weaver@remote-executive.com",
+    "phone": "",
+    "location": "Brussels, Belgium",
+    "linkedin": "https://www.linkedin.com/in/heathweaver/"
+  },
+  "profile": "With over two decades of experience, Heath has honed a versatile skill set that bridges technical expertise with strategic leadership. Known for driving innovation and efficiency, Heath's career reflects a consistent ability to adapt and excel in dynamic environments, making a significant impact in every role undertaken.",
+  "employmentHistory": [
+    {
+      "company": "EmailsandDeals.com",
+      "title": "Personal project to explore AI",
+      "start_date": "2024-08-31",
+      "end_date": "2024-12-31",
+      "location": "Brussels",
+      "responsibilities": [
+        "EmailsandDeals.com is a non SaaS project that uses AI to extract deals from emails and provide coupons to visitors.",
+        "Designed and implemented the entire architecture for emailsanddeals.com, including backend, frontend, and deployment.",
+        "Developed 12 microservices in Python for email processing, including fetching, parsing, sanitizing links, and integrating affiliate links.",
+        "Integrated AI systems (e.g., OpenAI) for email content review and deal extraction, later transitioning to Python-based LLM and OCR tools for improved efficiency.",
+        "Built a responsive frontend using Deno Fresh (TypeScript) and ensured seamless user interaction with thumbnails, text, and a search engine.",
+        "Managed database design and optimization using MariaDB, transitioning from Appwrite to improve page load times from 18 seconds to under 1 second.",
+        "Implemented Redis for efficient queuing and task management after refactoring from a database table-based queue system.",
+        "Automated the generation of blog posts and tweets for every processed email, ensuring full system automation.",
+        "Handled deployment, version control, and staging workflows using Git, including pull requests and staging branch management."
+      ],
+      "achievements": [
+        "Processed 11,500 emails over 2.5 months, achieving a processing rate of 1 email every 5 seconds.",
+        "Improved deal extraction accuracy from 80% to 95% through iterative AI model refinements and Python-based tooling.",
+        "Improved deal extraction accuracy from 80% to 95% through iterative AI model refinements and Python-based tooling.",
+        "Reduced page load times from 18 seconds to under 1 second by refactoring the backend and migrating to MariaDB.",
+        "Fully automated the system, enabling end-to-end processing of emails, including affiliate link integration, thumbnail generation, and content publishing.",
+        "Subscribed to 450+ stores for deal aggregation, demonstrating scalability and integration capabilities.",
+        "Successfully implemented Redis for task queuing, improving system reliability and performance.",
+        "Gained hands-on experience with AI integration, Redis, Deno Fresh, and advanced Python development."
+      ],
+      "narrative": [
+        "Designed and developed emailsanddeals.com, a fully automated AI-powered platform that processes 11,500 emails, extracts deals with 95% accuracy, and integrates affiliate links for monetization.",
+        "Built a scalable backend with 12 microservices in Python, handling email fetching, parsing, sanitization, and AI-driven content review, achieving a processing rate of 1 email every 5 seconds.",
+        "Refactored the system to replace OpenAI with Python-based LLM and OCR tools, improving deal extraction accuracy and reducing dependency on external AI services.",
+        "Optimized page load times from 18 seconds to under 1 second by migrating from Appwrite to a locally hosted MariaDB database and implementing Redis for task queuing.",
+        "Created a responsive frontend using Deno Fresh (TypeScript), featuring deal thumbnails, search functionality, and seamless user interaction.",
+        "Automated content generation, producing blog posts and tweets for every processed email, and integrated affiliate links to drive revenue.",
+        "Managed the entire project lifecycle, from architecture design and development to deployment and version control using Git and pull requests.",
+        "Gained expertise in AI integration, Redis, Deno Fresh, and advanced Python development while building a complex, fully automated system from scratch."
+      ],
+      "bulletPoints": [
+        {
+          "content": "Designed and implemented a scalable digital marketing platform, leveraging AI for organic acquisition strategies, achieving a 95% accuracy in deal extraction."
+        },
+        {
+          "content": "Automated content generation and affiliate link integration, enhancing user engagement and driving organic traffic growth in the health and wellness sector."
+        },
+        {
+          "content": "Optimized backend systems and database architecture, reducing page load times from 18 seconds to under 1 second, significantly improving user experience."
+        }
+      ]
+    },
+    {
+      "company": "Essence of Email Agency",
+      "title": "Managing Director",
+      "start_date": "2019-06-16",
+      "end_date": "2024-03-31",
+      "location": "Remote (US Clients)",
+      "responsibilities": [
+        "Managing Director responsible for all aspects of the email marketing primarily for eCommerce clients, including sales, marketing, and operations",
+        "Managed several SaaS, Education, and platform clients",
+        "Directly managed large teams (up to 50), focusing on organization and motivation",
+        "Overhauled customer segmentation and email strategies, boosting client revenue by 34%",
+        "Created a project planning system, increasing productivity by 94%",
+        "Closed 35% of deals across 200 opportunities, actively participating in sales calls",
+        "Developed a vision focused on expertise areas, increasing client retention by 100%",
+        "Reorganized teams to better meet client needs, improving client satisfaction by 10%",
+        "Implemented AI-powered solutions like Custom GPTs for copywriting, saving 6% annually while enhancing customer satisfaction",
+        "Hired skilled workers from best-cost countries, optimizing labor costs",
+        "Implemented a matrix-based forecasting system using AI for scenario analysis",
+        "Developed LinkedIn and cross-channel lead generation strategies, gaining 6 clients in under 3 months",
+        "Established extensive process documentation, reducing production defects by 76%",
+        "Conducted regular coaching sessions, performance, and salary reviews to foster team development"
+      ],
+      "achievements": [
+        "Set a new company record for revenue through personal involvement in sales.",
+        "Increased productivity and quality across the board by reshaping work processes and implementing strategic hires.",
+        "Launched The Better Creative, targeting new markets by spinning off the design unit."
+      ],
+      "narrative": [
+        "At Essence of Email, I led as Managing Director, fundamentally reshaping our operations to focus on client satisfaction and employee productivity. My direct involvement in sales and strategy led to unprecedented revenue growth and client retention.",
+        "I championed the integration of AI in our workflow, notably with Custom GPTs for copywriting, which not only saved costs but also improved our service quality. My strategic vision was to align our workforce's expertise with client needs, dramatically reducing churn and enhancing job satisfaction.",
+        "I managed the transition of our design capabilities into a new venture, The Better Creative, demonstrating my ability to innovate and expand business horizons. My approach to team management included rigorous coaching, performance review, and strategic hiring to ensure we had the best talent at the most efficient cost."
+      ],
+      "bulletPoints": [
+        {
+          "content": "Overhauled customer segmentation and email strategies, boosting client revenue by 34%, aligning with driving organic traffic growth in the health and wellness sector."
+        },
+        {
+          "content": "Implemented AI-powered solutions like Custom GPTs for copywriting, saving 6% annually, demonstrating strong expertise in automation and enhancing customer satisfaction."
+        },
+        {
+          "content": "Developed LinkedIn and cross-channel lead generation strategies, gaining 6 clients in under 3 months, showcasing excellent analytical skills and actionable insights."
+        },
+        {
+          "content": "Reorganized teams to better meet client needs, improving client satisfaction by 10%, reflecting proven leadership in building and mentoring teams."
+        }
+      ]
+    },
+    {
+      "company": "Trilogy Software",
+      "title": "VP of Marketing",
+      "start_date": "2018-03-31",
+      "end_date": "2019-01-31",
+      "location": "Remote (US Timezone)",
+      "responsibilities": [
+        "Assisted with the launch of a portfolio of highly technical software solutions for telecom operators",
+        "Developed and delivered an intensive four-week Sales boot camp, creating and implementing a framework to evaluate training effectiveness",
+        "Developed Marketing assembly lines for 15 SaaS products, including customer and competitor review, creation of sales enablement materials, and ABM strategies",
+        "Managed Salesforce migration, data recovery, and training for sales teams",
+        "Created ABM content for DNN (DotNetNuke), focusing on partner and developer ecosystem enhancement",
+        "Reported directly to the group COO, overseeing marketing and sales enablement efforts",
+        "Worked closely with the management team for the ramp-up of telecom software products"
+      ],
+      "achievements": [
+        "Delivered 25% of a four-week Sales boot camp, significantly enhancing the sales team's capabilities.",
+        "Established effective marketing processes for multiple SaaS products, contributing to streamlined product launches and sales strategies.",
+        "Led the transition and training for Salesforce, ensuring data integrity and team readiness for ABM."
+      ],
+      "narrative": [
+        "At Trilogy Software, I was instrumental in not only launching sophisticated software products for telecom but also in building the marketing and sales capabilities around these products. I developed comprehensive training programs, like the Sales boot camp, which directly improved our sales team's effectiveness.",
+        "I took on the responsibility of creating a marketing assembly line for our SaaS offerings, which involved deep dives into market analysis, competitive positioning, and crafting materials that empowered our sales teams to succeed. This was under the direct oversight of the COO, ensuring alignment with corporate objectives.",
+        "My role also included managing the complexities of Salesforce migration, which was crucial for our ABM strategies, ensuring we had the data and systems in place to target and engage with clients effectively."
+      ],
+      "bulletPoints": [
+        {
+          "content": "Developed and implemented marketing assembly lines for 15 SaaS products, enhancing sales enablement and ABM strategies, leading to streamlined product launches."
+        },
+        {
+          "content": "Managed Salesforce migration and training, ensuring data integrity and team readiness, which supported effective ABM strategies and sales team performance."
+        }
+      ]
+    },
+    {
+      "company": "Retorica & The Specialists Agency",
+      "title": "Managing Partner & Co-Founder",
+      "start_date": "2013-07-31",
+      "end_date": "2017-07-31",
+      "location": "Remote",
+      "responsibilities": [
+        "Advised corporate clients such as Motorola, Virgin Wines, and Hillary's Blinds on multichannel e-business strategy",
+        "Directed daily operations of POS & display advertising agency, including a digital growth-hacking division focused on startups and small businesses",
+        "Developed and implemented business strategies with the Board of Directors, aiming for differentiation through client-centric and integrated online marketing approaches",
+        "Managed end-to-end development of high-impact point-of-sale materials like window displays, coupons, and merchandising for clients including Samsonite, Fiat, Kia, and Bacardi-Martini",
+        "Oversaw digital division's focus on growing client businesses through testing and optimization of digital presence, including advertising, email, and websites",
+        "Engaged in hands-on work due to the boutique nature of the agency, from writing copy to overseeing print jobs"
+      ],
+      "achievements": [
+        "Our agency's campaign work was notably used as the storyline for Bombay Sapphire's Spice Hunter campaign.",
+        "Managed and grew an agency with a unique creative process, specializing in open source solutions for digital clients.",
+        "Successfully operated a small agency at a senior level, gaining extensive experience in business development and operational management."
+      ],
+      "narrative": [
+        "At The Specialists Agency & Retorica, I wore many hats as the Managing Partner & Co-Founder, from advising multinational clients on their digital strategies to directing the daily operations of a creative agency. Our focus was on delivering bespoke, high-impact POS and digital advertising solutions.",
+        "We specialized in creating unique campaigns that not only met but often exceeded client expectations, like the notable Bombay Sapphire campaign. Our strategy was to remain boutique, allowing for personalized service and innovative, client-focused solutions.",
+        "The digital division under my leadership was all about growth through continuous testing and optimization, ensuring our clients from startups to established brands saw significant digital presence improvement."
+      ],
+      "bulletPoints": [
+        {
+          "content": "Directed digital growth-hacking division, implementing organic acquisition strategies that significantly enhanced digital presence for startups and small businesses."
+        },
+        {
+          "content": "Developed and executed integrated online marketing strategies, driving organic traffic growth for clients in diverse sectors including health and wellness."
+        }
+      ]
+    },
+    {
+      "company": "High Position Agency",
+      "title": "Director, Europe",
+      "start_date": "2010-03-31",
+      "end_date": "2011-05-31",
+      "location": "Partially Remote",
+      "responsibilities": [
+        "Advised corporate clients such as Motorola, Virgin Wines, and Hillary's Blinds on multichannel e-business strategy",
+        "Developed and implemented business strategy with the Board of Directors, focusing on differentiation through client-focus and an integrated online marketing approach",
+        "Defined and clarified business group processes, moving lower profit clients to a best-cost partner in India",
+        "Developed KPIs and review processes to ensure quality from offshore partners",
+        "Directly involved in Conversion Rate Optimization testing across various brands",
+        "Launched conversion optimization program",
+        "Implemented LinkedIn B2B automation, growing leads for small businesses",
+        "Redesigned the company website with integrated landing page optimization and CRM"
+      ],
+      "achievements": [
+        "Strategy resulted in a 75% increase in revenue for High Position Agency.",
+        "Reduced customer churn by 40% through innovative client management strategies.",
+        "Doubled profitability and client satisfaction by optimizing business processes and partnerships."
+      ],
+      "narrative": [
+        "At High Position Agency, I was the driving force behind a strategy that not only increased revenue by 75% but also significantly cut down customer churn. My approach was to deeply understand and cater to client needs, which was evident in how I advised major clients on their e-business strategies.",
+        "I revamped our internal processes, which included outsourcing less profitable segments to an Indian partner, while ensuring high-quality service through strict KPIs. This not only doubled our profitability but also our client satisfaction.",
+        "I spearheaded the integration of a new client reporting format using Google Analytics, which gave us unprecedented visibility into our e-business performance. Additionally, my initiative in launching conversion optimization and B2B automation programs directly led to increased engagement and sales leads."
+      ],
+      "bulletPoints": [
+        {
+          "content": "Developed and implemented a multichannel e-business strategy, focusing on organic acquisition strategies, which resulted in a 75% increase in revenue and a 40% reduction in customer churn."
+        }
+      ]
+    },
+    {
+      "company": "Sony eCommerce Europe",
+      "title": "Head of Search Engine Marketing, Europe",
+      "start_date": "2007-06-30",
+      "end_date": "2010-02-28",
+      "location": "Brussels",
+      "responsibilities": [
+        "Aligned European search activities by building relationships with local marketing teams, resulting in a 103% lift in search traffic year-on-year",
+        "Coordinated Pan-European search campaigns across 16 local country marketing teams, product marketing departments, affiliate networks, and PR and Marketing agencies, achieving top 5 listings for high-volume keywords like laptop, camera, and HD TV",
+        "Managed Sony VAIO computer pricing flows in SAP",
+        "Provided analysis to marketing groups to shape fact-based value propositions for dealers",
+        "Developed testing framework via SEM to identify best performing value propositions",
+        "Supervised Advertising & Promotion budget activities within profitability framework"
+      ],
+      "achievements": [
+        "Increased Direct Sales by 300% over three years through effective management of Search Marketing program.",
+        "Reduced ad costs by 5% while significantly increasing sales.",
+        "Created first ever Sony worldwide Marginal Profit analysis to enhance profitability insights.",
+        "Developed a strategy called 'locomotive' which contributed to VAIO's profitability turnaround, from 0% to over 5% operational profit in three years."
+      ],
+      "narrative": [
+        "At Sony Electronics, I led the Search Engine Marketing for Europe, where my team and I not only doubled search traffic but also increased direct sales dramatically. We achieved this by closely aligning our search activities with local marketing strategies and by innovating with our testing frameworks.",
+        "I was instrumental in creating Sony's first worldwide profitability analysis, which gave us actionable insights to boost our Net Income Before Taxes (NIBT). My role also extended into managing the financial aspects of the VAIO brand, ensuring profitability and strategic alignment.",
+        "The 'locomotive' strategy I developed was pivotal in turning around VAIO's profitability, which was specifically noted in Sony's annual report for its significant impact on the European market."
+      ],
+      "bulletPoints": [
+        {
+          "content": "Aligned European search activities with local marketing teams, driving a 103% increase in search traffic year-on-year, demonstrating success in organic traffic growth."
+        },
+        {
+          "content": "Coordinated Pan-European search campaigns across 16 teams, achieving top 5 listings for high-volume keywords, showcasing strong expertise in organic acquisition strategies."
+        },
+        {
+          "content": "Developed the 'locomotive' strategy, turning VAIO's operational profit from 0% to over 5% in three years, highlighting creative problem-solving and understanding of market trends."
+        }
+      ]
+    },
+    {
+      "company": "Sony VAIO Europe",
+      "title": "Manager, Finance",
+      "start_date": "2003-09-30",
+      "end_date": "2007-06-30",
+      "location": "Brussels",
+      "responsibilities": [
+        "Served as Controller for Sony VAIO brand overseeing €1B+ annual revenue, managing P&L, budgets, forecasts, and financial reporting",
+        "Led worldwide profitability analysis initiatives, including product, dealer, and customer-level marginal profit insights",
+        "Managed full Sales & Marketing financial processes (semi-annual budgets, monthly forecasts, variance analysis, daily/weekly sales monitoring)",
+        "Supervised a team providing operational support and financial analysis for European sales entities",
+        "Streamlined financial processes (e.g., GP monitoring) through automation, reducing monthly workload by 4 days and staff requirements",
+        "Partnered with Sales & Marketing to develop profitability management frameworks by customer, product, and channel",
+        "Managed Sony VAIO computer pricing flows in SAP and supported SAP Campaign Management implementation"
+      ],
+      "achievements": [
+        "Created Sony's first worldwide Marginal Profit analysis, enabling granular profitability insights by country/product/dealer and driving NIBT growth",
+        "Developed 'locomotive' strategy contributing to VAIO's profitability turnaround (0% to 5% operational profit in 3 years), noted in Sony's annual report",
+        "Increased Revenue by 300% while reducing costs by 5% through Cost of Sales ROI strategies",
+        "Quadrupled budget allocation through strategic collaboration with Senior Management",
+        "Streamlined reporting processes to achieve weekly financial closes, saving 4 days/month and reducing headcount needs",
+        "Pioneered Six Sigma Lite methodology to standardize reporting and operational workflows"
+      ],
+      "narrative": [
+        "As Finance Manager for Sony VAIO Europe, I transformed financial operations for a €1B+ business by creating groundbreaking profitability analyses that became corporate benchmarks. My locomotive strategy was instrumental in reversing declining margins.",
+        "I led cross-functional initiatives that bridged Finance and Marketing, developing ROI frameworks that simultaneously grew revenue by 300% while cutting costs. My team became known for turning complex data into executable strategies.",
+        "By implementing process automation and lean methodologies, I eliminated 160+ hours of annual redundant work while improving reporting accuracy. My financial leadership directly supported VAIO's return to profitability during a critical turnaround period.",
+        "As trusted advisor to senior leadership, I shaped budget allocations and pricing strategies that balanced aggressive growth targets with strict profitability guardrails. My analyses became decision-making cornerstones for European operations."
+      ],
+      "bulletPoints": [
+        {
+          "content": "Streamlined financial processes through automation, reducing monthly workload by 4 days, aligning with experience in automation and operational efficiency."
+        },
+        {
+          "content": "Developed 'locomotive' strategy contributing to VAIO's profitability turnaround, showcasing creative problem-solving and understanding of market trends."
+        },
+        {
+          "content": "Increased Revenue by 300% while reducing costs by 5% through Cost of Sales ROI strategies, demonstrating excellent analytical skills and ability to drive actionable insights."
+        }
+      ]
+    },
+    {
+      "company": "Charlotte Russe",
+      "title": "Financial Analyst and Investor Relations",
+      "start_date": "2002-09-30",
+      "end_date": "2003-04-30",
+      "location": "San Diego",
+      "responsibilities": [
+        "Automated reporting to increase management productivity using MS Excel VBA (Macros)",
+        "Automated reporting using Excel VBA (Macros) increasing management productivity",
+        "{'Managed Investor Relations (NASDAQ': 'CHIC) including, presenting research to senior management, producing the Annual Report, and responding to industry analyst and investors'}",
+        "{'Managed Investor Relations (NASDAQ': 'CHIC); produced the annual report to investors, responded to industry analyst and investors, and tracked competitor financial performance, through PR Newswire. Supported senior management in annual budgets, monthly and daily in-store sales forecasts, and monthly, weekly, daily performance reviews'}",
+        "Presented monthly, quarterly, annual, and ad hoc reporting and budgeting to senior management, board of directors, and major shareholders",
+        "Supported Senior Management including annual budgets, monthly and daily in-store sales forecasts, and monthly, weekly, daily performance reviews",
+        "Worked closely with Marketing Communications and Product Management"
+      ],
+      "achievements": [
+        "Automation and Efficiency: Automated reporting using Excel VBA (Macros) to significantly enhance management productivity.",
+        "Investor Relations Leadership: Managed Investor Relations for Charlotte Russe (NASDAQ: CHIC), producing the Annual Report, engaging with industry analysts and investors, and providing strategic financial insights to senior management and the board."
+      ],
+      "narrative": [
+        "At Charlotte Russe, I developed and implemented Excel VBA macros for automated reporting, which increased management productivity by streamlining data analysis and presentation.",
+        "My role in Investor Relations included producing comprehensive annual reports, directly responding to queries from analysts and investors, and tracking competitor performance via PR Newswire.",
+        "I supported strategic decision-making by presenting monthly, quarterly, annual, and ad hoc financial reports to senior management, the board of directors, and major shareholders.",
+        "Engaged actively with Wall Street analysts, providing insights and updates on Charlotte Russe's performance, which was crucial for a small-cap, publicly traded company.",
+        "I was instrumental in supporting senior management with annual budgets, monthly and daily in-store sales forecasts, and detailed performance reviews, ensuring all levels of the organization had the data needed to make informed decisions.",
+        "Worked closely with the Marketing Communications and Product Management teams to align investor relations activities with broader company strategies."
+      ],
+      "bulletPoints": [
+        {
+          "content": "Automated reporting processes using Excel VBA (Macros), enhancing management productivity and supporting strategic decision-making with accurate, timely financial insights."
+        }
+      ]
+    }
+  ],
+  "certificatesAndAwards": [
+    "Spirit of Dixie"
+  ],
+  "contact": {
+    "id": 14,
+    "full_name": "Heath Weaver",
+    "email": "heath.weaver@remote-executive.com",
+    "phone": "",
+    "location": "Brussels, Belgium",
+    "linkedin": "https://www.linkedin.com/in/heathweaver/"
+  },
+  "experience": [
+    {
+      "id": 98,
+      "company": "Charlotte Russe",
+      "title": "Financial Analyst and Investor Relations",
+      "start_date": "2002-09-30T22:00:00.000Z",
+      "end_date": "2003-04-30T22:00:00.000Z",
+      "location": "San Diego",
+      "responsibilities": [
+        "Automated reporting to increase management productivity using MS Excel VBA (Macros)",
+        "Automated reporting using Excel VBA (Macros) increasing management productivity",
+        "{'Managed Investor Relations (NASDAQ': 'CHIC) including, presenting research to senior management, producing the Annual Report, and responding to industry analyst and investors'}",
+        "{'Managed Investor Relations (NASDAQ': 'CHIC); produced the annual report to investors, responded to industry analyst and investors, and tracked competitor financial performance, through PR Newswire. Supported senior management in annual budgets, monthly and daily in-store sales forecasts, and monthly, weekly, daily performance reviews'}",
+        "Presented monthly, quarterly, annual, and ad hoc reporting and budgeting to senior management, board of directors, and major shareholders",
+        "Supported Senior Management including annual budgets, monthly and daily in-store sales forecasts, and monthly, weekly, daily performance reviews",
+        "Worked closely with Marketing Communications and Product Management"
+      ],
+      "achievements": [
+        "Automation and Efficiency: Automated reporting using Excel VBA (Macros) to significantly enhance management productivity.",
+        "Investor Relations Leadership: Managed Investor Relations for Charlotte Russe (NASDAQ: CHIC), producing the Annual Report, engaging with industry analysts and investors, and providing strategic financial insights to senior management and the board."
+      ],
+      "narrative": [
+        "At Charlotte Russe, I developed and implemented Excel VBA macros for automated reporting, which increased management productivity by streamlining data analysis and presentation.",
+        "My role in Investor Relations included producing comprehensive annual reports, directly responding to queries from analysts and investors, and tracking competitor performance via PR Newswire.",
+        "I supported strategic decision-making by presenting monthly, quarterly, annual, and ad hoc financial reports to senior management, the board of directors, and major shareholders.",
+        "Engaged actively with Wall Street analysts, providing insights and updates on Charlotte Russe's performance, which was crucial for a small-cap, publicly traded company.",
+        "I was instrumental in supporting senior management with annual budgets, monthly and daily in-store sales forecasts, and detailed performance reviews, ensuring all levels of the organization had the data needed to make informed decisions.",
+        "Worked closely with the Marketing Communications and Product Management teams to align investor relations activities with broader company strategies."
+      ]
+    },
+    {
+      "id": 101,
+      "company": "EmailsandDeals.com",
+      "title": "Personal project to explore AI",
+      "start_date": "2024-08-31T22:00:00.000Z",
+      "end_date": "2024-12-31T23:00:00.000Z",
+      "location": "Brussels",
+      "responsibilities": [
+        "EmailsandDeals.com is a non SaaS project that uses AI to extract deals from emails and provide coupons to visitors.",
+        "Designed and implemented the entire architecture for emailsanddeals.com, including backend, frontend, and deployment.",
+        "Developed 12 microservices in Python for email processing, including fetching, parsing, sanitizing links, and integrating affiliate links.",
+        "Integrated AI systems (e.g., OpenAI) for email content review and deal extraction, later transitioning to Python-based LLM and OCR tools for improved efficiency.",
+        "Built a responsive frontend using Deno Fresh (TypeScript) and ensured seamless user interaction with thumbnails, text, and a search engine.",
+        "Managed database design and optimization using MariaDB, transitioning from Appwrite to improve page load times from 18 seconds to under 1 second.",
+        "Implemented Redis for efficient queuing and task management after refactoring from a database table-based queue system.",
+        "Automated the generation of blog posts and tweets for every processed email, ensuring full system automation.",
+        "Handled deployment, version control, and staging workflows using Git, including pull requests and staging branch management."
+      ],
+      "achievements": [
+        "Processed 11,500 emails over 2.5 months, achieving a processing rate of 1 email every 5 seconds.",
+        "Improved deal extraction accuracy from 80% to 95% through iterative AI model refinements and Python-based tooling.",
+        "Improved deal extraction accuracy from 80% to 95% through iterative AI model refinements and Python-based tooling.",
+        "Reduced page load times from 18 seconds to under 1 second by refactoring the backend and migrating to MariaDB.",
+        "Fully automated the system, enabling end-to-end processing of emails, including affiliate link integration, thumbnail generation, and content publishing.",
+        "Subscribed to 450+ stores for deal aggregation, demonstrating scalability and integration capabilities.",
+        "Successfully implemented Redis for task queuing, improving system reliability and performance.",
+        "Gained hands-on experience with AI integration, Redis, Deno Fresh, and advanced Python development."
+      ],
+      "narrative": [
+        "Designed and developed emailsanddeals.com, a fully automated AI-powered platform that processes 11,500 emails, extracts deals with 95% accuracy, and integrates affiliate links for monetization.",
+        "Built a scalable backend with 12 microservices in Python, handling email fetching, parsing, sanitization, and AI-driven content review, achieving a processing rate of 1 email every 5 seconds.",
+        "Refactored the system to replace OpenAI with Python-based LLM and OCR tools, improving deal extraction accuracy and reducing dependency on external AI services.",
+        "Optimized page load times from 18 seconds to under 1 second by migrating from Appwrite to a locally hosted MariaDB database and implementing Redis for task queuing.",
+        "Created a responsive frontend using Deno Fresh (TypeScript), featuring deal thumbnails, search functionality, and seamless user interaction.",
+        "Automated content generation, producing blog posts and tweets for every processed email, and integrated affiliate links to drive revenue.",
+        "Managed the entire project lifecycle, from architecture design and development to deployment and version control using Git and pull requests.",
+        "Gained expertise in AI integration, Redis, Deno Fresh, and advanced Python development while building a complex, fully automated system from scratch."
+      ]
+    },
+    {
+      "id": 102,
+      "company": "Essence of Email Agency",
+      "title": "Managing Director",
+      "start_date": "2019-06-16T22:00:00.000Z",
+      "end_date": "2024-03-31T22:00:00.000Z",
+      "location": "Remote (US Clients)",
+      "responsibilities": [
+        "Managing Director responsible for all aspects of the email marketing primarily for eCommerce clients, including sales, marketing, and operations",
+        "Managed several SaaS, Education, and platform clients",
+        "Directly managed large teams (up to 50), focusing on organization and motivation",
+        "Overhauled customer segmentation and email strategies, boosting client revenue by 34%",
+        "Created a project planning system, increasing productivity by 94%",
+        "Closed 35% of deals across 200 opportunities, actively participating in sales calls",
+        "Developed a vision focused on expertise areas, increasing client retention by 100%",
+        "Reorganized teams to better meet client needs, improving client satisfaction by 10%",
+        "Implemented AI-powered solutions like Custom GPTs for copywriting, saving 6% annually while enhancing customer satisfaction",
+        "Hired skilled workers from best-cost countries, optimizing labor costs",
+        "Implemented a matrix-based forecasting system using AI for scenario analysis",
+        "Developed LinkedIn and cross-channel lead generation strategies, gaining 6 clients in under 3 months",
+        "Established extensive process documentation, reducing production defects by 76%",
+        "Conducted regular coaching sessions, performance, and salary reviews to foster team development"
+      ],
+      "achievements": [
+        "Set a new company record for revenue through personal involvement in sales.",
+        "Increased productivity and quality across the board by reshaping work processes and implementing strategic hires.",
+        "Launched The Better Creative, targeting new markets by spinning off the design unit."
+      ],
+      "narrative": [
+        "At Essence of Email, I led as Managing Director, fundamentally reshaping our operations to focus on client satisfaction and employee productivity. My direct involvement in sales and strategy led to unprecedented revenue growth and client retention.",
+        "I championed the integration of AI in our workflow, notably with Custom GPTs for copywriting, which not only saved costs but also improved our service quality. My strategic vision was to align our workforce's expertise with client needs, dramatically reducing churn and enhancing job satisfaction.",
+        "I managed the transition of our design capabilities into a new venture, The Better Creative, demonstrating my ability to innovate and expand business horizons. My approach to team management included rigorous coaching, performance review, and strategic hiring to ensure we had the best talent at the most efficient cost."
+      ]
+    },
+    {
+      "id": 96,
+      "company": "High Position Agency",
+      "title": "Director, Europe",
+      "start_date": "2010-03-31T22:00:00.000Z",
+      "end_date": "2011-05-31T22:00:00.000Z",
+      "location": "Partially Remote",
+      "responsibilities": [
+        "Advised corporate clients such as Motorola, Virgin Wines, and Hillary's Blinds on multichannel e-business strategy",
+        "Developed and implemented business strategy with the Board of Directors, focusing on differentiation through client-focus and an integrated online marketing approach",
+        "Defined and clarified business group processes, moving lower profit clients to a best-cost partner in India",
+        "Developed KPIs and review processes to ensure quality from offshore partners",
+        "Directly involved in Conversion Rate Optimization testing across various brands",
+        "Launched conversion optimization program",
+        "Implemented LinkedIn B2B automation, growing leads for small businesses",
+        "Redesigned the company website with integrated landing page optimization and CRM"
+      ],
+      "achievements": [
+        "Strategy resulted in a 75% increase in revenue for High Position Agency.",
+        "Reduced customer churn by 40% through innovative client management strategies.",
+        "Doubled profitability and client satisfaction by optimizing business processes and partnerships."
+      ],
+      "narrative": [
+        "At High Position Agency, I was the driving force behind a strategy that not only increased revenue by 75% but also significantly cut down customer churn. My approach was to deeply understand and cater to client needs, which was evident in how I advised major clients on their e-business strategies.",
+        "I revamped our internal processes, which included outsourcing less profitable segments to an Indian partner, while ensuring high-quality service through strict KPIs. This not only doubled our profitability but also our client satisfaction.",
+        "I spearheaded the integration of a new client reporting format using Google Analytics, which gave us unprecedented visibility into our e-business performance. Additionally, my initiative in launching conversion optimization and B2B automation programs directly led to increased engagement and sales leads."
+      ]
+    },
+    {
+      "id": 95,
+      "company": "Retorica & The Specialists Agency",
+      "title": "Managing Partner & Co-Founder",
+      "start_date": "2013-07-31T22:00:00.000Z",
+      "end_date": "2017-07-31T22:00:00.000Z",
+      "location": "Remote",
+      "responsibilities": [
+        "Advised corporate clients such as Motorola, Virgin Wines, and Hillary's Blinds on multichannel e-business strategy",
+        "Directed daily operations of POS & display advertising agency, including a digital growth-hacking division focused on startups and small businesses",
+        "Developed and implemented business strategies with the Board of Directors, aiming for differentiation through client-centric and integrated online marketing approaches",
+        "Managed end-to-end development of high-impact point-of-sale materials like window displays, coupons, and merchandising for clients including Samsonite, Fiat, Kia, and Bacardi-Martini",
+        "Oversaw digital division's focus on growing client businesses through testing and optimization of digital presence, including advertising, email, and websites",
+        "Engaged in hands-on work due to the boutique nature of the agency, from writing copy to overseeing print jobs"
+      ],
+      "achievements": [
+        "Our agency's campaign work was notably used as the storyline for Bombay Sapphire's Spice Hunter campaign.",
+        "Managed and grew an agency with a unique creative process, specializing in open source solutions for digital clients.",
+        "Successfully operated a small agency at a senior level, gaining extensive experience in business development and operational management."
+      ],
+      "narrative": [
+        "At The Specialists Agency & Retorica, I wore many hats as the Managing Partner & Co-Founder, from advising multinational clients on their digital strategies to directing the daily operations of a creative agency. Our focus was on delivering bespoke, high-impact POS and digital advertising solutions.",
+        "We specialized in creating unique campaigns that not only met but often exceeded client expectations, like the notable Bombay Sapphire campaign. Our strategy was to remain boutique, allowing for personalized service and innovative, client-focused solutions.",
+        "The digital division under my leadership was all about growth through continuous testing and optimization, ensuring our clients from startups to established brands saw significant digital presence improvement."
+      ]
+    },
+    {
+      "id": 97,
+      "company": "Sony eCommerce Europe",
+      "title": "Head of Search Engine Marketing, Europe",
+      "start_date": "2007-06-30T22:00:00.000Z",
+      "end_date": "2010-02-28T23:00:00.000Z",
+      "location": "Brussels",
+      "responsibilities": [
+        "Aligned European search activities by building relationships with local marketing teams, resulting in a 103% lift in search traffic year-on-year",
+        "Coordinated Pan-European search campaigns across 16 local country marketing teams, product marketing departments, affiliate networks, and PR and Marketing agencies, achieving top 5 listings for high-volume keywords like laptop, camera, and HD TV",
+        "Managed Sony VAIO computer pricing flows in SAP",
+        "Provided analysis to marketing groups to shape fact-based value propositions for dealers",
+        "Developed testing framework via SEM to identify best performing value propositions",
+        "Supervised Advertising & Promotion budget activities within profitability framework"
+      ],
+      "achievements": [
+        "Increased Direct Sales by 300% over three years through effective management of Search Marketing program.",
+        "Reduced ad costs by 5% while significantly increasing sales.",
+        "Created first ever Sony worldwide Marginal Profit analysis to enhance profitability insights.",
+        "Developed a strategy called 'locomotive' which contributed to VAIO's profitability turnaround, from 0% to over 5% operational profit in three years."
+      ],
+      "narrative": [
+        "At Sony Electronics, I led the Search Engine Marketing for Europe, where my team and I not only doubled search traffic but also increased direct sales dramatically. We achieved this by closely aligning our search activities with local marketing strategies and by innovating with our testing frameworks.",
+        "I was instrumental in creating Sony's first worldwide profitability analysis, which gave us actionable insights to boost our Net Income Before Taxes (NIBT). My role also extended into managing the financial aspects of the VAIO brand, ensuring profitability and strategic alignment.",
+        "The 'locomotive' strategy I developed was pivotal in turning around VAIO's profitability, which was specifically noted in Sony's annual report for its significant impact on the European market."
+      ]
+    },
+    {
+      "id": 99,
+      "company": "Sony VAIO Europe",
+      "title": "Manager, Finance",
+      "start_date": "2003-09-30T22:00:00.000Z",
+      "end_date": "2007-06-30T22:00:00.000Z",
+      "location": "Brussels",
+      "responsibilities": [
+        "Served as Controller for Sony VAIO brand overseeing €1B+ annual revenue, managing P&L, budgets, forecasts, and financial reporting",
+        "Led worldwide profitability analysis initiatives, including product, dealer, and customer-level marginal profit insights",
+        "Managed full Sales & Marketing financial processes (semi-annual budgets, monthly forecasts, variance analysis, daily/weekly sales monitoring)",
+        "Supervised a team providing operational support and financial analysis for European sales entities",
+        "Streamlined financial processes (e.g., GP monitoring) through automation, reducing monthly workload by 4 days and staff requirements",
+        "Partnered with Sales & Marketing to develop profitability management frameworks by customer, product, and channel",
+        "Managed Sony VAIO computer pricing flows in SAP and supported SAP Campaign Management implementation"
+      ],
+      "achievements": [
+        "Created Sony's first worldwide Marginal Profit analysis, enabling granular profitability insights by country/product/dealer and driving NIBT growth",
+        "Developed 'locomotive' strategy contributing to VAIO's profitability turnaround (0% to 5% operational profit in 3 years), noted in Sony's annual report",
+        "Increased Revenue by 300% while reducing costs by 5% through Cost of Sales ROI strategies",
+        "Quadrupled budget allocation through strategic collaboration with Senior Management",
+        "Streamlined reporting processes to achieve weekly financial closes, saving 4 days/month and reducing headcount needs",
+        "Pioneered Six Sigma Lite methodology to standardize reporting and operational workflows"
+      ],
+      "narrative": [
+        "As Finance Manager for Sony VAIO Europe, I transformed financial operations for a €1B+ business by creating groundbreaking profitability analyses that became corporate benchmarks. My locomotive strategy was instrumental in reversing declining margins.",
+        "I led cross-functional initiatives that bridged Finance and Marketing, developing ROI frameworks that simultaneously grew revenue by 300% while cutting costs. My team became known for turning complex data into executable strategies.",
+        "By implementing process automation and lean methodologies, I eliminated 160+ hours of annual redundant work while improving reporting accuracy. My financial leadership directly supported VAIO's return to profitability during a critical turnaround period.",
+        "As trusted advisor to senior leadership, I shaped budget allocations and pricing strategies that balanced aggressive growth targets with strict profitability guardrails. My analyses became decision-making cornerstones for European operations."
+      ]
+    },
+    {
+      "id": 94,
+      "company": "Trilogy Software",
+      "title": "VP of Marketing",
+      "start_date": "2018-03-31T22:00:00.000Z",
+      "end_date": "2019-01-31T23:00:00.000Z",
+      "location": "Remote (US Timezone)",
+      "responsibilities": [
+        "Assisted with the launch of a portfolio of highly technical software solutions for telecom operators",
+        "Developed and delivered an intensive four-week Sales boot camp, creating and implementing a framework to evaluate training effectiveness",
+        "Developed Marketing assembly lines for 15 SaaS products, including customer and competitor review, creation of sales enablement materials, and ABM strategies",
+        "Managed Salesforce migration, data recovery, and training for sales teams",
+        "Created ABM content for DNN (DotNetNuke), focusing on partner and developer ecosystem enhancement",
+        "Reported directly to the group COO, overseeing marketing and sales enablement efforts",
+        "Worked closely with the management team for the ramp-up of telecom software products"
+      ],
+      "achievements": [
+        "Delivered 25% of a four-week Sales boot camp, significantly enhancing the sales team's capabilities.",
+        "Established effective marketing processes for multiple SaaS products, contributing to streamlined product launches and sales strategies.",
+        "Led the transition and training for Salesforce, ensuring data integrity and team readiness for ABM."
+      ],
+      "narrative": [
+        "At Trilogy Software, I was instrumental in not only launching sophisticated software products for telecom but also in building the marketing and sales capabilities around these products. I developed comprehensive training programs, like the Sales boot camp, which directly improved our sales team's effectiveness.",
+        "I took on the responsibility of creating a marketing assembly line for our SaaS offerings, which involved deep dives into market analysis, competitive positioning, and crafting materials that empowered our sales teams to succeed. This was under the direct oversight of the COO, ensuring alignment with corporate objectives.",
+        "My role also included managing the complexities of Salesforce migration, which was crucial for our ABM strategies, ensuring we had the data and systems in place to target and engage with clients effectively."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "Dixie State University",
+      "degree": "",
+      "field": "Business Administration with Accounting and Marketing Emphasis",
+      "location": "St. George, UT",
+      "start_date": "1997-08-31",
+      "end_date": "1999-04-30"
+    }
+  ],
+  "skills": [
+    {
+      "category": "Business Development",
+      "skills": [
+        "Sales Strategy",
+        "Client Retention",
+        "Revenue Growth",
+        "Business Operations",
+        "Strategic Planning",
+        "Cost Optimization",
+        "Performance Analysis"
+      ]
+    },
+    {
+      "category": "Finance & Business",
+      "skills": [
+        "Financial Analysis",
+        "Investment Advisory",
+        "Series 7 Licensed",
+        "Investor Relations",
+        "Budget Management",
+        "Revenue Optimization",
+        "Profitability Analysis",
+        "Strategic Partnerships",
+        "Client Relations",
+        "Sales Operations",
+        "Market Analysis"
+      ]
+    },
+    {
+      "category": "Leadership & Management",
+      "skills": [
+        "Team Leadership",
+        "Performance Management",
+        "Business Strategy",
+        "Process Optimization",
+        "Client Relationship Management",
+        "Project Management",
+        "Change Management",
+        "P&L Management",
+        "Six Sigma",
+        "Strategic Planning"
+      ]
+    },
+    {
+      "category": "Marketing & Digital",
+      "skills": [
+        "Digital Marketing Strategy",
+        "Email Marketing",
+        "Lead Generation",
+        "Client Acquisition",
+        "Customer Segmentation",
+        "Multichannel Marketing",
+        "Digital Advertising",
+        "Campaign Management",
+        "Copywriting",
+        "SEO/SEM",
+        "Content Strategy",
+        "Marketing Automation",
+        "Growth Marketing",
+        "Performance Marketing",
+        "Marketing Analytics",
+        "Brand Development",
+        "Social Media Marketing",
+        "Marketing Operations",
+        "ABM Strategy"
+      ]
+    },
+    {
+      "category": "Technical",
+      "skills": [
+        "AI Implementation",
+        "Custom GPT Development",
+        "Process Documentation",
+        "Digital Optimization",
+        "Testing & Analytics",
+        "SQL",
+        "Python",
+        "Deno",
+        "PostgreSQL",
+        "Vector Databases",
+        "AI/ML Integration",
+        "Tableau",
+        "SAP",
+        "Excel VBA",
+        "API Development"
+      ]
+    },
+    {
+      "category": "Languages",
+      "skills": [
+        "English (Native)",
+        "French (Basic)",
+        "Italian (Learning)"
+      ]
+    }
+  ],
+  "awards": [
+    {
+      "title": "Spirit of Dixie",
+      "issuer": "Dixie State University"
+    }
+  ],
+  "publications": [
+    {
+      "title": "Publication Title",
+      "publisher": "Publisher Name",
+      "url": "https://example.com/publication",
+      "description": "Brief description of the publication and its impact"
+    }
+  ]
+}

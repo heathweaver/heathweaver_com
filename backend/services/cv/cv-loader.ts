@@ -11,7 +11,11 @@ export class CVLoader {
       const jsonContent = await Deno.readTextFile(this.jsonPath);
       return JSON.parse(jsonContent);
     } catch (error) {
-      throw new Error(`Failed to load CV from JSON: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to load CV from JSON: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      );
     }
   }
-} 
+}

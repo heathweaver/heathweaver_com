@@ -1,10 +1,12 @@
-import { Handlers } from "$fresh/server.ts";
 import { AuthPluginConfig } from "../mod.ts";
+import { Handlers } from "fresh/compat";
 
 const LINKEDIN_AUTH_URL = "https://www.linkedin.com/oauth/v2/authorization";
 const LINKEDIN_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken";
 
-type LinkedInConfig = NonNullable<NonNullable<AuthPluginConfig["providers"]>["linkedin"]>;
+type LinkedInConfig = NonNullable<
+  NonNullable<AuthPluginConfig["providers"]>["linkedin"]
+>;
 
 export function createLinkedInHandlers(config?: LinkedInConfig): Handlers {
   if (!config) {
@@ -19,10 +21,13 @@ export function createLinkedInHandlers(config?: LinkedInConfig): Handlers {
       if (!code) {
         // Generate and store state for CSRF protection
         const state = crypto.randomUUID();
-        
+
         // Store state in cookie for verification
         const headers = new Headers();
-        headers.append("Set-Cookie", `linkedin_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax`);
+        headers.append(
+          "Set-Cookie",
+          `linkedin_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax`,
+        );
 
         // Build authorization URL
         const authUrl = new URL(LINKEDIN_AUTH_URL);
@@ -36,15 +41,15 @@ export function createLinkedInHandlers(config?: LinkedInConfig): Handlers {
           status: 302,
           headers: {
             ...Object.fromEntries(headers),
-            Location: authUrl.toString()
-          }
+            Location: authUrl.toString(),
+          },
         });
       }
 
       return new Response(null, {
         status: 302,
-        headers: { Location: "/api/connect/linkedin-callback?code=" + code }
+        headers: { Location: "/api/connect/linkedin-callback?code=" + code },
       });
-    }
+    },
   };
-} 
+}

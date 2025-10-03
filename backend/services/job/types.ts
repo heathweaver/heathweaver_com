@@ -3,7 +3,11 @@ import { Document as DenoDocument } from "@b-fuze/deno-dom/wasm";
 export type Document = DenoDocument;
 
 export interface ParserError {
-  type: 'HTML_PARSE_ERROR' | 'JSON_PARSE_ERROR' | 'CONTENT_VALIDATION_ERROR' | 'EXTRACTION_ERROR';
+  type:
+    | "HTML_PARSE_ERROR"
+    | "JSON_PARSE_ERROR"
+    | "CONTENT_VALIDATION_ERROR"
+    | "EXTRACTION_ERROR";
   message: string;
   details?: unknown;
 }
@@ -94,4 +98,4 @@ export interface BaseParser {
   name: string;
   parse(doc: Document, rawHtml: string): Promise<ParseResult>;
   setConfig(config: Partial<ParserConfig>): void;
-} 
+}

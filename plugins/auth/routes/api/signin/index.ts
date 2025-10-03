@@ -1,23 +1,31 @@
-import { Handlers } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { setCookie } from "cookie";
+import { Handlers } from "fresh/compat";
 
 export const handler: Handlers = {
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
+
     // Redirect to sign in
     return new Response(null, {
       status: 303,
-      headers: { Location: "/auth/login" }
+      headers: { Location: "/auth/login" },
     });
   },
 
-  async POST(req: Request) {
+  async POST(ctx: FreshContext) {
+    const req = ctx.req;
+
     try {
       const formData = await req.formData();
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
 
       // TODO: Replace Appwrite session creation with KV
-      const session = { secret: "temp-session", expire: Date.now() + 24*60*60*1000 };
+      const session = {
+        secret: "temp-session",
+        expire: Date.now() + 24 * 60 * 60 * 1000,
+      };
 
       if (!session || !session.secret) {
         throw new Error("Failed to create session");
@@ -40,11 +48,13 @@ export const handler: Handlers = {
 
       return response;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-      return new Response(JSON.stringify({ error: errorMessage }), { 
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "An unknown error occurred";
+      return new Response(JSON.stringify({ error: errorMessage }), {
         status: 400,
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
     }
-  }
-}; 
+  },
+};

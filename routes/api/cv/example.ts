@@ -1,9 +1,11 @@
-import { Handlers } from "$fresh/server.ts";
+import { define } from "../../../utils.ts";
 
-export const handler: Handlers = {
-  async GET(_req, _ctx) {
+export const handler = define.handlers({
+  async GET(_ctx) {
     try {
-      const exampleCV = await Deno.readTextFile("./backend/artifacts/HeathWeaver_VpOfMarketing,Emea_01927.json");
+      const exampleCV = await Deno.readTextFile(
+        "./backend/artifacts/HeathWeaver_VpOfMarketing,Emea_01927.json",
+      );
       return new Response(exampleCV, {
         headers: { "Content-Type": "application/json" },
         status: 200,
@@ -18,4 +20,4 @@ export const handler: Handlers = {
       );
     }
   },
-}; 
+});

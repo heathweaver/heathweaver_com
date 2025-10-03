@@ -1,8 +1,8 @@
-import { Handlers } from "$fresh/server.ts";
 import { signInWithGoogleSignin } from "../../../lib/kv_oauth.ts";
+import { define } from "../../../utils.ts";
 
-export const handler: Handlers = {
-  async GET(req) {
-    return await signInWithGoogleSignin(req);
-  }
-}; 
+export const handler = define.handlers({
+  async GET(ctx) {
+    return await signInWithGoogleSignin(ctx.req);
+  },
+});

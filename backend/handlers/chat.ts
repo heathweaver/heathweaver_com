@@ -1,5 +1,5 @@
 import { AIService } from "../types/ai-service.types.ts";
-import { ChatMessage, ChatResponse, ChatModel } from "../types/chat.ts";
+import { ChatMessage, ChatModel, ChatResponse } from "../types/chat.ts";
 
 export class ChatHandler {
   private readonly services: Record<string, AIService>;
@@ -19,13 +19,13 @@ export class ChatHandler {
   async handleMessage(
     message: string,
     model: string,
-    conversationHistory: ChatMessage[]
+    conversationHistory: ChatMessage[],
   ): Promise<ChatResponse> {
     try {
       console.log("Processing chat message:", {
         model,
         messageLength: message.length,
-        historyLength: conversationHistory.length
+        historyLength: conversationHistory.length,
       });
 
       const service = this.getService(model);
@@ -38,13 +38,13 @@ export class ChatHandler {
 
       return {
         content: response.content[0],
-        error: null
+        error: null,
       };
     } catch (error) {
       console.error("Chat handling error:", error);
       return {
         content: null,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
@@ -52,13 +52,13 @@ export class ChatHandler {
   async handleJobUrl(
     url: string,
     model: string,
-    jobContent: string
+    jobContent: string,
   ): Promise<ChatResponse> {
     try {
       console.log("Processing job URL:", {
         model,
         url,
-        contentLength: jobContent.length
+        contentLength: jobContent.length,
       });
 
       const service = this.getService(model);
@@ -71,14 +71,14 @@ export class ChatHandler {
 
       return {
         content: response.content[0],
-        error: null
+        error: null,
       };
     } catch (error) {
       console.error("Job URL handling error:", error);
       return {
         content: null,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
-} 
+}

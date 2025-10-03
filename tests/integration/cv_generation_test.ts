@@ -1,4 +1,7 @@
-import { assertEquals, assertExists } from "https://deno.land/std@0.208.0/assert/mod.ts";
+import {
+  assertEquals,
+  assertExists,
+} from "https://deno.land/std@0.208.0/assert/mod.ts";
 import { CVGenerator } from "../../backend/services/cv/cv-generator.ts";
 import { CVLoader } from "../../backend/services/cv/cv-loader.ts";
 import { XAIService } from "../../backend/services/ai/xai.ts";
@@ -13,8 +16,10 @@ Deno.test({
       jobTitle: "Software Engineering Manager",
       company: "TechCorp",
       jobDescription: "Leading a team of software engineers...",
-      requirements: "5+ years of engineering experience\nStrong leadership skills",
-      responsibilities: "Team management\nTechnical architecture\nAgile processes"
+      requirements:
+        "5+ years of engineering experience\nStrong leadership skills",
+      responsibilities:
+        "Team management\nTechnical architecture\nAgile processes",
     };
 
     // Initialize services
@@ -32,12 +37,16 @@ Deno.test({
       assertExists(cv.headline, "CV should have a headline");
       assertExists(cv.profile, "CV should have a profile");
       assertExists(cv.employmentHistory, "CV should have employment history");
-      
+
       // Verify content relevance
       assertEquals(typeof cv.headline, "string", "Headline should be a string");
       assertEquals(typeof cv.profile, "string", "Profile should be a string");
-      assertEquals(Array.isArray(cv.employmentHistory), true, "Employment history should be an array");
-      
+      assertEquals(
+        Array.isArray(cv.employmentHistory),
+        true,
+        "Employment history should be an array",
+      );
+
       // Verify employment history structure
       if (cv.employmentHistory.length > 0) {
         const firstJob = cv.employmentHistory[0];
@@ -50,7 +59,7 @@ Deno.test({
       // Ensure database connection is closed
       await db.disconnect();
     }
-  }
+  },
 });
 
 Deno.test({
@@ -63,7 +72,7 @@ Deno.test({
         email: "test@example.com",
         phone: "123-456-7890",
         location: "San Francisco, CA",
-        title: "Software Engineer"
+        title: "Software Engineer",
       },
       headline: "INNOVATIVE SOFTWARE ENGINEER",
       profile: "Experienced engineer...",
@@ -73,8 +82,8 @@ Deno.test({
         start_date: "2020-01",
         end_date: "Present",
         location: "San Francisco, CA",
-        bulletPoints: [{ content: "Led development of key features" }]
-      }]
+        bulletPoints: [{ content: "Led development of key features" }],
+      }],
     };
 
     const tempFile = await Deno.makeTempFile({ suffix: ".json" });
@@ -87,10 +96,13 @@ Deno.test({
 
       assertEquals(loadedCV.basicInfo.name, testCV.basicInfo.name);
       assertEquals(loadedCV.headline, testCV.headline);
-      assertEquals(loadedCV.employmentHistory[0].title, testCV.employmentHistory[0].title);
+      assertEquals(
+        loadedCV.employmentHistory[0].title,
+        testCV.employmentHistory[0].title,
+      );
     } finally {
       // Cleanup
       await Deno.remove(tempFile);
     }
-  }
-}); 
+  },
+});

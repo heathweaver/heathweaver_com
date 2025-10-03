@@ -37,50 +37,56 @@ try {
   await db.connect();
 
   // Initialize AI service based on model argument
-  const aiService = args["model"] === "xai" 
+  const aiService = args["model"] === "xai"
     ? new XAIService(config.xai_api_key)
     : new DeepSeekService(config.deepseek_api_key, args["model"]);
 
   console.log(`Using AI model: ${args["model"]}`);
 
   // Get CV data either from JSON or by generating it
-  const { cv, jobTitle } = args["json"] 
-    ? { 
-        cv: await new CVLoader(args["json"]).loadCV(), 
-        jobTitle: args["json"].match(/HeathWeaver_(.+?)_\d{5}/)?.[1] || "FromJson"
-      }
+  const { cv, jobTitle } = args["json"]
+    ? {
+      cv: await new CVLoader(args["json"]).loadCV(),
+      jobTitle: args["json"].match(/HeathWeaver_(.+?)_\d{5}/)?.[1] ||
+        "FromJson",
+    }
     : await generateCV(args["job-listing"]!, db, aiService);
 
   // Generate PDF
   console.log("\nGenerating PDF...");
   const pdfGenerator = new PDFGenerator();
-  const pdfBytes = await pdfGenerator.generateCV(cv, args["region"] as "US" | "EU");
+  const pdfBytes = await pdfGenerator.generateCV(
+    cv,
+    args["region"] as "US" | "EU",
+  );
 
   // Generate unique ID for file naming (2 bytes converted to 4-digit number)
   const id = Array.from(crypto.getRandomValues(new Uint8Array(2)))
-    .map(b => b % 100)
-    .join('')
-    .padStart(5, '0');
+    .map((b) => b % 100)
+    .join("")
+    .padStart(5, "0");
 
   // Format job title for filename (PascalCase)
   const formattedTitle = jobTitle
     .split(/[\s-]+/)
-    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join('');
+    .map((word: string) =>
+      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join("");
 
   const filename = `backend/artifacts/HeathWeaver_${formattedTitle}_${id}.pdf`;
-  const jsonFilename = `backend/artifacts/HeathWeaver_${formattedTitle}_${id}.json`;
+  const jsonFilename =
+    `backend/artifacts/HeathWeaver_${formattedTitle}_${id}.json`;
 
   await Deno.writeFile(filename, pdfBytes);
   await Deno.writeTextFile(jsonFilename, JSON.stringify(cv, null, 2));
-  
+
   console.log(`Files generated successfully:
 - PDF: ${filename}
 - JSON: ${jsonFilename}`);
 
   // Clean up
   await db.disconnect();
-
 } catch (error) {
   console.error("Error:", error instanceof Error ? error.message : error);
   Deno.exit(1);
@@ -88,19 +94,25 @@ try {
 
 /**
  * Generates a customized CV based on the job posting URL
- * 
+ *
  * @param jobUrl - URL of the job posting to analyze
  * @param db - Database service instance for persistence
  * @param aiService - AI service instance for content generation
  * @returns Object containing generated CV and job title
  */
-async function generateCV(jobUrl: string, db: DatabaseService, aiService: AIService) {
+async function generateCV(
+  jobUrl: string,
+  db: DatabaseService,
+  aiService: AIService,
+) {
   console.log("Fetching job posting...");
   const jobResult = await processJobUrl(jobUrl, aiService, db);
   console.log("Job data:", jobResult);
 
   if (!jobResult.title || !jobResult.company) {
-    throw new Error("Failed to extract required job information (title or company)");
+    throw new Error(
+      "Failed to extract required job information (title or company)",
+    );
   }
 
   console.log("\nGenerating CV...");
@@ -110,10 +122,14 @@ async function generateCV(jobUrl: string, db: DatabaseService, aiService: AIServ
     jobTitle: jobResult.title,
     company: jobResult.company,
     jobDescription: jobResult.description || "",
-    requirements: Array.isArray(jobResult.requirements) ? jobResult.requirements.join("\n") : "",
-    responsibilities: Array.isArray(jobResult.responsibilities) ? jobResult.responsibilities.join("\n") : "",
-    region: args["region"] as "US" | "EU"
+    requirements: Array.isArray(jobResult.requirements)
+      ? jobResult.requirements.join("\n")
+      : "",
+    responsibilities: Array.isArray(jobResult.responsibilities)
+      ? jobResult.responsibilities.join("\n")
+      : "",
+    region: args["region"] as "US" | "EU",
   });
 
   return { cv, jobTitle: jobResult.title };
-} 
+}

@@ -6,7 +6,7 @@ export interface GenerateOptions {
   requirements: string;
   responsibilities: string;
   bulletPointConfig?: CompanyBulletConfig;
-  region?: 'US' | 'EU';  // defaults to EU if not specified
+  region?: "US" | "EU"; // defaults to EU if not specified
 }
 
 export interface CompanyBulletConfig {
@@ -22,5 +22,5 @@ export const DEFAULT_BULLET_CONFIG: CompanyBulletConfig = {
   "High Position Agency": 1,
   "Sony eCommerce Europe": 3,
   "Sony VAIO Europe": 3,
-  "Charlotte Russe": 1
-}; 
+  "Charlotte Russe": 1,
+};

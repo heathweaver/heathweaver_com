@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI CV Generator - Professional CVs Tailored to Your Target Job</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --text-color: #1f2937;
+            --light-bg: #f3f4f6;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        header {
+            background: var(--white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: var(--light-bg);
+        }
+
+        .nav-links a.active {
+            color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .user-menu {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem;
+            min-width: 200px;
+            display: none;
+        }
+
+        .user-menu:hover .user-dropdown {
+            display: block;
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+
+        .user-dropdown a:hover {
+            background: var(--light-bg);
+        }
+
+        .user-dropdown .divider {
+            height: 1px;
+            background: var(--light-bg);
+            margin: 0.5rem 0;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--white);
+            color: var(--primary-color);
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .features {
+            padding: 4rem 0;
+            background: var(--light-bg);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .pricing {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .pricing h2 {
+            margin-bottom: 2rem;
+        }
+
+        .price-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .price {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        footer {
+            background: var(--text-color);
+            color: var(--white);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">AI</div>
+                <span>AI CV Generator</span>
+            </a>
+            <nav class="nav-links">
+                <a href="profile.html">Profile</a>
+                <a href="#" class="active">Generator</a>
+            </nav>
+            <div class="user-menu">
+                <div class="user-avatar">JD</div>
+                <div class="user-dropdown">
+                    <a href="profile.html">My Profile</a>
+                    <a href="#">My Credits</a>
+                    <div class="divider"></div>
+                    <a href="#">Sign Out</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Generate Professional CVs with AI</h1>
+            <p>Get a perfectly tailored CV for your dream job in seconds. Our AI analyzes job descriptions and creates a customized CV that highlights your relevant experience and skills.</p>
+            <a href="#" class="cta-button">Get Started - 1 Credit</a>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Why Choose Our AI CV Generator?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>AI-Powered Customization</h3>
+                    <p>Our advanced AI analyzes job descriptions and automatically tailors your CV to match the requirements, highlighting relevant experience and skills.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Professional Formatting</h3>
+                    <p>Get beautifully formatted PDFs in both US and EU formats, with proper spacing, typography, and layout that recruiters love.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Comprehensive Sections</h3>
+                    <p>Include all important sections: experience, education, skills, awards, and publications, all optimized for your target position.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Smart Bullet Points</h3>
+                    <p>AI-generated bullet points that emphasize your achievements and align with the job requirements, making your experience stand out.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2>Simple Pricing</h2>
+            <div class="price-card">
+                <h3>Pay As You Go</h3>
+                <div class="price">1 <span>credit</span></div>
+                <p>Generate one professional CV</p>
+                <ul style="list-style: none; margin: 2rem 0;">
+                    <li>✓ AI-powered customization</li>
+                    <li>✓ Professional PDF format</li>
+                    <li>✓ US or EU layout</li>
+                    <li>✓ All CV sections included</li>
+                </ul>
+                <a href="#" class="cta-button">Generate CV Now</a>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="container">
+            <p>© 2024 AI CV Generator. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> 

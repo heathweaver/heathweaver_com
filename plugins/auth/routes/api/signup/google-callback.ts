@@ -1,29 +1,35 @@
-import { Handlers } from "$fresh/server.ts";
 import { handleGoogleSignupCallback } from "../../../lib/kv_oauth.ts";
 import { createUser, getUserByProviderId } from "@db/user-db.ts";
 import { setCookie } from "cookie";
+import { define } from "../../../utils.ts";
 
-export const handler: Handlers = {
-  async GET(req) {
+export const handler = define.handlers({
+  async GET(ctx) {
+
     try {
-      console.log("1. Google callback received with URL:", req.url);
-      
+      console.log("1. Google callback received with URL:", ctx.req.url);
+
       // 1. Let the package handle the OAuth flow
       console.log("2. Attempting OAuth callback handling...");
-      const { response, sessionId, tokens } = await handleGoogleSignupCallback(req);
-      console.log("3. OAuth callback successful:", { 
+      const { response, sessionId, tokens } = await handleGoogleSignupCallback(
+        ctx.req,
+      );
+      console.log("3. OAuth callback successful:", {
         hasResponse: !!response,
         hasSession: !!sessionId,
         hasTokens: !!tokens,
-        tokenType: tokens?.accessToken ? typeof tokens.accessToken : 'no token'
+        tokenType: tokens?.accessToken ? typeof tokens.accessToken : "no token",
       });
 
       // 2. Only after successful OAuth, handle user
       if (tokens?.accessToken) {
         console.log("4. Starting user handling with token");
-        const userResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-          headers: { "Authorization": `Bearer ${tokens.accessToken}` }
-        });
+        const userResponse = await fetch(
+          "https://www.googleapis.com/oauth2/v2/userinfo",
+          {
+            headers: { "Authorization": `Bearer ${tokens.accessToken}` },
+          },
+        );
         const userData = await userResponse.json();
         console.log("5. Google API response:", userData);
 
@@ -56,13 +62,13 @@ export const handler: Handlers = {
         const kv = await Deno.openKv();
         await kv.set(["sessions", sessionId], {
           $id: userId, // Store as string with $id to match expected format
-          created: Date.now()
+          created: Date.now(),
         });
 
         // Create custom response with session cookie
         const newResponse = new Response(null, {
           status: 303,
-          headers: { Location: redirectPath }
+          headers: { Location: redirectPath },
         });
 
         // Set the session cookie
@@ -76,30 +82,33 @@ export const handler: Handlers = {
           httpOnly: true,
         });
 
-        console.log(`7. Redirecting to ${redirectPath} with session cookie and user ID:`, userId);
+        console.log(
+          `7. Redirecting to ${redirectPath} with session cookie and user ID:`,
+          userId,
+        );
         return newResponse;
       } else {
         console.log("4. No access token available");
         throw new Error("No access token received from Google");
       }
-
     } catch (error: unknown) {
       console.error("Google signup error:", error);
-      
+
       if (error instanceof Error) {
+        const errorWithOAuth = error as Error & { error?: string; errorDescription?: string };
         console.error("Error details:", {
           name: error.name,
           message: error.message,
           stack: error.stack,
-          oauthError: (error as any).error,
-          oauthDescription: (error as any).errorDescription
+          oauthError: errorWithOAuth.error,
+          oauthDescription: errorWithOAuth.errorDescription,
         });
       }
 
       return new Response(null, {
         status: 303,
-        headers: { Location: "/signup?error=Failed to create account" }
+        headers: { Location: "/auth/signup?error=Failed to create account" },
       });
     }
-  }
-}; 
+  },
+});

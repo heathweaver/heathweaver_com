@@ -50,4 +50,4 @@ export interface FetchResult {
   success: boolean;
   content?: string;
   error?: string;
-} 
+}

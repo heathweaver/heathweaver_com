@@ -7,7 +7,9 @@ export default function Navigation() {
         <div class="flex justify-between items-center h-16">
           {/* Logo - Left side */}
           <div class="flex-shrink-0">
-            <a href="/" class="text-xl font-bold text-emerald-600">AI CV Generator</a>
+            <a href="/" class="text-xl font-bold text-emerald-600">
+              AI CV Generator
+            </a>
           </div>
 
           {/* Center navigation */}
@@ -17,6 +19,12 @@ export default function Navigation() {
               class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-900"
             >
               Home
+            </a>
+            <a
+              href="/jobs"
+              class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 hover:text-gray-900"
+            >
+              Track Jobs
             </a>
             <a
               href="/profile"
@@ -41,4 +49,4 @@ export default function Navigation() {
       </div>
     </nav>
   );
-} 
+}

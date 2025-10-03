@@ -1,5 +1,7 @@
-import { Client } from "https://deno.land/x/postgres@v0.17.0/mod.ts";
+import postgres from "postgres";
 import { withTransaction } from "./postgres-base.ts";
+
+type Sql = postgres.Sql;
 
 // Generate a 10-digit user ID (numeric only for simplicity)
 function generateUserId(): string {
@@ -91,47 +93,59 @@ export interface UserProfile {
 }
 
 // Helper function to safely format education display
-export function formatEducationDisplay(edu: UserProfile['education'][0]): string {
-  if (!edu.degree || edu.degree.trim() === '') {
+export function formatEducationDisplay(
+  edu: UserProfile["education"][0],
+): string {
+  if (!edu.degree || edu.degree.trim() === "") {
     return edu.field;
   }
   return `${edu.degree} in ${edu.field}`;
 }
 
 // Helper function to safely format date range
-export function formatDateRange(startDate: string | null, endDate: string | null): string {
-  const start = startDate ? new Date(startDate).toLocaleDateString() : '';
-  const end = endDate ? new Date(endDate).toLocaleDateString() : 'Present';
+export function formatDateRange(
+  startDate: string | null,
+  endDate: string | null,
+): string {
+  const start = startDate ? new Date(startDate).toLocaleDateString() : "";
+  const end = endDate ? new Date(endDate).toLocaleDateString() : "Present";
   return `${start} - ${end}`;
 }
 
 export async function createUser(params: CreateUserParams): Promise<User> {
-  return await withTransaction(async (client: Client) => {
+  return await withTransaction(async (client: Sql) => {
     const userId = generateUserId();
 
     // Create user
-    const userResult = await client.queryArray`
+    const userResult: Array<{
+      id: string;
+      email: string;
+      first_name: string;
+      last_name: string;
+      provider: string;
+      provider_id: string;
+    }> = await client`
       INSERT INTO users (
         id, email, first_name, last_name, provider, provider_id
       ) VALUES (
-        ${userId}, ${params.email}, ${params.firstName}, ${params.lastName}, 
+        ${userId}, ${params.email}, ${params.firstName ?? null}, ${params.lastName ?? null}, 
         ${params.provider}, ${params.providerId}
       )
       RETURNING *
     `;
 
     // Create user profile
-    await client.queryArray`
+    await client`
       INSERT INTO user_profiles (
         user_id, avatar_url, headline, current_position, location
       ) VALUES (
-        ${userId}, ${params.profileData?.avatarUrl}, ${params.profileData?.headline},
-        ${params.profileData?.currentPosition}, ${params.profileData?.location}
+        ${userId}, ${params.profileData?.avatarUrl ?? null}, ${params.profileData?.headline ?? null},
+        ${params.profileData?.currentPosition ?? null}, ${params.profileData?.location ?? null}
       )
     `;
 
     // Initialize free subscription
-    await client.queryArray`
+    await client`
       INSERT INTO subscriptions (
         user_id, plan_type, status
       ) VALUES (
@@ -140,7 +154,7 @@ export async function createUser(params: CreateUserParams): Promise<User> {
     `;
 
     // Initialize credits
-    await client.queryArray`
+    await client`
       INSERT INTO credits (
         user_id, balance, total_earned
       ) VALUES (
@@ -149,7 +163,7 @@ export async function createUser(params: CreateUserParams): Promise<User> {
     `;
 
     // Record welcome credits transaction
-    await client.queryArray`
+    await client`
       INSERT INTO credit_transactions (
         user_id, amount, type, description
       ) VALUES (
@@ -157,62 +171,114 @@ export async function createUser(params: CreateUserParams): Promise<User> {
       )
     `;
 
-    return mapUserResult(userResult.rows[0]);
+    return mapUserResultFromObject(userResult[0]);
   });
 }
 
-export async function getUserByProviderId(provider: string, providerId: string): Promise<User | null> {
-  return await withTransaction(async (client: Client) => {
-    const result = await client.queryArray`
-      SELECT u.*, up.*, c.balance, c.total_earned, s.plan_type, s.status
+export async function getUserByProviderId(
+  provider: string,
+  providerId: string,
+): Promise<User | null> {
+  return await withTransaction(async (client: Sql) => {
+    const result: Array<{
+      id: string;
+      email: string;
+      first_name: string;
+      last_name: string;
+      provider: string;
+      provider_id: string;
+      avatar_url?: string;
+      headline?: string;
+      current_position?: string;
+      location?: string;
+      balance?: number;
+      total_earned?: number;
+      plan_type?: string;
+      status?: string;
+    }> = await client`
+      SELECT u.id, u.email, u.first_name, u.last_name, u.provider, u.provider_id,
+             up.avatar_url, up.headline, up.current_position, up.location,
+             c.balance, c.total_earned, s.plan_type, s.status
       FROM users u
       LEFT JOIN user_profiles up ON u.id = up.user_id
       LEFT JOIN credits c ON u.id = c.user_id
       LEFT JOIN subscriptions s ON u.id = s.user_id
       WHERE u.provider = ${provider} AND u.provider_id = ${providerId}
     `;
-    
-    return result.rows[0] ? mapUserResult(result.rows[0]) : null;
+
+    return result[0] ? mapUserResultFromObject(result[0]) : null;
   });
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
-  return await withTransaction(async (client: Client) => {
-    const result = await client.queryArray`
-      SELECT u.*, up.*, c.balance, c.total_earned, s.plan_type, s.status
+  return await withTransaction(async (client: Sql) => {
+    const result: Array<{
+      id: string;
+      email: string;
+      first_name: string;
+      last_name: string;
+      provider: string;
+      provider_id: string;
+      avatar_url?: string;
+      headline?: string;
+      current_position?: string;
+      location?: string;
+      balance?: number;
+      total_earned?: number;
+      plan_type?: string;
+      status?: string;
+    }> = await client`
+      SELECT u.id, u.email, u.first_name, u.last_name, u.provider, u.provider_id,
+             up.avatar_url, up.headline, up.current_position, up.location,
+             c.balance, c.total_earned, s.plan_type, s.status
       FROM users u
       LEFT JOIN user_profiles up ON u.id = up.user_id
       LEFT JOIN credits c ON u.id = c.user_id
       LEFT JOIN subscriptions s ON u.id = s.user_id
       WHERE u.email = ${email}
     `;
-    
-    return result.rows[0] ? mapUserResult(result.rows[0]) : null;
+
+    return result[0] ? mapUserResultFromObject(result[0]) : null;
   });
 }
 
 // Helper function to map database result to User interface
-function mapUserResult(row: unknown[]): User {
+function mapUserResultFromObject(row: {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  provider: string;
+  provider_id: string;
+  avatar_url?: string;
+  headline?: string;
+  current_position?: string;
+  location?: string;
+  balance?: number;
+  total_earned?: number;
+  plan_type?: string;
+  status?: string;
+}): User {
   return {
-    id: row[0] as string,
-    email: row[1] as string,
-    firstName: row[2] as string,
-    lastName: row[3] as string,
-    provider: row[4] as string,
-    providerId: row[5] as string,
+    id: row.id,
+    email: row.email,
+    firstName: row.first_name,
+    lastName: row.last_name,
+    provider: row.provider,
+    providerId: row.provider_id,
     profile: {
-      avatarUrl: row[7] as string,
-      headline: row[8] as string,
-      currentPosition: row[9] as string,
-      location: row[10] as string,
+      avatarUrl: row.avatar_url,
+      headline: row.headline,
+      currentPosition: row.current_position,
+      location: row.location,
     },
     credits: {
-      balance: row[11] as number,
-      totalEarned: row[12] as number,
+      balance: row.balance || 0,
+      totalEarned: row.total_earned || 0,
     },
     subscription: {
-      planType: row[13] as string,
-      status: row[14] as string,
+      planType: row.plan_type || 'free',
+      status: row.status || 'active',
     },
   };
 }
@@ -234,8 +300,8 @@ export async function updateUserWithLinkedIn(userId: string, memberData: {
     };
   };
 }) {
-  return withTransaction(async (client: Client) => {
-    await client.queryObject`
+  return await withTransaction(async (client: Sql) => {
+    await client`
       UPDATE users 
       SET 
         provider = 'linkedin',
@@ -247,7 +313,7 @@ export async function updateUserWithLinkedIn(userId: string, memberData: {
       RETURNING id
     `;
 
-    await client.queryObject`
+    await client`
       INSERT INTO user_profiles (
         user_id,
         linkedin_profile_url,
@@ -269,7 +335,10 @@ export async function updateUserWithLinkedIn(userId: string, memberData: {
         ${memberData.industry || null},
         ${memberData.location?.name || null},
         ${memberData.summary || null},
-        ${memberData.profilePicture?.["displayImage~"]?.elements?.[0]?.identifiers?.[0]?.identifier || null},
+        ${
+      memberData.profilePicture?.["displayImage~"]?.elements?.[0]?.identifiers
+        ?.[0]?.identifier || null
+    },
         CURRENT_TIMESTAMP
       )
       ON CONFLICT (user_id) 
@@ -288,9 +357,9 @@ export async function updateUserWithLinkedIn(userId: string, memberData: {
 }
 
 export async function getUserProfile(userId: string): Promise<UserProfile> {
-  return withTransaction(async (client: Client) => {
+  return await withTransaction(async (client: Sql) => {
     // Get professional experience
-    const experienceResult = await client.queryObject<{
+    const experienceResult: Array<{
       id: number;
       company: string;
       title: string;
@@ -300,13 +369,12 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
       responsibilities?: string[];
       achievements?: string[];
       narrative?: string;
-    }>(
-      `SELECT * FROM professional_experience WHERE user_id = $1 ORDER BY start_date DESC`,
-      [userId]
-    );
+    }> = await client`
+      SELECT * FROM professional_experience WHERE user_id = ${userId} ORDER BY start_date DESC
+    `;
 
     // Get education
-    const educationResult = await client.queryObject<{
+    const educationResult: Array<{
       id: number;
       institution: string;
       degree: string;
@@ -315,35 +383,32 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
       end_date?: string;
       location?: string;
       achievements?: string[];
-    }>(
-      `SELECT * FROM education WHERE user_id = $1 ORDER BY start_date DESC`,
-      [userId]
-    );
+    }> = await client`
+      SELECT * FROM education WHERE user_id = ${userId} ORDER BY start_date DESC
+    `;
 
     // Get awards
-    const awardsResult = await client.queryObject<{
+    const awardsResult: Array<{
       id: number;
       title: string;
       issuer?: string;
       date?: string;
       description?: string;
-    }>(
-      `SELECT * FROM awards WHERE user_id = $1 ORDER BY date DESC`,
-      [userId]
-    );
+    }> = await client`
+      SELECT * FROM awards WHERE user_id = ${userId} ORDER BY date DESC
+    `;
 
     // Get skills
-    const skillsResult = await client.queryObject<{
+    const skillsResult: Array<{
       id: number;
       category: string;
       skills: string[];
-    }>(
-      `SELECT * FROM skills WHERE user_id = $1`,
-      [userId]
-    );
+    }> = await client`
+      SELECT * FROM skills WHERE user_id = ${userId}
+    `;
 
     // Get contact info
-    const contactResult = await client.queryObject<{
+    const contactResult: Array<{
       id: number;
       full_name: string;
       email?: string;
@@ -354,87 +419,92 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
         BE?: string;
         US?: string;
       };
-    }>(
-      `SELECT * FROM contact_info WHERE user_id = $1`,
-      [userId]
-    );
+    }> = await client`
+      SELECT * FROM contact_info WHERE user_id = ${userId}
+    `;
 
     return {
-      experience: experienceResult.rows.map(exp => ({
+      experience: experienceResult.map((exp) => ({
         id: exp.id,
         company: exp.company,
         title: exp.title,
         start_date: exp.start_date,
-        end_date: exp.end_date,
-        location: exp.location,
-        responsibilities: exp.responsibilities,
-        achievements: exp.achievements,
-        narrative: exp.narrative
+        end_date: exp.end_date ?? null,
+        location: exp.location ?? null,
+        responsibilities: exp.responsibilities ?? null,
+        achievements: exp.achievements ?? null,
+        narrative: exp.narrative ?? null,
       })),
-      education: educationResult.rows.map(edu => ({
+      education: educationResult.map((edu) => ({
         id: edu.id,
         institution: edu.institution,
-        degree: edu.degree,
+        degree: edu.degree ?? null,
         field: edu.field,
-        start_date: edu.start_date,
-        end_date: edu.end_date,
-        location: edu.location,
-        achievements: edu.achievements
+        start_date: edu.start_date ?? null,
+        end_date: edu.end_date ?? null,
+        location: edu.location ?? null,
+        achievements: edu.achievements ?? null,
       })),
-      awards: awardsResult.rows.map(award => ({
+      awards: awardsResult.map((award) => ({
         id: award.id,
         title: award.title,
-        issuer: award.issuer,
-        date: award.date,
-        description: award.description
+        issuer: award.issuer ?? null,
+        date: award.date ?? null,
+        description: award.description ?? null,
       })),
-      skills: skillsResult.rows.map(skill => ({
+      skills: skillsResult.map((skill) => ({
         id: skill.id,
         category: skill.category,
-        skills: skill.skills
+        skills: skill.skills,
       })),
-      contact: contactResult.rows[0] ? {
-        fullName: contactResult.rows[0].full_name,
-        email: contactResult.rows[0].email,
-        phone: contactResult.rows[0].phone,
-        location: contactResult.rows[0].location,
-        linkedin: contactResult.rows[0].linkedin,
-        phoneNumbers: contactResult.rows[0].phone_numbers
-      } : null
+      contact: contactResult[0]
+        ? {
+          fullName: contactResult[0].full_name,
+          email: contactResult[0].email ?? null,
+          phone: contactResult[0].phone ?? null,
+          location: contactResult[0].location ?? null,
+          linkedin: contactResult[0].linkedin ?? null,
+          phoneNumbers: contactResult[0].phone_numbers ?? null,
+        }
+        : null,
     };
   });
 }
 
 export interface ExperienceUpdate {
-  id: number;
+  id: number; 
   userId: number;
   field: string;
   value: string | null;
 }
 
-export async function updateExperienceField({ id, userId, field, value }: ExperienceUpdate) {
-  console.log('DB: Updating experience field:', { id, userId, field, value });
-  
-  return await withTransaction(async (client: Client) => {
+export async function updateExperienceField(
+  { id, userId, field, value }: ExperienceUpdate,
+) {
+  console.log("DB: Updating experience field:", { id, userId, field, value });
+
+  return await withTransaction(async (client: Sql) => {
     // First verify this experience belongs to the user
-    const result = await client.queryObject<{ user_id: number }>(
-      `SELECT user_id FROM professional_experience WHERE id = $1`,
-      [id]
+    const result: Array<{ user_id: number }> = await client`
+      SELECT user_id FROM professional_experience WHERE id = ${id}
+    `;
+
+    if (!result.length || result[0].user_id !== userId) {
+      throw new Error("Unauthorized: Experience does not belong to user");
+    }
+
+    // Update the specified field - use dynamic SQL with postgres package
+    // Note: This is safe because field names are validated by the caller
+    const updateResult = await client.unsafe(
+      `UPDATE professional_experience SET ${field} = $1 WHERE id = $2 AND user_id = $3 RETURNING *`,
+      [value, id, userId]
     );
 
-    if (!result.rows.length || result.rows[0].user_id !== userId) {
-      throw new Error('Unauthorized: Experience does not belong to user');
+    if (!updateResult.length) {
+      throw new Error("Failed to update experience");
     }
 
-    // Update the specified field
-    const query = `UPDATE professional_experience SET ${field} = $1 WHERE id = $2 AND user_id = $3 RETURNING *`;
-    const updateResult = await client.queryObject(query, [value, id, userId]);
-    
-    if (!updateResult.rows.length) {
-      throw new Error('Failed to update experience');
-    }
-
-    console.log('DB: Successfully updated experience:', updateResult.rows[0]);
-    return updateResult.rows[0];
+    console.log("DB: Successfully updated experience:", updateResult[0]);
+    return updateResult[0];
   });
-} 
+}
