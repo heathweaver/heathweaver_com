@@ -6,7 +6,7 @@ interface ImportedJobData {
   company?: string;
   description?: string;
   location?: string;
-  error?: string;
+  error?: string | { message?: string; type?: string };
 }
 
 export default function AddJobForm() {
@@ -41,7 +41,21 @@ export default function AddJobForm() {
       const data: ImportedJobData = await response.json();
 
       if (!response.ok) {
-        importError.value = data.error || "Failed to import job";
+        // Handle error object or string
+        if (typeof data.error === 'string') {
+          importError.value = data.error;
+        } else if (data.error && typeof data.error === 'object') {
+          importError.value = data.error.message || JSON.stringify(data.error);
+        } else {
+          importError.value = "Failed to import job";
+        }
+        // Keep the URL so user can try again or edit it
+        return;
+      }
+
+      // Check if we got valid data
+      if (!data.company && !data.title && !data.description) {
+        importError.value = "Could not extract job details from this URL. Please enter details manually.";
         return;
       }
 
