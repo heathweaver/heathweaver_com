@@ -1,8 +1,8 @@
 import { JobStatus } from "../../backend/types/job-tracking.ts";
 
 export default function JobStatusFilter() {
-  const statuses: JobStatus[] = ['applied', 'interviewing', 'offer'];
-  
+  const statuses: JobStatus[] = ["applied", "interviewing", "offer"];
+
   return (
     <div class="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg w-fit">
       {statuses.map((status) => (
@@ -16,4 +16,4 @@ export default function JobStatusFilter() {
       ))}
     </div>
   );
-} 
+}

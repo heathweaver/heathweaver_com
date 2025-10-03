@@ -1,5 +1,3 @@
-
-
 export const handler = async (req: Request) => {
   if (req.method === "POST") {
     try {
@@ -13,29 +11,29 @@ export const handler = async (req: Request) => {
       const session = await account.createMagicURLToken(
         ID.unique(),
         email,
-        `${new URL(req.url).origin}/verify`
+        `${new URL(req.url).origin}/verify`,
       );
       console.log("Magic URL session created:", session);
 
       return new Response(null, {
         status: 303,
-        headers: { 
-          Location: "/auth/login?message=Check your email for a login link"
-        }
+        headers: {
+          Location: "/auth/login?message=Check your email for a login link",
+        },
       });
     } catch (error) {
       console.error("Magic URL error details:", {
         message: error.message,
         code: error.code,
         type: error.type,
-        response: error.response
+        response: error.response,
       });
-      return new Response(JSON.stringify({ error: error.message }), { 
+      return new Response(JSON.stringify({ error: error.message }), {
         status: 400,
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
     }
   }
 
   return new Response("Method not allowed", { status: 405 });
-}; 
+};

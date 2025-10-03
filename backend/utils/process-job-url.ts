@@ -13,7 +13,7 @@ interface JobResult {
 export async function processJobUrl(url: string): Promise<JobResult> {
   try {
     const response = await fetch(url);
-    
+
     if (!response.ok) {
       return {
         success: false,
@@ -22,7 +22,7 @@ export async function processJobUrl(url: string): Promise<JobResult> {
     }
 
     const html = await response.text();
-    
+
     // For now, return the raw HTML content
     // TODO: Implement proper HTML parsing and content extraction
     return {
@@ -36,4 +36,4 @@ export async function processJobUrl(url: string): Promise<JobResult> {
       error: error instanceof Error ? error.message : String(error),
     };
   }
-} 
+}

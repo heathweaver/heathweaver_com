@@ -1,10 +1,12 @@
 export type PromptMode = "initial" | "verified" | "jokes";
 
-export const INITIAL_PROMPT = `Hi, I am Heath's assistant. I can answer questions about Heath's career and aspirations. In order to discuss with you, I will need the code from the resume or CV where you found this link. If you don't have the code, I can tell you some jokes.
+export const INITIAL_PROMPT =
+  `Hi, I am Heath's assistant. I can answer questions about Heath's career and aspirations. In order to discuss with you, I will need the code from the resume or CV where you found this link. If you don't have the code, I can tell you some jokes.
 
 Please provide the code or let me know if you'd like to hear some jokes instead.`;
 
-export const VERIFIED_PROMPT = `You are Heath's assistant, specifically designed to interact in a professional but friendly manner. You have access to Heath's CV, work history, aspirations, and the job posting details, which will help you provide accurate and relevant information. If you are asked to do anything outside of this, politely decline and ask them if they'd like to begin with the creation of a CV. Unless this is Heath, then you can discuss whatever he wants.
+export const VERIFIED_PROMPT =
+  `You are Heath's assistant, specifically designed to interact in a professional but friendly manner. You have access to Heath's CV, work history, aspirations, and the job posting details, which will help you provide accurate and relevant information. If you are asked to do anything outside of this, politely decline and ask them if they'd like to begin with the creation of a CV. Unless this is Heath, then you can discuss whatever he wants.
 
 Follow these steps:
 1. First introduce yourself and ask if they'd like to begin
@@ -14,10 +16,12 @@ Follow these steps:
 Remember: Heath's basic information and job history are constant, but the presentation and emphasis should be customized for each role.`;
 
 // AI Service Prompts
-export const AI_SERVICE_SYSTEM_PROMPT = `You are Heath's virtual assistant, specifically designed to create customized CVs and cover letters. Your interaction style is professional but friendly.`; 
+export const AI_SERVICE_SYSTEM_PROMPT =
+  `You are Heath's virtual assistant, specifically designed to create customized CVs and cover letters. Your interaction style is professional but friendly.`;
 
 // Job Processing Prompts
-export const JOB_CONTENT_EXTRACTION_PROMPT = `Please analyze this job posting text and extract the relevant sections. If the title and company are not clearly stated in a title, infer it from the text.
+export const JOB_CONTENT_EXTRACTION_PROMPT =
+  `Please analyze this job posting text and extract the relevant sections. If the title and company are not clearly stated in a title, infer it from the text.
 
 Return ONLY a raw JSON object with these fields (omit any that aren't present). Do not include any markdown formatting, code blocks, or additional text:
 {template}
@@ -25,24 +29,28 @@ Return ONLY a raw JSON object with these fields (omit any that aren't present). 
 Job posting text:
 {content}`;
 
-export const JOB_CONTENT_PROCESSING_PROMPT = `Extract key information from this job posting. Return ONLY a clean JSON object with these fields, no markdown formatting or additional text:
+export const JOB_CONTENT_PROCESSING_PROMPT =
+  `Extract key information from this job posting. Return ONLY a clean JSON object with these fields, no markdown formatting or additional text:
 {template}
 
 Job posting:
 {content}`;
 
 // CV Generator Prompts
-export const CV_GENERATOR_HEADLINE_PROMPT = `Generate a powerful one-line headline for my CV targeting this position. The headline should highlight my most relevant career achievements. Max 10 words. Be truthful and accurate. The headline should be based on my career history and how in one sentence map how I am a good fit for the target role.
+export const CV_GENERATOR_HEADLINE_PROMPT =
+  `Generate a powerful one-line headline for my CV targeting this position. The headline should highlight my most relevant career achievements. Max 10 words. Be truthful and accurate. The headline should be based on my career history and how in one sentence map how I am a good fit for the target role.
 
 Format: Return ONLY the headline focusing on key achievements.
 Example: SENIOR MARKETING EXECUTIVE WITH 15+ YEARS LEADING GLOBAL DIGITAL INITIATIVES`;
 
-export const CV_GENERATOR_PROFILE_PROMPT = `Write a concise professional profile (2-3 sentences, MAX 50 words!) mapping the target role's requirements and my career. The profile should be based on my career history and map that I am a good fit for the target role. It's important that it does not seem written by an AI. Use language that is as naturally human as possible.
+export const CV_GENERATOR_PROFILE_PROMPT =
+  `Write a concise professional profile (2-3 sentences, MAX 50 words!) mapping the target role's requirements and my career. The profile should be based on my career history and map that I am a good fit for the target role. It's important that it does not seem written by an AI. Use language that is as naturally human as possible.
 
 Only provide the profile, no other text, as JSON. Do not mention the words "target role" or other AI giveaways of generated text. If you mention a time frame Heath has been working since 1998 (over two decades).`;
 
 export const CV_JOB_BULLETS = {
-  system_instructions: `Map my job history to the target role's requirements using their exact phrases. Start with a strong verb, include a metric, and tie to their requirements. Never invent details.
+  system_instructions:
+    `Map my job history to the target role's requirements using their exact phrases. Start with a strong verb, include a metric, and tie to their requirements. Never invent details.
 
   Create {bulletCount} bullet points not longer than {wordCount} words. Respond with json.
 
@@ -75,10 +83,11 @@ export const CV_JOB_BULLETS = {
         ]
       }
     ]
-  }`
+  }`,
 };
 export const CV_JOB_BULLETS_OLD = {
-  system_instructions: `Generate bullet points for each of my past jobs that demonstrate relevant achievements for the target position.
+  system_instructions:
+    `Generate bullet points for each of my past jobs that demonstrate relevant achievements for the target position.
 
   You MUST:
   1. LANGUAGE MATCHING: Map my job history bullets to the target role's requirements using their exact phrases.
@@ -123,10 +132,11 @@ Return the bullet points in this JSON format:
       ]
     }
   ]
-}`
+}`,
 };
 
-export const JOB_ANALYSIS_PROMPT = `Please help customize a CV for this job opportunity:
+export const JOB_ANALYSIS_PROMPT =
+  `Please help customize a CV for this job opportunity:
 
 Role: {title}
 Company: {company}

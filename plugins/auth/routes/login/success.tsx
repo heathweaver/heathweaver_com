@@ -1,4 +1,4 @@
-import { PageProps } from "$fresh/server.ts";
+import { PageProps } from "fresh";
 import MarketingNavigation from "../../components/MarketingNavigation.tsx";
 
 export default function LoginSuccessPage(props: PageProps) {
@@ -12,10 +12,11 @@ export default function LoginSuccessPage(props: PageProps) {
             Please check your inbox to continue logging in.
           </h2>
           <p class="mt-2 text-center text-sm text-gray-600">
-            Click the link in the email we sent to your email address to complete the login process.
+            Click the link in the email we sent to your email address to
+            complete the login process.
           </p>
         </div>
       </div>
     </>
   );
-} 
+}

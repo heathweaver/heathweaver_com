@@ -1,13 +1,25 @@
-import { Plugin, MiddlewareHandler, FreshContext } from "$fresh/server.ts";
-import { handler as authHandler, AuthState } from "../../routes/_middleware.ts";
-import LoginPage from "./routes/login/index.tsx";
+// Plugin interface for Fresh 2.x
+interface Plugin {
+  name: string;
+  routes?: Array<{
+    path: string;
+    component?: any;
+    handler?: any;
+  }>;
+  islands?: {
+    baseLocation: string;
+    paths: string[];
+  };
+}
+
+import { AuthState } from "../../routes/_middleware.ts";
+import { handler as loginHandler } from "./routes/login/index.tsx";
 import SignUpPage from "./routes/signup/index.tsx";
 import TestPage from "./routes/test/index.tsx";
 import { handler as googleSigninHandler } from "./routes/api/signin/google.ts";
 import { handler as googleSignupHandler } from "./routes/api/signup/google.ts";
 import { handler as googleSignupCallbackHandler } from "./routes/api/signup/google-callback.ts";
 import { handler as googleSigninCallbackHandler } from "./routes/api/signin/google-callback.ts";
-import UserMenu from "./islands/UserMenu.tsx";
 
 // Re-export AuthState type
 export type { AuthState };
@@ -67,65 +79,76 @@ export interface AuthPluginConfig {
   };
 }
 
-export function authPlugin(config: AuthPluginConfig = {}): Plugin {
-  // Create a middleware handler that initializes auth state
-  const pluginMiddleware: MiddlewareHandler = async (
-    req: Request,
-    ctx: FreshContext
-  ) => {
-    // Initialize auth state
-    ctx.state = {
-      sessionId: null,
-      user: null,
-      ...ctx.state
-    };
-    
-    return await authHandler(req, ctx as FreshContext<AuthState>);
-  };
-
-  return {
-    name: "auth",
-    middlewares: [{
-      middleware: {
-        handler: pluginMiddleware
-      },
-      path: "/"
-    }],
-    routes: [
+export function authPlugin(_config: AuthPluginConfig = {}) {
+  return (app: any) => {
+    console.log("Auth plugin is being called!");
+    // Register all auth routes
+    const routes = [
       {
         path: "/auth/login",
-        component: LoginPage
+        handler: loginHandler,
       },
       {
         path: "/auth/signup",
-        component: SignUpPage
+        component: SignUpPage,
       },
       {
         path: "/auth/test",
-        component: TestPage
+        component: TestPage,
       },
       {
         path: "/auth/api/signin/google",
-        handler: googleSigninHandler
+        handler: googleSigninHandler,
       },
       {
         path: "/auth/api/signup/google",
-        handler: googleSignupHandler
+        handler: googleSignupHandler,
       },
       {
         path: "/auth/api/signup/google-callback",
-        handler: googleSignupCallbackHandler
+        handler: googleSignupCallbackHandler,
       },
       {
         path: "/auth/api/signin/google-callback",
-        handler: googleSigninCallbackHandler
+        handler: googleSigninCallbackHandler,
+      },
+    ];
+
+    // Register each route with the app
+    for (const route of routes) {
+      console.log(`Registering route: ${route.path}`);
+      if (route.handler) {
+        // Handlers are objects with GET/POST methods
+        const handler = route.handler as any;
+        console.log(`  Handler keys:`, Object.keys(handler));
+        
+        // Register each HTTP method
+        if (handler.GET) {
+          app.get(route.path, handler.GET);
+          console.log(`  -> Registered GET handler`);
+        }
+        if (handler.POST) {
+          app.post(route.path, handler.POST);
+          console.log(`  -> Registered POST handler`);
+        }
+        if (handler.PUT) {
+          app.put(route.path, handler.PUT);
+          console.log(`  -> Registered PUT handler`);
+        }
+        if (handler.DELETE) {
+          app.delete(route.path, handler.DELETE);
+          console.log(`  -> Registered DELETE handler`);
+        }
+      } else if (route.component) {
+        // Page routes with just components (no handler)
+        const Component = route.component;
+        app.get(route.path, (ctx: any) => {
+          const element = Component();
+          return ctx.render(element);
+        });
+        console.log(`  -> Registered as component`);
       }
-    ],
-    islands: {
-      baseLocation: import.meta.url,
-      paths: [
-        "./islands/UserMenu.tsx"
-      ]
     }
+    console.log("Auth plugin registration complete!");
   };
 }

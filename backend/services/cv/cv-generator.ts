@@ -1,9 +1,28 @@
-import { CV, BasicInfo, BulletPoint, EmploymentHistoryItem, EducationItem, SkillItem, AwardItem, PublicationItem } from "../../types/cv.ts";
+import {
+  AwardItem,
+  BasicInfo,
+  BulletPoint,
+  CV,
+  EducationItem,
+  EmploymentHistoryItem,
+  PublicationItem,
+  SkillItem,
+} from "../../types/cv.ts";
 import { AIService } from "../../types/ai-service.types.ts";
 import { DatabaseService } from "../../db/database.ts";
-import { DBExperience, DBEducation, DBSkill, DBAward, DBContact, DBPublication } from "../../types/db.ts";
+import {
+  DBAward,
+  DBContact,
+  DBEducation,
+  DBExperience,
+  DBPublication,
+  DBSkill,
+} from "../../types/db.ts";
 import { GenerateOptions } from "../../types/cv-generation.ts";
-import { CV_GENERATOR_PROFILE_PROMPT, CV_JOB_BULLETS } from "../../prompt/index.ts";
+import {
+  CV_GENERATOR_PROFILE_PROMPT,
+  CV_JOB_BULLETS,
+} from "../../prompt/index.ts";
 import { DEFAULT_BULLET_CONFIG } from "../../types/cv-generation.ts";
 
 interface ParsedJobPosting {
@@ -20,7 +39,7 @@ interface ParsedJobPosting {
 export class CVGenerator {
   constructor(
     private ai: AIService,
-    private db: DatabaseService
+    private db: DatabaseService,
   ) {}
 
   /**
@@ -33,7 +52,7 @@ export class CVGenerator {
       company: "",
       responsibilities: [],
       requirements: [],
-      description: ""
+      description: "",
     };
 
     // Extract title and company if present in structured format
@@ -44,28 +63,36 @@ export class CVGenerator {
 
     // Split content into sections
     const sections = content.split(/\n\s*\n/);
-    
+
     let currentSection = "description";
     for (const section of sections) {
       const cleanSection = section.trim();
-      
+
       // Skip empty sections
       if (!cleanSection) continue;
 
       // Detect section type
-      if (/responsibilities|position responsibilities|job duties/i.test(cleanSection)) {
+      if (
+        /responsibilities|position responsibilities|job duties/i.test(
+          cleanSection,
+        )
+      ) {
         currentSection = "responsibilities";
         continue;
       }
-      if (/requirements|qualifications|skills|experience required/i.test(cleanSection)) {
+      if (
+        /requirements|qualifications|skills|experience required/i.test(
+          cleanSection,
+        )
+      ) {
         currentSection = "requirements";
         continue;
       }
 
       // Extract bullet points
       const bullets = cleanSection.split(/[•\-\*]\s+/)
-        .map(b => b.trim())
-        .filter(b => b.length > 10); // Filter out short/empty bullets
+        .map((b) => b.trim())
+        .filter((b) => b.length > 10); // Filter out short/empty bullets
 
       // Add content to appropriate section
       switch (currentSection) {
@@ -92,20 +119,20 @@ export class CVGenerator {
 
   private formatDate(dateStr: string): string {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
   }
 
   async generateCV(options: GenerateOptions): Promise<CV> {
     const rawData = await this.db.fetchCVData();
-    
+
     // Parse job posting if provided
     let jobData: ParsedJobPosting | null = null;
-    if (typeof options.requirements === 'string') {
+    if (typeof options.requirements === "string") {
       jobData = this.parseJobPosting(options.requirements);
       options.requirements = [
         ...jobData.requirements,
-        ...jobData.responsibilities
-      ].join('\n');
+        ...jobData.responsibilities,
+      ].join("\n");
       options.jobTitle = jobData.title || options.jobTitle;
     }
 
@@ -116,80 +143,93 @@ export class CVGenerator {
       email: contact.email,
       phone: contact.phone,
       location: contact.location,
-      linkedin: contact.linkedin
+      linkedin: contact.linkedin,
     };
 
     // Transform experience into employment history with customized bullet points
     const employmentHistory: EmploymentHistoryItem[] = [];
     for (const job of (rawData.experience as DBExperience[])) {
       const customBullets = await this.generateCustomBulletPoints(
-        job, 
+        job,
         options,
-        jobData?.requirements || []
+        jobData?.requirements || [],
       );
-      
+
       employmentHistory.push({
         company: job.company,
         title: job.title,
         start_date: this.formatDate(job.start_date.toISOString()),
-        end_date: job.end_date ? this.formatDate(job.end_date.toISOString()) : undefined,
+        end_date: job.end_date
+          ? this.formatDate(job.end_date.toISOString())
+          : undefined,
         location: job.location,
         responsibilities: job.responsibilities,
         achievements: job.achievements,
         narrative: job.narrative,
-        bulletPoints: customBullets
+        bulletPoints: customBullets,
       });
     }
 
     // Sort in reverse chronological order
-    employmentHistory.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
-    
+    employmentHistory.sort((a, b) =>
+      new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
+    );
+
     // Always set the most recent job's end date to 'Present'
     if (employmentHistory.length > 0) {
-      employmentHistory[0].end_date = 'Present';
+      employmentHistory[0].end_date = "Present";
     }
 
     // Transform education
-    const education: EducationItem[] = (rawData.education as DBEducation[]).map(edu => ({
-      institution: edu.institution,
-      degree: edu.degree,
-      field: edu.field,
-      location: edu.location,
-      start_date: edu.start_date.toISOString().split('T')[0],
-      end_date: edu.end_date.toISOString().split('T')[0],
-    }));
+    const education: EducationItem[] = (rawData.education as DBEducation[]).map(
+      (edu) => ({
+        institution: edu.institution,
+        degree: edu.degree,
+        field: edu.field,
+        location: edu.location,
+        start_date: edu.start_date.toISOString().split("T")[0],
+        end_date: edu.end_date.toISOString().split("T")[0],
+      }),
+    );
 
     // Transform skills - separate languages and append at end
     const allSkills = rawData.skills as DBSkill[];
-    const languageSkills = allSkills.find(skill => skill.category === "Languages");
-    const otherSkills = allSkills.filter(skill => skill.category !== "Languages");
-    
+    const languageSkills = allSkills.find((skill) =>
+      skill.category === "Languages"
+    );
+    const otherSkills = allSkills.filter((skill) =>
+      skill.category !== "Languages"
+    );
+
     const skills: SkillItem[] = [
-      ...otherSkills.map(skill => ({
+      ...otherSkills.map((skill) => ({
         category: skill.category,
-        skills: skill.skills
+        skills: skill.skills,
       })),
-      ...(languageSkills ? [{
-        category: languageSkills.category,
-        skills: languageSkills.skills
-      }] : [])
+      ...(languageSkills
+        ? [{
+          category: languageSkills.category,
+          skills: languageSkills.skills,
+        }]
+        : []),
     ];
 
     // Transform awards
-    const awards: AwardItem[] = (rawData.awards as DBAward[]).map(award => ({
+    const awards: AwardItem[] = (rawData.awards as DBAward[]).map((award) => ({
       title: award.title,
       issuer: award.issuer || undefined,
-      date: award.date ? award.date.toISOString().split('T')[0] : undefined
+      date: award.date ? award.date.toISOString().split("T")[0] : undefined,
     }));
 
     // Transform publications
-    const publications: PublicationItem[] = (rawData.publications as DBPublication[]).map(pub => ({
-      title: pub.title,
-      publisher: pub.publisher,
-      date: pub.date ? pub.date.toISOString().split('T')[0] : undefined,
-      url: pub.url,
-      description: pub.description
-    }));
+    const publications: PublicationItem[] =
+      (rawData.publications as DBPublication[]).map((pub) => ({
+        title: pub.title,
+        publisher: pub.publisher,
+        date: pub.date ? pub.date.toISOString().split("T")[0] : undefined,
+        url: pub.url,
+        description: pub.description,
+      }));
 
     // Generate profile using AI
     // const profile = await this.generateProfile(options, basicInfo, employmentHistory);
@@ -199,41 +239,43 @@ export class CVGenerator {
       basicInfo,
       profile,
       employmentHistory,
-      certificatesAndAwards: awards.map(award => award.title),
+      certificatesAndAwards: awards.map((award) => award.title),
       contact: rawData.contact,
       experience: rawData.experience,
       education,
       skills,
       awards,
-      publications
+      publications,
     };
   }
 
   private async generateCustomBulletPoints(
-    job: DBExperience, 
+    job: DBExperience,
     options: GenerateOptions,
-    jobRequirements: string[] = []
+    jobRequirements: string[] = [],
   ): Promise<BulletPoint[]> {
     console.log(`Generating bullets for: ${job.company} - ${job.title}`);
     const config = options.bulletPointConfig || DEFAULT_BULLET_CONFIG;
-    
+
     if (!config[job.company]) {
-      throw new Error(`Company "${job.company}" not found in bullet point configuration`);
+      throw new Error(
+        `Company "${job.company}" not found in bullet point configuration`,
+      );
     }
-    
+
     const bulletCount = config[job.company];
     const wordCount = 50;
-    
+
     const prompt = this.constructBulletPrompt(
-      job, 
-      jobRequirements.length > 0 ? jobRequirements : options.requirements, 
-      bulletCount, 
-      wordCount
+      job,
+      jobRequirements.length > 0 ? jobRequirements : options.requirements,
+      bulletCount,
+      wordCount,
     );
 
     console.log("\nBullet point prompt after replacement:", prompt);
     const response = await this.ai.processJobPosting(prompt);
-    
+
     if (response.error) {
       throw new Error(`generateCustomBulletPoints: ${response.error}`);
     }
@@ -244,7 +286,11 @@ export class CVGenerator {
       return result.jobs[0].bullets.map((content: string) => ({ content }));
     } catch (error: unknown) {
       console.error("Failed to parse bullet response:", error);
-      throw new Error(`Failed to parse bullet response: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to parse bullet response: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
   }
 
@@ -255,25 +301,27 @@ export class CVGenerator {
     return years;
   }
 
-  private getBulletConfig(years: number): { bulletCount: number, wordCount: number } {
+  private getBulletConfig(
+    years: number,
+  ): { bulletCount: number; wordCount: number } {
     if (years < 2) return { bulletCount: 1, wordCount: 30 };
     if (years <= 3) return { bulletCount: 2, wordCount: 50 };
     return { bulletCount: 4, wordCount: 80 };
   }
 
   private constructBulletPrompt(
-    job: DBExperience, 
+    job: DBExperience,
     targetRequirements: string | string[],
     bulletCount: number,
-    wordCount: number
+    wordCount: number,
   ): string {
-    const requirements = Array.isArray(targetRequirements) 
+    const requirements = Array.isArray(targetRequirements)
       ? targetRequirements.join("\n")
       : targetRequirements;
 
     console.log(`Bullet config for ${job.company}:`, {
       bulletCount,
-      wordCount
+      wordCount,
     });
 
     const systemInstructions = CV_JOB_BULLETS.system_instructions
@@ -295,7 +343,9 @@ ${requirements}
 Job Information:
 Company: ${job.company}
 Title: ${job.title}
-Duration: ${job.start_date.toISOString().split('T')[0]} to ${job.end_date ? job.end_date.toISOString().split('T')[0] : 'Present'}
+Duration: ${job.start_date.toISOString().split("T")[0]} to ${
+      job.end_date ? job.end_date.toISOString().split("T")[0] : "Present"
+    }
 Required Bullet Points: ${bulletCount}
 Max Words per Bullet: ${wordCount}
 
@@ -314,13 +364,15 @@ ${responseFormat}`;
   private async generateProfile(
     options: GenerateOptions,
     basicInfo: BasicInfo,
-    employmentHistory: EmploymentHistoryItem[]
+    employmentHistory: EmploymentHistoryItem[],
   ): Promise<string> {
     const careerHistory = employmentHistory
-      .map(job => `${job.title} at ${job.company} (${job.start_date} - ${job.end_date})
+      .map((job) =>
+        `${job.title} at ${job.company} (${job.start_date} - ${job.end_date})
 Key Achievements:
-${job.achievements?.map(a => `- ${a}`).join('\n')}`)
-      .join('\n\n');
+${job.achievements?.map((a) => `- ${a}`).join("\n")}`
+      )
+      .join("\n\n");
 
     const prompt = CV_GENERATOR_PROFILE_PROMPT
       .replace("{jobTitle}", options.jobTitle)
@@ -343,4 +395,4 @@ ${job.achievements?.map(a => `- ${a}`).join('\n')}`)
       return response.content[0].trim();
     }
   }
-} 
+}

@@ -1,1 +1,1 @@
-// Functions to handle job history and templates 
+// Functions to handle job history and templates

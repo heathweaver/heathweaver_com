@@ -1,27 +1,33 @@
-import { JobTracking, JobStatus } from "../../backend/types/job-tracking.ts";
+import { JobStatus, JobTracking } from "../../backend/types/job-tracking.ts";
 
 interface JobStatusSelectProps {
   job: JobTracking;
 }
 
 export default function JobStatusSelect({ job }: JobStatusSelectProps) {
-  const statuses: JobStatus[] = ['saved', 'applied', 'interviewing', 'offer', 'closed'];
+  const statuses: JobStatus[] = [
+    "saved",
+    "applied",
+    "interviewing",
+    "offer",
+    "closed",
+  ];
 
   const handleStatusChange = async (newStatus: JobStatus) => {
     try {
       const response = await fetch(`/api/jobs/${job.id}/status`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ status: newStatus }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update status');
+        throw new Error("Failed to update status");
       }
     } catch (error) {
-      console.error('Error updating job status:', error);
+      console.error("Error updating job status:", error);
     }
   };
 
@@ -43,4 +49,4 @@ export default function JobStatusSelect({ job }: JobStatusSelectProps) {
       ))}
     </select>
   );
-} 
+}

@@ -1,4 +1,4 @@
-import { AIService, AIResponse } from "../../types/ai-service.types.ts";
+import { AIResponse, AIService } from "../../types/ai-service.types.ts";
 
 interface XAIMessage {
   role: "user" | "assistant" | "system";
@@ -40,7 +40,7 @@ export class XAIService implements AIService {
         },
         body: JSON.stringify({
           model: this.model,
-          ...options
+          ...options,
         }),
       });
 
@@ -61,14 +61,17 @@ export class XAIService implements AIService {
     }
   }
 
-  async processJobPosting(prompt: string, jsonSchema?: Record<string, unknown>): Promise<AIResponse> {
+  async processJobPosting(
+    prompt: string,
+    jsonSchema?: Record<string, unknown>,
+  ): Promise<AIResponse> {
     const options: XAIRequestOptions = {
       messages: [{ role: "user", content: prompt }],
       max_tokens: 1024,
       response_format: {
         type: "json_object",
-        schema: jsonSchema || {}
-      }
+        schema: jsonSchema || {},
+      },
     };
 
     return this.makeRequest(options);
@@ -77,7 +80,7 @@ export class XAIService implements AIService {
   async generateCV(prompt: string): Promise<AIResponse> {
     return this.makeRequest({
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 2048
+      max_tokens: 2048,
     });
   }
-} 
+}

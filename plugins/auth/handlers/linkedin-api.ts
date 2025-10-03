@@ -26,4 +26,4 @@ export async function getLinkedInPositions(accessToken: string) {
   }
 
   return await response.json();
-} 
+}

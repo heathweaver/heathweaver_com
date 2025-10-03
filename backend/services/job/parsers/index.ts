@@ -1,14 +1,14 @@
 import { DOMParser } from "@b-fuze/deno-dom/wasm";
-import { ParseResult, ParserError } from "../types.ts";
+import { ParserError, ParseResult } from "../types.ts";
 import { JsonLdParser } from "./json-ld-parser.ts";
 import { HtmlParser } from "./html-parser.ts";
 import { JavaScriptParser } from "./js-parser.ts";
 
 export class JobParser {
   private parsers = [
-    new JsonLdParser(),     // Try structured data first
+    new JsonLdParser(), // Try structured data first
     new JavaScriptParser(), // Then try embedded JS data
-    new HtmlParser()        // Finally try HTML containers
+    new HtmlParser(), // Finally try HTML containers
   ];
 
   async parse(html: string): Promise<ParseResult> {
@@ -22,7 +22,7 @@ export class JobParser {
         content: "",
         error: {
           type: "HTML_PARSE_ERROR",
-          message: "Failed to parse HTML document"
+          message: "Failed to parse HTML document",
         },
         debug: {
           parser: "JobParser",
@@ -32,20 +32,20 @@ export class JobParser {
             success: false,
             error: {
               type: "HTML_PARSE_ERROR",
-              message: "Failed to parse HTML document"
-            }
+              message: "Failed to parse HTML document",
+            },
           }],
           timing: {
             start: Date.now(),
-            end: Date.now()
+            end: Date.now(),
           },
           contentLength: 0,
           sample: "",
           containerFound: false,
           firstTermFound: "none",
           errorType: "HTML_PARSE_ERROR",
-          fullError: "Failed to parse HTML document"
-        }
+          fullError: "Failed to parse HTML document",
+        },
       };
     }
 
@@ -58,9 +58,9 @@ export class JobParser {
           success: result.success,
           contentLength: result.content?.length,
           error: result.error,
-          debug: result.debug
+          debug: result.debug,
         });
-        
+
         if (result && result.success) {
           console.debug(`Successfully parsed with ${parser.name} parser`);
           return result;
@@ -79,30 +79,30 @@ export class JobParser {
       content: "",
       error: {
         type: "EXTRACTION_ERROR",
-        message: "All parsers failed to extract content"
+        message: "All parsers failed to extract content",
       },
       debug: {
         parser: "JobParser",
         strategy: "combined",
-        attempts: this.parsers.map(p => ({
+        attempts: this.parsers.map((p) => ({
           type: p.name,
           success: false,
           error: {
             type: "EXTRACTION_ERROR",
-            message: `Failed to extract with ${p.name} parser`
-          }
+            message: `Failed to extract with ${p.name} parser`,
+          },
         })),
         timing: {
           start: Date.now(),
-          end: Date.now()
+          end: Date.now(),
         },
         contentLength: 0,
         sample: "",
         containerFound: false,
         firstTermFound: "none",
         errorType: "EXTRACTION_ERROR",
-        fullError: "All parsers failed to extract content"
-      }
+        fullError: "All parsers failed to extract content",
+      },
     };
   }
-} 
+}

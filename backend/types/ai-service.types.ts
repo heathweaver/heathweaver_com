@@ -20,5 +20,8 @@ export interface AIService {
    * @param prompt The prompt to process
    * @param jsonSchema Optional schema if JSON response is required
    */
-  processJobPosting(prompt: string, jsonSchema?: Record<string, unknown>): Promise<AIResponse>;
-} 
+  processJobPosting(
+    prompt: string,
+    jsonSchema?: Record<string, unknown>,
+  ): Promise<AIResponse>;
+}

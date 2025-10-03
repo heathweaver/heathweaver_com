@@ -1,4 +1,4 @@
-import { JobTracking, JobStatus } from "../../backend/types/job-tracking.ts";
+import { JobStatus, JobTracking } from "../../backend/types/job-tracking.ts";
 import JobStatusSelect from "../../islands/jobs/JobStatusSelect.tsx";
 import JobSearch from "../../islands/jobs/JobSearch.tsx";
 import Navigation from "../Navigation.tsx";
@@ -13,12 +13,13 @@ export default function JobsPage({ jobs }: JobsPageProps) {
   const activeFilter = useSignal<JobStatus | null>(null);
 
   // Filter jobs based on search term and active filter
-  const filteredJobs = jobs.filter(job => {
-    const matchesSearch = searchTerm.value === "" || 
+  const filteredJobs = jobs.filter((job) => {
+    const matchesSearch = searchTerm.value === "" ||
       job.companyName.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
       job.jobTitle.toLowerCase().includes(searchTerm.value.toLowerCase());
 
-    const matchesFilter = !activeFilter.value || job.status === activeFilter.value;
+    const matchesFilter = !activeFilter.value ||
+      job.status === activeFilter.value;
 
     return matchesSearch && matchesFilter;
   });
@@ -34,8 +35,8 @@ export default function JobsPage({ jobs }: JobsPageProps) {
               + Add Job
             </button>
           </div>
-          
-          <JobSearch 
+
+          <JobSearch
             searchTerm={searchTerm}
             activeFilter={activeFilter}
           />
@@ -52,19 +53,34 @@ export default function JobsPage({ jobs }: JobsPageProps) {
             </colgroup>
             <thead class="bg-gray-50">
               <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Company Name
                 </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Job Title
                 </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                >
                   Created Date
                 </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Status
                 </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   CV Status
                 </th>
               </tr>
@@ -73,10 +89,14 @@ export default function JobsPage({ jobs }: JobsPageProps) {
               {filteredJobs.map((job) => (
                 <tr key={job.id} class="hover:bg-gray-50">
                   <td class="px-6 py-4">
-                    <div class="text-sm font-medium text-gray-900 break-words">{job.companyName}</div>
+                    <div class="text-sm font-medium text-gray-900 break-words">
+                      {job.companyName}
+                    </div>
                   </td>
                   <td class="px-6 py-4">
-                    <div class="text-sm text-gray-900 break-words">{job.jobTitle}</div>
+                    <div class="text-sm text-gray-900 break-words">
+                      {job.jobTitle}
+                    </div>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-sm text-gray-500">
@@ -88,23 +108,25 @@ export default function JobsPage({ jobs }: JobsPageProps) {
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center space-x-2">
-                      {job.cvId ? (
-                        <>
-                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            CV Generated
-                          </span>
-                          <a 
-                            href={`/cv/${job.cvId}`}
-                            class="text-emerald-600 hover:text-emerald-900 text-sm font-medium"
-                          >
-                            View CV
-                          </a>
-                        </>
-                      ) : (
-                        <button class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 hover:bg-emerald-100 hover:text-emerald-800">
-                          Generate CV
-                        </button>
-                      )}
+                      {job.cvId
+                        ? (
+                          <>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              CV Generated
+                            </span>
+                            <a
+                              href={`/cv/${job.cvId}`}
+                              class="text-emerald-600 hover:text-emerald-900 text-sm font-medium"
+                            >
+                              View CV
+                            </a>
+                          </>
+                        )
+                        : (
+                          <button class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 hover:bg-emerald-100 hover:text-emerald-800">
+                            Generate CV
+                          </button>
+                        )}
                     </div>
                   </td>
                 </tr>
@@ -115,4 +137,4 @@ export default function JobsPage({ jobs }: JobsPageProps) {
       </main>
     </>
   );
-} 
+}

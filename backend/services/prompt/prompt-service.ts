@@ -1,11 +1,13 @@
 import { parse } from "@std/yaml";
 import { JobHistory } from "../../types/cv.ts";
-import { PromptTemplate, PromptData } from "../../types/prompt.ts";
+import { PromptData, PromptTemplate } from "../../types/prompt.ts";
 
 export class PromptService {
   private promptData: PromptData | null = null;
 
-  async loadPrompts(promptPath: string = "backend/prompts/cv-generation.yml"): Promise<void> {
+  async loadPrompts(
+    promptPath: string = "backend/prompts/cv-generation.yml",
+  ): Promise<void> {
     const yamlContent = await Deno.readTextFile(promptPath);
     this.promptData = parse(yamlContent) as PromptData;
   }
@@ -56,7 +58,7 @@ export class PromptService {
 
     const template = this.promptData.cv_generation.job_bullets;
     let prompt = template.template;
-    
+
     // Replace template variables
     prompt = prompt
       .replace("{system_instructions}", template.system_instructions || "")
@@ -70,23 +72,24 @@ export class PromptService {
   }
 
   private formatJobHistory(jobs: JobHistory[]): string {
-    return jobs.map(job => `
+    return jobs.map((job) => `
 Company: ${job.company}
 Title: ${job.title}
 Duration: ${this.calculateDuration(job.start_date, job.end_date)}
-Location: ${job.location || 'Remote'}
+Location: ${job.location || "Remote"}
 Responsibilities:
-${job.responsibilities.map(r => `- ${r}`).join('\n')}
+${job.responsibilities.map((r) => `- ${r}`).join("\n")}
 Achievements:
-${job.achievements.map(a => `- ${a}`).join('\n')}
+${job.achievements.map((a) => `- ${a}`).join("\n")}
 Narrative:
-${job.narrative.map(n => `- ${n}`).join('\n')}
-`).join('\n---\n');
+${job.narrative.map((n) => `- ${n}`).join("\n")}
+`).join("\n---\n");
   }
 
   private calculateDuration(startDate: Date, endDate: Date | null): string {
     const end = endDate || new Date();
-    const diffYears = (end.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+    const diffYears = (end.getTime() - startDate.getTime()) /
+      (1000 * 60 * 60 * 24 * 365.25);
     return diffYears.toFixed(1) + " years";
   }
-} 
+}

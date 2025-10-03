@@ -12,21 +12,23 @@ import { JobContent } from "../../types/job.ts";
 export async function processJobUrl(
   url: string,
   ai: AIService,
-  db?: DatabaseService
+  db?: DatabaseService,
 ): Promise<JobContent & { id?: string }> {
   console.debug("\nProcessing URL:", url);
-  
+
   // 1. Fetch HTML
   console.debug("1. Fetching HTML...");
   const fetchResult = await fetchJobPosting(url);
   console.debug("Fetch result:", {
     success: fetchResult.success,
     contentLength: fetchResult.content?.length,
-    error: fetchResult.error
+    error: fetchResult.error,
   });
-  
+
   if (!fetchResult.success || !fetchResult.content) {
-    return { error: String(fetchResult.error || "No content returned from fetch") };
+    return {
+      error: String(fetchResult.error || "No content returned from fetch"),
+    };
   }
 
   // 2. Parse HTML to clean text
@@ -36,14 +38,16 @@ export async function processJobUrl(
     success: parseResult.success,
     contentLength: parseResult.content?.length,
     error: parseResult.error,
-    debug: parseResult.debug
+    debug: parseResult.debug,
   });
-  
+
   if (!parseResult.success || !parseResult.content) {
-    return { error: String(parseResult.error || "No content returned from parse") };
+    return {
+      error: String(parseResult.error || "No content returned from parse"),
+    };
   }
 
   // 3. Process text into structured data and store
   console.debug("\n3. Processing content...");
   return processJobContent(parseResult.content, ai, db, url);
-} 
+}

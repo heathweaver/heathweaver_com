@@ -1,4 +1,4 @@
-import { AIService, AIResponse } from "../../types/ai-service.types.ts";
+import { AIResponse, AIService } from "../../types/ai-service.types.ts";
 import { AI_SERVICE_SYSTEM_PROMPT } from "../../prompt/index.ts";
 
 interface AnthropicMessage {
@@ -28,7 +28,9 @@ export class AnthropicService implements AIService {
     this.apiKey = apiKey;
   }
 
-  private async makeRequest(options: AnthropicRequestOptions): Promise<AIResponse> {
+  private async makeRequest(
+    options: AnthropicRequestOptions,
+  ): Promise<AIResponse> {
     try {
       console.log("Making Anthropic API request:", {
         url: `${this.baseUrl}/messages`,
@@ -39,7 +41,7 @@ export class AnthropicService implements AIService {
         model: this.model,
         messages: options.messages,
         max_tokens: options.max_tokens,
-        system: AI_SERVICE_SYSTEM_PROMPT
+        system: AI_SERVICE_SYSTEM_PROMPT,
       };
 
       console.log("Request body:", JSON.stringify(requestBody));
@@ -58,7 +60,10 @@ export class AnthropicService implements AIService {
       console.log("Raw API response:", responseText);
 
       if (!response.ok) {
-        console.error(`Anthropic API error: Status ${response.status}`, responseText);
+        console.error(
+          `Anthropic API error: Status ${response.status}`,
+          responseText,
+        );
         throw new Error(`request: Anthropic API error: ${responseText}`);
       }
 
@@ -90,14 +95,14 @@ export class AnthropicService implements AIService {
   async processJobPosting(prompt: string): Promise<AIResponse> {
     return this.makeRequest({
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 1024
+      max_tokens: 1024,
     });
   }
 
   async generateCV(prompt: string): Promise<AIResponse> {
     return this.makeRequest({
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 2048
+      max_tokens: 2048,
     });
   }
-} 
+}

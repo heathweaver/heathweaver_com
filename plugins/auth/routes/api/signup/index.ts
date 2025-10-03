@@ -1,16 +1,17 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 
 export async function handler(
-  req: Request,
   _ctx: FreshContext,
 ) {
+  const req = ctx.req;
+
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
   }
 
   try {
     const { email } = await req.json();
-    
+
     // TODO: Replace with KV storage
     const kv = await Deno.openKv();
     const token = crypto.randomUUID();
@@ -21,10 +22,12 @@ export async function handler(
 
     return new Response(JSON.stringify({ success: true }));
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "An error occurred";
+    const message = error instanceof Error
+      ? error.message
+      : "An error occurred";
     return new Response(
       JSON.stringify({ error: message }),
-      { status: 400 }
+      { status: 400 },
     );
   }
-} 
+}

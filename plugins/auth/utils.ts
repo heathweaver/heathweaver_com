@@ -1,4 +1,7 @@
-import { User, Session } from "./types.ts";
+import { Session, User } from "./types.ts";
+
+// Re-export define from the main app utils
+export { define } from "../../utils.ts";
 
 export function createSession(user: User): Session {
   return {

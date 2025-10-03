@@ -10,4 +10,4 @@ export interface PromptData {
     profile_prompt: string;
     job_bullets: PromptTemplate;
   };
-} 
+}

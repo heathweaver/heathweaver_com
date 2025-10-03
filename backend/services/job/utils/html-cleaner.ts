@@ -1,4 +1,4 @@
-import { DOMParser, Document, Element } from "@b-fuze/deno-dom/wasm";
+import { Document, DOMParser, Element } from "@b-fuze/deno-dom/wasm";
 import { ParserConfig } from "../types.ts";
 
 export class HtmlCleaner {
@@ -12,26 +12,26 @@ export class HtmlCleaner {
 
     // Replace common elements with appropriate text
     const elementReplacements: Record<string, string> = {
-      'p': '\n\n',
-      'br': '\n',
-      'div': '\n',
-      'h1': '\n\n',
-      'h2': '\n\n',
-      'h3': '\n\n',
-      'h4': '\n\n',
-      'h5': '\n\n',
-      'h6': '\n\n',
-      'li': '\n• ',
-      'tr': '\n',
-      'th': '\t',
-      'td': '\t',
+      "p": "\n\n",
+      "br": "\n",
+      "div": "\n",
+      "h1": "\n\n",
+      "h2": "\n\n",
+      "h3": "\n\n",
+      "h4": "\n\n",
+      "h5": "\n\n",
+      "h6": "\n\n",
+      "li": "\n• ",
+      "tr": "\n",
+      "th": "\t",
+      "td": "\t",
     };
 
     // Replace elements with their text equivalents
     Object.entries(elementReplacements).forEach(([tag, replacement]) => {
-      doc.querySelectorAll(tag).forEach(el => {
+      doc.querySelectorAll(tag).forEach((el) => {
         try {
-          const text = el.textContent || '';
+          const text = el.textContent || "";
           el.textContent = `${replacement}${text}`;
         } catch (err) {
           console.debug(`Failed to process ${tag} element:`, err);
@@ -44,13 +44,14 @@ export class HtmlCleaner {
 
     // Apply cleanup patterns
     return this.config.cleanupPatterns.reduce(
-      (content, { pattern, replacement }) => content.replace(pattern, replacement),
-      text
+      (content, { pattern, replacement }) =>
+        content.replace(pattern, replacement),
+      text,
     ).trim();
   }
 
   removeElements(doc: Document, selectors: string[]): void {
-    selectors.forEach(selector => {
+    selectors.forEach((selector) => {
       doc.querySelectorAll(selector).forEach((el: Element) => {
         try {
           el.remove();
@@ -60,4 +61,4 @@ export class HtmlCleaner {
       });
     });
   }
-} 
+}

@@ -8,11 +8,11 @@ export const handler: Handlers = {
   async GET(req) {
     try {
       console.log("1. Apple callback received with URL:", req.url);
-      
+
       // 1. Let the package handle the OAuth flow
       console.log("2. Attempting OAuth callback handling...");
       const { response, sessionId, tokens } = await handleAppleSignupCallback(req);
-      console.log("3. OAuth callback successful:", { 
+      console.log("3. OAuth callback successful:", {
         hasResponse: !!response,
         hasSession: !!sessionId,
         hasTokens: !!tokens,
@@ -38,7 +38,7 @@ export const handler: Handlers = {
         if (!existingUser.rows.length) {
           // Create new user if they don't exist
           const result = await db.queryObject<{ id: number }>(
-            `INSERT INTO runners (first_name, provider, provider_id) 
+            `INSERT INTO runners (first_name, provider, provider_id)
              VALUES ($1, $2, $3) RETURNING id`,
             [userData.name || 'Apple User', 'apple', userData.sub]
           );
@@ -83,7 +83,7 @@ export const handler: Handlers = {
 
     } catch (error: unknown) {
       console.error("Apple signup error:", error);
-      
+
       if (error instanceof Error) {
         console.error("Error details:", {
           name: error.name,
@@ -100,5 +100,5 @@ export const handler: Handlers = {
       });
     }
   }
-}; 
-*/ 
+};
+*/

@@ -6,5 +6,5 @@ export const handler: Handlers = {
   async GET(req) {
     return await signInWithAppleSignup(req);
   }
-}; 
-*/ 
+};
+*/

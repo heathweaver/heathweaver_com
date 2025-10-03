@@ -22,4 +22,4 @@ export interface StreamChunk {
   }>;
 }
 
-export type ChatModel = "anthropic" | "xai" | "deepseek" | "openai"; 
+export type ChatModel = "anthropic" | "xai" | "deepseek" | "openai";

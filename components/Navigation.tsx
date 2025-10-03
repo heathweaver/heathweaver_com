@@ -7,7 +7,9 @@ export default function Navigation() {
         <div class="flex justify-between items-center h-16">
           {/* Logo - Left side */}
           <div class="flex-shrink-0">
-            <a href="/" class="text-xl font-bold text-emerald-600">AI CV Generator</a>
+            <a href="/" class="text-xl font-bold text-emerald-600">
+              AI CV Generator
+            </a>
           </div>
 
           {/* Center navigation */}
@@ -47,4 +49,4 @@ export default function Navigation() {
       </div>
     </nav>
   );
-} 
+}

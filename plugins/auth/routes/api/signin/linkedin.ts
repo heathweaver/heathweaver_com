@@ -1,8 +1,10 @@
-import { Handlers } from "$fresh/server.ts";
 import { signInWithLinkedInSignin } from "../../../lib/kv_oauth.ts";
+import { Handlers } from "fresh/compat";
 
 export const handler: Handlers = {
-  async GET(req) {
+  async GET(ctx) {
+    const req = ctx.req;
+
     return await signInWithLinkedInSignin(req);
-  }
-}; 
+  },
+};

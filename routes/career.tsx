@@ -1,31 +1,33 @@
-import { Handlers, PageProps } from "$fresh/server.ts";
-import { Head } from "$fresh/runtime.ts";
+import { Head } from "fresh/runtime";
 import Navigation from "../components/Navigation.tsx";
 import CVGenerator from "../islands/CVGenerator.tsx";
 import DocumentPreview from "../islands/DocumentPreview.tsx";
-import { AuthState } from "../plugins/auth/mod.ts";
+import { define } from "../utils.ts";
 
-export const handler: Handlers<null, AuthState> = {
-  async GET(_req, ctx) {
+export const handler = define.handlers({
+  GET(ctx) {
     const { user } = ctx.state;
-    
+
     if (!user) {
       return new Response(null, {
         status: 302,
-        headers: { Location: "/auth/login" }
+        headers: { Location: "/auth/login" },
       });
     }
 
-    return ctx.render(null);
+    return { data: null };
   },
-};
+});
 
-export default function Career() {
+export default define.page<typeof handler>(function Career() {
   return (
     <>
       <Head>
         <title>CV Generator - Remote Executive</title>
-        <meta name="description" content="Professional CV generator for remote executives." />
+        <meta
+          name="description"
+          content="Professional CV generator for remote executives."
+        />
       </Head>
       <div class="min-h-screen bg-gray-100">
         <Navigation />
@@ -49,4 +51,4 @@ export default function Career() {
       </div>
     </>
   );
-} 
+});

@@ -46,4 +46,4 @@ export interface CV {
   }>;
 }
 
-export const cvSignal = signal<CV | null>(null); 
+export const cvSignal = signal<CV | null>(null);

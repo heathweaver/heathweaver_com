@@ -1,11 +1,12 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import "$std/dotenv/load.ts";
 import { VERIFIED_PROMPT } from "../../backend/prompt/index.ts";
 
 export async function handler(
-  req: Request,
   _ctx: FreshContext,
 ): Promise<Response> {
+  const req = ctx.req;
+
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
   }
@@ -14,7 +15,7 @@ export async function handler(
   if (!apiKey) {
     return new Response(
       JSON.stringify({ error: "OpenAI API key not configured" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 
@@ -32,12 +33,12 @@ export async function handler(
         messages: [
           {
             role: "system",
-            content: VERIFIED_PROMPT
+            content: VERIFIED_PROMPT,
           },
-          { role: "user", content: message }
+          { role: "user", content: message },
         ],
         max_tokens: 1024,
-        temperature: 0.7
+        temperature: 0.7,
       }),
     });
 
@@ -49,13 +50,14 @@ export async function handler(
     const data = await response.json();
     return new Response(
       JSON.stringify({ content: data.choices[0].message.content }),
-      { headers: { "Content-Type": "application/json" } }
+      { headers: { "Content-Type": "application/json" } },
     );
-
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({
+        error: error instanceof Error ? error.message : String(error),
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
-} 
+}

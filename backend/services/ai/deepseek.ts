@@ -1,4 +1,4 @@
-import { AIService, AIResponse } from "../../types/ai-service.types.ts";
+import { AIResponse, AIService } from "../../types/ai-service.types.ts";
 import { AI_SERVICE_SYSTEM_PROMPT } from "../../prompt/index.ts";
 
 interface DeepSeekMessage {
@@ -32,7 +32,10 @@ export class DeepSeekService implements AIService {
     console.log(`DeepSeek service initialized with model: ${model}`);
   }
 
-  private async makeRequest(messages: DeepSeekMessage[], options: { requiresJson?: boolean } = {}): Promise<AIResponse> {
+  private async makeRequest(
+    messages: DeepSeekMessage[],
+    options: { requiresJson?: boolean } = {},
+  ): Promise<AIResponse> {
     if (!this.apiKey) {
       console.error("DeepSeek API key not found");
       return { error: "DeepSeek API key not found", content: [] };
@@ -41,7 +44,7 @@ export class DeepSeekService implements AIService {
     console.log("Making DeepSeek API request:", {
       url: this.baseUrl,
       model: this.model,
-      messageCount: messages.length
+      messageCount: messages.length,
     });
 
     const requestBody = {
@@ -51,8 +54,8 @@ export class DeepSeekService implements AIService {
       temperature: 0.7,
       stream: false,
       ...(options.requiresJson && {
-        response_format: { type: 'json_object' }
-      })
+        response_format: { type: "json_object" },
+      }),
     };
 
     try {
@@ -60,9 +63,9 @@ export class DeepSeekService implements AIService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.apiKey}`
+          "Authorization": `Bearer ${this.apiKey}`,
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
       });
 
       const responseText = await response.text();
@@ -79,16 +82,24 @@ export class DeepSeekService implements AIService {
       } catch (e) {
         console.error("Failed to parse DeepSeek response:", e);
         console.error("Raw response text:", responseText);
-        throw new Error(`Failed to parse DeepSeek response. Raw response: ${responseText.slice(0, 500)}...`);
+        throw new Error(
+          `Failed to parse DeepSeek response. Raw response: ${
+            responseText.slice(0, 500)
+          }...`,
+        );
       }
 
       if (!data.choices?.[0]?.message?.content) {
         console.error("Unexpected response structure:", data);
-        throw new Error(`Unexpected response structure from DeepSeek: ${JSON.stringify(data)}`);
+        throw new Error(
+          `Unexpected response structure from DeepSeek: ${
+            JSON.stringify(data)
+          }`,
+        );
       }
 
       return {
-        content: [data.choices[0].message.content]
+        content: [data.choices[0].message.content],
       };
     } catch (error) {
       console.error("DeepSeek request error:", error);
@@ -100,16 +111,18 @@ export class DeepSeekService implements AIService {
     const messages: DeepSeekMessage[] = [
       {
         role: "system",
-        content: AI_SERVICE_SYSTEM_PROMPT
+        content: AI_SERVICE_SYSTEM_PROMPT,
       },
       {
         role: "user",
-        content: prompt
-      }
+        content: prompt,
+      },
     ];
 
     // console.log("Processing job posting with DeepSeek:", { promptLength: prompt.length });
-    return await this.makeRequest(messages, { requiresJson: prompt.toLowerCase().includes('json') });
+    return await this.makeRequest(messages, {
+      requiresJson: prompt.toLowerCase().includes("json"),
+    });
   }
 
   async generateCV(prompt: string): Promise<AIResponse> {
@@ -117,13 +130,13 @@ export class DeepSeekService implements AIService {
     const messages: DeepSeekMessage[] = [
       {
         role: "system",
-        content: AI_SERVICE_SYSTEM_PROMPT
+        content: AI_SERVICE_SYSTEM_PROMPT,
       },
       {
         role: "user",
-        content: prompt
-      }
+        content: prompt,
+      },
     ];
     return await this.makeRequest(messages);
   }
-} 
+}

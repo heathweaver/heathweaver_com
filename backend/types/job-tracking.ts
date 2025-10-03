@@ -1,4 +1,9 @@
-export type JobStatus = 'saved' | 'applied' | 'interviewing' | 'offer' | 'closed';
+export type JobStatus =
+  | "saved"
+  | "applied"
+  | "interviewing"
+  | "offer"
+  | "closed";
 
 export interface JobTracking {
   id: string;
@@ -21,4 +26,4 @@ export interface JobTrackingFilters {
     end: Date;
   };
   searchTerm?: string;
-} 
+}

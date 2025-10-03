@@ -1,10 +1,10 @@
 import { AIService } from "../../types/ai-service.types.ts";
 import { JobContent } from "../../types/job.ts";
 import { DatabaseService } from "../../db/database.ts";
-import { 
-  JOB_ANALYSIS_PROMPT, 
+import {
+  JOB_ANALYSIS_PROMPT,
   JOB_CONTENT_EXTRACTION_PROMPT,
-  JOB_CONTENT_PROCESSING_PROMPT
+  JOB_CONTENT_PROCESSING_PROMPT,
 } from "../../prompt/index.ts";
 
 const JOB_CONTENT_TEMPLATE = {
@@ -16,7 +16,7 @@ const JOB_CONTENT_TEMPLATE = {
   requirements: "List of requirements/qualifications",
   responsibilities: "List of responsibilities/duties",
   aboutCompany: "Information about the company",
-  benefits: "Benefits/perks information"
+  benefits: "Benefits/perks information",
 };
 
 /**
@@ -24,8 +24,8 @@ const JOB_CONTENT_TEMPLATE = {
  */
 function generateJobId(): string {
   return Array.from(crypto.getRandomValues(new Uint8Array(10)))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 /**
@@ -45,7 +45,7 @@ export function structureJobContent(rawText: string): string {
 export function prepareCVPrompt(jobContent: JobContent): string {
   // Remove any undefined fields
   const content = Object.fromEntries(
-    Object.entries(jobContent).filter(([_, v]) => v !== undefined)
+    Object.entries(jobContent).filter(([_, v]) => v !== undefined),
   ) as JobContent;
 
   return JOB_ANALYSIS_PROMPT
@@ -54,8 +54,8 @@ export function prepareCVPrompt(jobContent: JobContent): string {
     .replace("{location}", content.location || "")
     .replace("{salary}", content.salary || "")
     .replace("{description}", content.description || "")
-    .replace("{requirements}", content.requirements?.join('\n') || "")
-    .replace("{responsibilities}", content.responsibilities?.join('\n') || "")
+    .replace("{requirements}", content.requirements?.join("\n") || "")
+    .replace("{responsibilities}", content.responsibilities?.join("\n") || "")
     .replace("{aboutCompany}", content.aboutCompany || "")
     .replace("{benefits}", content.benefits || "");
 }
@@ -64,31 +64,31 @@ export function prepareCVPrompt(jobContent: JobContent): string {
  * Validates the structure of job content returned from the LLM
  */
 export function validateJobContent(content: unknown): JobContent {
-  if (typeof content !== 'object' || !content) {
+  if (typeof content !== "object" || !content) {
     console.error("validate: Invalid job content structure");
     return { error: "validate: Invalid job content structure" };
   }
 
   const result: JobContent = {};
   const stringFields = [
-    'title',
-    'company',
-    'location',
-    'salary',
-    'description',
-    'aboutCompany'
+    "title",
+    "company",
+    "location",
+    "salary",
+    "description",
+    "aboutCompany",
   ] as const;
 
-  const arrayFields = ['requirements', 'responsibilities'] as const;
+  const arrayFields = ["requirements", "responsibilities"] as const;
 
   // Handle string fields
   for (const key of stringFields) {
     const value = (content as Record<string, unknown>)[key];
-    if (value !== undefined && typeof value !== 'string') {
+    if (value !== undefined && typeof value !== "string") {
       console.error(`validate: Invalid type for field ${key}`);
       return { error: `validate: Invalid type for field ${key}` };
     }
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       result[key] = value;
     }
   }
@@ -99,12 +99,12 @@ export function validateJobContent(content: unknown): JobContent {
     if (value !== undefined) {
       if (Array.isArray(value)) {
         result[key] = value.map(String);
-      } else if (typeof value === 'string') {
+      } else if (typeof value === "string") {
         // Split string on newlines and/or commas, then clean up
         result[key] = value
           .split(/[\n,]+/)
-          .map(item => item.trim())
-          .filter(item => item.length > 0);
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0);
       } else {
         console.error(`validate: Invalid type for field ${key}`);
         return { error: `validate: Invalid type for field ${key}` };
@@ -113,9 +113,9 @@ export function validateJobContent(content: unknown): JobContent {
   }
 
   // Handle benefits which can be either string or array
-  const benefits = (content as Record<string, unknown>)['benefits'];
+  const benefits = (content as Record<string, unknown>)["benefits"];
   if (benefits !== undefined) {
-    if (typeof benefits === 'string') {
+    if (typeof benefits === "string") {
       result.benefits = benefits;
     } else if (Array.isArray(benefits)) {
       result.benefits = benefits.map(String).join("\n");
@@ -138,7 +138,7 @@ export async function processJobContent(
   content: string,
   ai: AIService,
   db?: DatabaseService,
-  url?: string
+  url?: string,
 ): Promise<JobContent & { id?: string }> {
   // First check if we have valid content
   if (!content) {
@@ -147,10 +147,10 @@ export async function processJobContent(
 
   // Only log first 100 chars of content for debugging
   console.log("Processing job content:", content.slice(0, 100) + "...");
-  
+
   // Extract initial job data using AI
   const structuringPrompt = structureJobContent(content);
-  
+
   try {
     const response = await ai.processJobPosting(structuringPrompt);
     if (response.error || !response.content.length) {
@@ -166,13 +166,15 @@ export async function processJobContent(
       // If content is valid, generate an ID
       if (!validatedContent.error) {
         const id = generateJobId();
-        
+
         // Database storage is optional - only try if db is provided and has storeJobContent method
-        if (db && 'storeJobContent' in db && url) {
+        if (db && "storeJobContent" in db && url) {
           try {
             await db.storeJobContent(validatedContent, content, id, url);
           } catch (dbError) {
-            console.error(`process: Failed to store job content - ${String(dbError)}`);
+            console.error(
+              `process: Failed to store job content - ${String(dbError)}`,
+            );
             // Continue even if storage fails - don't fail the whole process
           }
         }
@@ -183,11 +185,13 @@ export async function processJobContent(
       return validatedContent;
     } catch (parseError) {
       console.error(`process: Invalid JSON response - ${String(parseError)}`);
-      return { error: `process: Invalid JSON response - ${String(parseError)}` };
+      return {
+        error: `process: Invalid JSON response - ${String(parseError)}`,
+      };
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`process: ${message}`);
     return { error: `process: ${message}` };
   }
-} 
+}

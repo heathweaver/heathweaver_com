@@ -6,9 +6,11 @@ interface JobSearchProps {
   activeFilter: Signal<JobStatus | null>;
 }
 
-export default function JobSearch({ searchTerm, activeFilter }: JobSearchProps) {
-  const statuses: JobStatus[] = ['applied', 'interviewing', 'offer'];
-  
+export default function JobSearch(
+  { searchTerm, activeFilter }: JobSearchProps,
+) {
+  const statuses: JobStatus[] = ["applied", "interviewing", "offer"];
+
   return (
     <div class="space-y-4">
       <input
@@ -23,11 +25,16 @@ export default function JobSearch({ searchTerm, activeFilter }: JobSearchProps) 
         {statuses.map((status) => (
           <button
             key={status}
-            onClick={() => activeFilter.value = activeFilter.value === status ? null : status}
+            onClick={() =>
+              activeFilter.value = activeFilter.value === status
+                ? null
+                : status}
             class={`px-4 py-2 text-sm font-medium rounded-md focus:outline-none transition-colors
-              ${activeFilter.value === status 
-                ? 'bg-emerald-600 text-white shadow-sm' 
-                : 'bg-white text-gray-900 shadow hover:bg-gray-50'}`}
+              ${
+              activeFilter.value === status
+                ? "bg-emerald-600 text-white shadow-sm"
+                : "bg-white text-gray-900 shadow hover:bg-gray-50"
+            }`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </button>
@@ -35,4 +42,4 @@ export default function JobSearch({ searchTerm, activeFilter }: JobSearchProps) 
       </div>
     </div>
   );
-} 
+}

@@ -74,23 +74,23 @@ export interface EducationItem {
 }
 
 export interface SkillItem {
-    category: string;
-    skills: string[];
+  category: string;
+  skills: string[];
 }
 
 export interface AwardItem {
-    title: string;
-    issuer?: string;
-    date?: string;
-    description?: string;
+  title: string;
+  issuer?: string;
+  date?: string;
+  description?: string;
 }
 
 export interface PublicationItem {
-    title: string;
-    publisher?: string;
-    date?: string;
-    url?: string;
-    description?: string;
+  title: string;
+  publisher?: string;
+  date?: string;
+  url?: string;
+  description?: string;
 }
 
 export interface CV {
@@ -129,4 +129,4 @@ export interface JobHistory {
 export interface CVData {
   basicInfo: BasicInfo;
   jobHistory: FullJobHistory[];
-} 
+}
