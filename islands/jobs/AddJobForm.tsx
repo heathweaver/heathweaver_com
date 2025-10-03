@@ -21,7 +21,6 @@ export default function AddJobForm() {
   const importError = useSignal("");
   const submitError = useSignal("");
   const submitSuccess = useSignal(false);
-  const showJobDetails = useSignal(false);
 
   const handleImport = async () => {
     if (!jobUrl.value.trim()) {
