@@ -1,8 +1,12 @@
 import { useSignal } from "@preact/signals";
 import { ChatMessage } from "../backend/types/chat.ts";
-import { INITIAL_PROMPT } from "../backend/prompt/index.ts";
+import { selectedCvIdSignal } from "./shared.ts";
 
-export default function ChatArea() {
+interface ChatAreaProps {
+  user?: { $id: string } | null;
+}
+
+export default function ChatArea({ user }: ChatAreaProps) {
   const messages = useSignal<ChatMessage[]>([{
     role: "assistant",
     content:
@@ -13,7 +17,6 @@ export default function ChatArea() {
   const currentModel = useSignal<"xai" | "anthropic" | "deepseek" | "openai">(
     "xai",
   );
-  const showJobInput = useSignal(false);
   const verificationData = useSignal<
     {
       isValid: boolean;
@@ -22,6 +25,8 @@ export default function ChatArea() {
       cvData?: Record<string, unknown>;
     } | null
   >(null);
+  const manualCvId = useSignal<string>("");
+  const showManualCvInput = useSignal(!user);
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
@@ -95,7 +100,7 @@ export default function ChatArea() {
       }
 
       // If in joke mode, fetch a joke
-      if (verificationData.value.mode === "jokes") {
+      if (verificationData.value?.mode === "jokes") {
         const jokeResponse = await fetch("/api/joke");
         if (!jokeResponse.ok) throw new Error("Failed to fetch joke");
 
@@ -108,6 +113,11 @@ export default function ChatArea() {
         return;
       }
 
+      // Get CV ID from auto-detect or manual input
+      const cvId = user && selectedCvIdSignal.value 
+        ? selectedCvIdSignal.value 
+        : manualCvId.value ? parseInt(manualCvId.value) : undefined;
+
       // For verified mode, make the AI request with the verification data
       const response = await fetch(`/api/${currentModel.value}`, {
         method: "POST",
@@ -115,6 +125,7 @@ export default function ChatArea() {
         body: JSON.stringify({
           message: userMessage,
           verificationData: verificationData.value,
+          cvId,
         }),
       });
 
@@ -200,6 +211,28 @@ export default function ChatArea() {
 
       {/* Chat input */}
       <div class="border-t p-4">
+        {showManualCvInput.value && !user && (
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              CV ID (optional)
+            </label>
+            <input
+              type="text"
+              value={manualCvId.value}
+              onChange={(e) => manualCvId.value = e.currentTarget.value}
+              class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+              placeholder="Enter CV ID to customize responses"
+            />
+          </div>
+        )}
+        {user && selectedCvIdSignal.value && (
+          <div class="mb-3 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <p class="text-sm text-emerald-700">
+              <span class="font-medium">Using CV #{selectedCvIdSignal.value}</span>
+              {" "}- Responses will be tailored to your selected resume
+            </p>
+          </div>
+        )}
         <form onSubmit={handleSubmit} class="flex items-center space-x-2">
           <input
             type="text"

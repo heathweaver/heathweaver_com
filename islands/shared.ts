@@ -47,3 +47,4 @@ export interface CV {
 }
 
 export const cvSignal = signal<CV | null>(null);
+export const selectedCvIdSignal = signal<number | null>(null);

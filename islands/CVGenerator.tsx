@@ -1,11 +1,10 @@
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import { type CV, cvSignal } from "./shared.ts";
+import { cvSignal, selectedCvIdSignal } from "./shared.ts";
 
 export default function CVGenerator() {
   const isLoading = useSignal(false);
   const error = useSignal<string | null>(null);
-  const selectedCvId = useSignal<number | null>(null);
   const cvs = useSignal<
     Array<{
       id: number;
@@ -28,7 +27,12 @@ export default function CVGenerator() {
       isLoading.value = true;
       error.value = null;
 
-      const response = await fetch("/api/cv");
+      console.log("CVGenerator: Loading CVs...");
+      const response = await fetch("/api/cv", {
+        credentials: "include",
+      });
+      console.log("CVGenerator: Response status:", response.status);
+      
       if (!response.ok) {
         throw new Error(
           `Failed to load CVs: ${response.status} ${response.statusText}`,
@@ -36,8 +40,10 @@ export default function CVGenerator() {
       }
 
       const data = await response.json();
+      console.log("CVGenerator: Loaded CVs:", data);
       cvs.value = data;
     } catch (err) {
+      console.error("CVGenerator: Error loading CVs:", err);
       error.value = err instanceof Error ? err.message : "An error occurred";
     } finally {
       isLoading.value = false;
@@ -48,9 +54,14 @@ export default function CVGenerator() {
     try {
       isLoading.value = true;
       error.value = null;
-      selectedCvId.value = id;
+      selectedCvIdSignal.value = id;
 
-      const response = await fetch(`/api/cv?id=${id}`);
+      console.log("CVGenerator: Loading CV with ID:", id);
+      const response = await fetch(`/api/cv?id=${id}`, {
+        credentials: "include",
+      });
+      console.log("CVGenerator: CV Response status:", response.status);
+      
       if (!response.ok) {
         throw new Error(
           `Failed to load CV: ${response.status} ${response.statusText}`,
@@ -58,8 +69,10 @@ export default function CVGenerator() {
       }
 
       const data = await response.json();
+      console.log("CVGenerator: Loaded CV data:", data);
       cvSignal.value = { ...data, id };
     } catch (err) {
+      console.error("CVGenerator: Error loading CV:", err);
       error.value = err instanceof Error ? err.message : "An error occurred";
     } finally {
       isLoading.value = false;
@@ -72,7 +85,7 @@ export default function CVGenerator() {
       <div class="relative">
         <select
           onChange={(e) => loadCV(Number(e.currentTarget.value))}
-          value={selectedCvId.value?.toString() || ""}
+          value={selectedCvIdSignal.value?.toString() || ""}
           class={`block w-full px-3 py-2 text-sm bg-white border rounded-md shadow-sm appearance-none transition-colors
             ${isLoading.value ? "opacity-50 cursor-wait" : "cursor-pointer"}
             ${
